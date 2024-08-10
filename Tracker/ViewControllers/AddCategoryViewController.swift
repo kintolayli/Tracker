@@ -45,7 +45,7 @@ class AddCategoryViewController: UIViewController, AddCategoryViewControllerProt
         button.layer.masksToBounds = true
         return button
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

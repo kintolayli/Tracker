@@ -85,8 +85,6 @@ final class ChooseTypeTrackerViewController: UIViewController {
     }
     
     @objc private func regularEventsButtonDidTap() {
-        print("regularEventsButtonDidTap")
-        
         let viewController = CreateRegularEventTrackerViewController()
         viewController.viewController = self
         self.delegate = viewController

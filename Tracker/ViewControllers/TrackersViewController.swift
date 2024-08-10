@@ -22,26 +22,90 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         return params
     }()
     
-    var categories: [TrackerCategory] = [
-        TrackerCategory(title: "По умолчанию", trackerList: []),
-    ]
+    //    var categories: [TrackerCategory] = [
+    //        TrackerCategory(title: "По умолчанию", trackerList: []),
+    //    ]
     
-//    var categories: [TrackerCategory] = [
-//        TrackerCategory(title: "Домашний уют", trackerList: [
-//            Tracker(name: "Поливать растения", color: .ypColorSelection10, emojii: "🍇", schedule: 0),
-//            Tracker(name: "Сходить погулять", color: .ypColorSelection2, emojii: "🫒", schedule: 0),
-//            Tracker(name: "Выкинуть мусор", color: .ypColorSelection13, emojii: "🍆", schedule: 0),
-//        ]),
-//        TrackerCategory(title: "Радостные мелочи", trackerList: [
-//            Tracker(name: "Кошка заслонила камеру на созвоне", color: .ypColorSelection17, emojii: "🥑", schedule: 0),
-//            Tracker(name: "Бабушка прислала открытку в вотсапе", color: .ypColorSelection18, emojii: "🫑", schedule: 0),
-//            Tracker(name: "Свидания в апреле", color: .ypColorSelection9, emojii: "🥒", schedule: 0),
-//        ]),
-//        TrackerCategory(title: "Самочувствие", trackerList: [
-//            Tracker(name: "Хорошее настроение", color: .ypColorSelection14, emojii: "🥝", schedule: 0),
-//            Tracker(name: "Легкая тревожность", color: .ypColorSelection15, emojii: "🙂", schedule: 0),
-//        ]),
-//    ]
+    var categories: [TrackerCategory] = [
+        TrackerCategory(title: "Домашний уют", trackerList: [
+            Tracker(name: "Поливать растения", color: .ypColorSelection10, emojii: "🍇", schedule: [
+                ("Понедельник", true, "Пн"),
+                ("Вторник", false, "Вт"),
+                ("Среда", false, "Ср"),
+                ("Четверг", false, "Чт"),
+                ("Пятница", false, "Пт"),
+                ("Суббота", false, "Сб"),
+                ("Воскресенье", false, "Вс")
+            ]),
+            Tracker(name: "Сходить погулять", color: .ypColorSelection2, emojii: "🫒", schedule: [
+                ("Понедельник", false, "Пн"),
+                ("Вторник", true, "Вт"),
+                ("Среда", false, "Ср"),
+                ("Четверг", false, "Чт"),
+                ("Пятница", false, "Пт"),
+                ("Суббота", false, "Сб"),
+                ("Воскресенье", false, "Вс")
+            ]),
+            Tracker(name: "Выкинуть мусор", color: .ypColorSelection13, emojii: "🍆", schedule: [
+                ("Понедельник", false, "Пн"),
+                ("Вторник", false, "Вт"),
+                ("Среда", true, "Ср"),
+                ("Четверг", false, "Чт"),
+                ("Пятница", false, "Пт"),
+                ("Суббота", false, "Сб"),
+                ("Воскресенье", false, "Вс")
+            ]),
+        ]),
+        TrackerCategory(title: "Радостные мелочи", trackerList: [
+            Tracker(name: "Кошка заслонила камеру на созвоне", color: .ypColorSelection17, emojii: "🥑", schedule: [
+                ("Понедельник", false, "Пн"),
+                ("Вторник", false, "Вт"),
+                ("Среда", false, "Ср"),
+                ("Четверг", true, "Чт"),
+                ("Пятница", false, "Пт"),
+                ("Суббота", false, "Сб"),
+                ("Воскресенье", false, "Вс")
+            ]),
+            Tracker(name: "Бабушка прислала открытку в вотсапе", color: .ypColorSelection18, emojii: "🫑", schedule: [
+                ("Понедельник", false, "Пн"),
+                ("Вторник", false, "Вт"),
+                ("Среда", false, "Ср"),
+                ("Четверг", false, "Чт"),
+                ("Пятница", true, "Пт"),
+                ("Суббота", false, "Сб"),
+                ("Воскресенье", false, "Вс")
+            ]),
+            Tracker(name: "Свидания в апреле", color: .ypColorSelection9, emojii: "🥒", schedule: [
+                ("Понедельник", false, "Пн"),
+                ("Вторник", false, "Вт"),
+                ("Среда", false, "Ср"),
+                ("Четверг", false, "Чт"),
+                ("Пятница", false, "Пт"),
+                ("Суббота", true, "Сб"),
+                ("Воскресенье", false, "Вс")
+            ]),
+        ]),
+        TrackerCategory(title: "Самочувствие", trackerList: [
+            Tracker(name: "Хорошее настроение", color: .ypColorSelection14, emojii: "🥝", schedule: [
+                ("Понедельник", false, "Пн"),
+                ("Вторник", false, "Вт"),
+                ("Среда", false, "Ср"),
+                ("Четверг", false, "Чт"),
+                ("Пятница", false, "Пт"),
+                ("Суббота", false, "Сб"),
+                ("Воскресенье", true, "Вс")
+            ]),
+            Tracker(name: "Легкая тревожность", color: .ypColorSelection15, emojii: "🙂", schedule: [
+                ("Понедельник", false, "Пн"),
+                ("Вторник", false, "Вт"),
+                ("Среда", false, "Ср"),
+                ("Четверг", false, "Чт"),
+                ("Пятница", false, "Пт"),
+                ("Суббота", false, "Сб"),
+                ("Воскресенье", true, "Вс")
+            ]),
+        ]),
+    ]
     
     private var completedTrackers: [UUID: TrackerRecord] = [:]
     private var currentDate: Date = Date()
@@ -49,6 +113,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter
     }()

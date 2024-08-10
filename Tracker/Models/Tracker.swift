@@ -13,5 +13,5 @@ struct Tracker {
     let name: String
     let color: UIColor
     let emojii: String
-    let schedule: Int
+    let schedule: [(String, Bool, String)]
 }

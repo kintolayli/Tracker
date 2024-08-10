@@ -95,7 +95,6 @@
 				8AD814A92C67A13E008DAA5D /* Models */,
 				8AD814A72C67A10C008DAA5D /* Helpers */,
 				8AD814A82C67A126008DAA5D /* Extensions */,
-				8ADF93612C5F8E15001A4690 /* TabBar */,
 				8ACDBC2D2C5CD87D00687ACF /* Assets.xcassets */,
 				8ACDBC2F2C5CD87D00687ACF /* LaunchScreen.storyboard */,
 				8ACDBC322C5CD87D00687ACF /* Info.plist */,
@@ -146,13 +145,6 @@
 				8ADF93642C5F8EF0001A4690 /* StatisticsViewController.swift */,
 			);
 			path = ViewControllers;
-			sourceTree = "<group>";
-		};
-		8ADF93612C5F8E15001A4690 /* TabBar */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = TabBar;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

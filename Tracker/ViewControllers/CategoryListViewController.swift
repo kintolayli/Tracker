@@ -162,7 +162,7 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
         self.dismiss(animated: true)
     }
     
-     func updateTableViewAnimated() {
+    func updateTableViewAnimated() {
         guard let newCount = viewController?.viewController?.viewController?.categories.count else { return }
         
         tableView.performBatchUpdates {

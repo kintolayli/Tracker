@@ -10,6 +10,7 @@ import UIKit
 
 protocol SheduleViewControllerProtocol: AnyObject {
     var viewController: CreateRegularEventTrackerViewController? { get set }
+    func getShedule() -> [(String, Bool, String)]
 }
 
 class SheduleViewController: UIViewController, SheduleViewControllerProtocol{
@@ -93,6 +94,10 @@ class SheduleViewController: UIViewController, SheduleViewControllerProtocol{
     
     @objc private func okButtonDidTap() {
         dismiss(animated: true)
+    }
+    
+    func getShedule() -> [(String, Bool, String)] {
+        return days
     }
 }
 

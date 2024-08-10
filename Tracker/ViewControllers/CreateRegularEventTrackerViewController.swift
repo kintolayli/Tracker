@@ -268,7 +268,8 @@ final class CreateRegularEventTrackerViewController: UIViewController, CreateReg
         let randomIntEmojies = Int.random(in: 0..<emojies.count)
         let emojii = emojies[randomIntEmojies]
         
-        let newTracker = Tracker(name: name, color: color, emojii: emojii, schedule: 0)
+        guard let shedule = sheduleDelegate?.getShedule() else { return }
+        let newTracker = Tracker(name: name, color: color, emojii: emojii, schedule: shedule)
         let category = selectedCategory
         
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
