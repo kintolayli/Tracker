@@ -49,7 +49,7 @@ final class TabBarController: UITabBarController {
         viewControllers = dataSource.map {
             switch $0 {
             case .tracker:
-                let trackerViewController = TrackerViewController()
+                let trackerViewController = TrackersViewController()
                 return UINavigationController(rootViewController: trackerViewController)
             case .statistics:
                 let statisticsViewController = StatisticsViewController()
