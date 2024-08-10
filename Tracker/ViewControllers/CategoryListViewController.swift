@@ -158,6 +158,7 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
         guard let category = cell.textLabel?.text else { return }
         viewController?.didSelectCategory(category)
         viewController?.updateTableViewFirstCell()
+        viewController?.categoryDidChange()
         self.dismiss(animated: true)
     }
     

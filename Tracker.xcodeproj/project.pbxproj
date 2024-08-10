@@ -22,6 +22,9 @@
 		8AD814802C66313D008DAA5D /* SupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD8147F2C66313D008DAA5D /* SupplementaryView.swift */; };
 		8AD814822C663BBB008DAA5D /* CategoryListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814812C663BBB008DAA5D /* CategoryListViewController.swift */; };
 		8AD814842C664236008DAA5D /* AddCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814832C664236008DAA5D /* AddCategoryViewController.swift */; };
+		8AD814AC2C67A382008DAA5D /* SheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814AB2C67A382008DAA5D /* SheduleViewController.swift */; };
+		8AD814AE2C67A7E2008DAA5D /* SheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814AD2C67A7E2008DAA5D /* SheduleTableViewCell.swift */; };
+		8AD814B02C67F4CE008DAA5D /* ExtensionNotificationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814AF2C67F4CE008DAA5D /* ExtensionNotificationName.swift */; };
 		8ADF935E2C5F5EA3001A4690 /* ExtensionUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF935D2C5F5EA3001A4690 /* ExtensionUIView.swift */; };
 		8ADF93602C5F8E0D001A4690 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF935F2C5F8E0D001A4690 /* TabBarController.swift */; };
 		8ADF93632C5F8EB3001A4690 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */; };
@@ -46,6 +49,9 @@
 		8AD8147F2C66313D008DAA5D /* SupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryView.swift; sourceTree = "<group>"; };
 		8AD814812C663BBB008DAA5D /* CategoryListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListViewController.swift; sourceTree = "<group>"; };
 		8AD814832C664236008DAA5D /* AddCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewController.swift; sourceTree = "<group>"; };
+		8AD814AB2C67A382008DAA5D /* SheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheduleViewController.swift; sourceTree = "<group>"; };
+		8AD814AD2C67A7E2008DAA5D /* SheduleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheduleTableViewCell.swift; sourceTree = "<group>"; };
+		8AD814AF2C67F4CE008DAA5D /* ExtensionNotificationName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionNotificationName.swift; sourceTree = "<group>"; };
 		8ADF935D2C5F5EA3001A4690 /* ExtensionUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionUIView.swift; sourceTree = "<group>"; };
 		8ADF935F2C5F8E0D001A4690 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
@@ -110,6 +116,7 @@
 			children = (
 				8ADF935D2C5F5EA3001A4690 /* ExtensionUIView.swift */,
 				8AD8147B2C64E1C5008DAA5D /* ExtensionUITextField+MaxLength.swift */,
+				8AD814AF2C67F4CE008DAA5D /* ExtensionNotificationName.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -127,13 +134,15 @@
 		8AD814AA2C67A177008DAA5D /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */,
-				8AD814732C63A105008DAA5D /* TrackersCollectionViewCell.swift */,
 				8AD8147F2C66313D008DAA5D /* SupplementaryView.swift */,
+				8AD814732C63A105008DAA5D /* TrackersCollectionViewCell.swift */,
+				8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */,
 				8AD814772C640F5F008DAA5D /* ChooseTypeTrackerViewController.swift */,
 				8AD814792C64BBE2008DAA5D /* CreateRegularEventTrackerViewController.swift */,
 				8AD814812C663BBB008DAA5D /* CategoryListViewController.swift */,
 				8AD814832C664236008DAA5D /* AddCategoryViewController.swift */,
+				8AD814AB2C67A382008DAA5D /* SheduleViewController.swift */,
+				8AD814AD2C67A7E2008DAA5D /* SheduleTableViewCell.swift */,
 				8ADF93642C5F8EF0001A4690 /* StatisticsViewController.swift */,
 			);
 			path = ViewControllers;
@@ -218,11 +227,13 @@
 			files = (
 				8ACDBC252C5CD87B00687ACF /* AppDelegate.swift in Sources */,
 				8ADF93652C5F8EF0001A4690 /* StatisticsViewController.swift in Sources */,
+				8AD814AE2C67A7E2008DAA5D /* SheduleTableViewCell.swift in Sources */,
 				8AD814782C640F5F008DAA5D /* ChooseTypeTrackerViewController.swift in Sources */,
 				8AD814702C62B789008DAA5D /* TrackerCategory.swift in Sources */,
 				8ADF93602C5F8E0D001A4690 /* TabBarController.swift in Sources */,
 				8AD814762C63B85A008DAA5D /* GeometricParams.swift in Sources */,
 				8AD8147C2C64E1C5008DAA5D /* ExtensionUITextField+MaxLength.swift in Sources */,
+				8AD814AC2C67A382008DAA5D /* SheduleViewController.swift in Sources */,
 				8ACDBC272C5CD87B00687ACF /* SceneDelegate.swift in Sources */,
 				8AD814822C663BBB008DAA5D /* CategoryListViewController.swift in Sources */,
 				8AD814722C62B7D3008DAA5D /* TrackerRecord.swift in Sources */,
@@ -233,6 +244,7 @@
 				8AD814802C66313D008DAA5D /* SupplementaryView.swift in Sources */,
 				8AD814742C63A105008DAA5D /* TrackersCollectionViewCell.swift in Sources */,
 				8AD8146E2C62B6DC008DAA5D /* Tracker.swift in Sources */,
+				8AD814B02C67F4CE008DAA5D /* ExtensionNotificationName.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

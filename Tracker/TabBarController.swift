@@ -8,7 +8,7 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
-
+    
     private enum TabBarItem: Int {
         case tracker
         case statistics

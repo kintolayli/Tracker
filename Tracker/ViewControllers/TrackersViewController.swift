@@ -22,26 +22,26 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         return params
     }()
     
-//    var categories: [TrackerCategory] = [
-//        TrackerCategory(title: "По умолчанию", trackerList: []),
-//    ]
-    
     var categories: [TrackerCategory] = [
-        TrackerCategory(title: "Домашний уют", trackerList: [
-            Tracker(name: "Поливать растения", color: .ypColorSelection10, emojii: "🍇", schedule: 0),
-            Tracker(name: "Сходить погулять", color: .ypColorSelection2, emojii: "🫒", schedule: 0),
-            Tracker(name: "Выкинуть мусор", color: .ypColorSelection13, emojii: "🍆", schedule: 0),
-        ]),
-        TrackerCategory(title: "Радостные мелочи", trackerList: [
-            Tracker(name: "Кошка заслонила камеру на созвоне", color: .ypColorSelection17, emojii: "🥑", schedule: 0),
-            Tracker(name: "Бабушка прислала открытку в вотсапе", color: .ypColorSelection18, emojii: "🫑", schedule: 0),
-            Tracker(name: "Свидания в апреле", color: .ypColorSelection9, emojii: "🥒", schedule: 0),
-        ]),
-        TrackerCategory(title: "Самочувствие", trackerList: [
-            Tracker(name: "Хорошее настроение", color: .ypColorSelection14, emojii: "🥝", schedule: 0),
-            Tracker(name: "Легкая тревожность", color: .ypColorSelection15, emojii: "🙂", schedule: 0),
-        ]),
+        TrackerCategory(title: "По умолчанию", trackerList: []),
     ]
+    
+//    var categories: [TrackerCategory] = [
+//        TrackerCategory(title: "Домашний уют", trackerList: [
+//            Tracker(name: "Поливать растения", color: .ypColorSelection10, emojii: "🍇", schedule: 0),
+//            Tracker(name: "Сходить погулять", color: .ypColorSelection2, emojii: "🫒", schedule: 0),
+//            Tracker(name: "Выкинуть мусор", color: .ypColorSelection13, emojii: "🍆", schedule: 0),
+//        ]),
+//        TrackerCategory(title: "Радостные мелочи", trackerList: [
+//            Tracker(name: "Кошка заслонила камеру на созвоне", color: .ypColorSelection17, emojii: "🥑", schedule: 0),
+//            Tracker(name: "Бабушка прислала открытку в вотсапе", color: .ypColorSelection18, emojii: "🫑", schedule: 0),
+//            Tracker(name: "Свидания в апреле", color: .ypColorSelection9, emojii: "🥒", schedule: 0),
+//        ]),
+//        TrackerCategory(title: "Самочувствие", trackerList: [
+//            Tracker(name: "Хорошее настроение", color: .ypColorSelection14, emojii: "🥝", schedule: 0),
+//            Tracker(name: "Легкая тревожность", color: .ypColorSelection15, emojii: "🙂", schedule: 0),
+//        ]),
+//    ]
     
     private var completedTrackers: [UUID: TrackerRecord] = [:]
     private var currentDate: Date = Date()
@@ -159,7 +159,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     }
     
     @objc private func didTapTrackerButton() {
-
+        
         let viewController = ChooseTypeTrackerViewController()
         viewController.viewController = self
         delegate = viewController
@@ -180,7 +180,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         var oldTrackerCategory: TrackerCategory?
         var oldTrackerCategoryIndex: Int?
         let updatedTrackerList: [Tracker]
-
+        
         for (index, category) in categories.enumerated() {
             if category.title == trackerCategory.title {
                 oldTrackerCategoryIndex = index
@@ -190,7 +190,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         guard let oldTrackerCategory else { return }
         updatedTrackerList = trackerCategory.trackerList + oldTrackerCategory.trackerList
-
+        
         let updatedTrackerCategory = TrackerCategory(title: trackerCategory.title, trackerList: updatedTrackerList)
         
         guard let oldTrackerCategoryIndex else { return }
@@ -259,12 +259,10 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        //Горизонтальные отступы между ячейками коллекции
         return params.cellSpacing
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        //Вертикальные отступы между ячейками коллекции
         return params.cellSpacing
     }
     
@@ -291,12 +289,12 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
         guard let indexPath = collectionView.indexPath(for: cell)  else { return }
         let newCell = categories[indexPath.section].trackerList[indexPath.row]
         let newTrackerRecord = TrackerRecord(id: newCell.id)
-
+        
         if completedTrackers.keys.contains(where: { $0 == newCell.id }) {
             guard let dateComplete = completedTrackers[newCell.id]?.date else { return }
             let dateString1 = dateFormatter.string(from: dateComplete)
             let dateString2 = dateFormatter.string(from: currentDate)
-
+            
             if dateString1 == dateString2 {
                 completedTrackers.removeValue(forKey: newCell.id)
                 cell.decreaseCounter()
