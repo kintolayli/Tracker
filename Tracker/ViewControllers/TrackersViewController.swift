@@ -31,12 +31,12 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         TrackerCategory(title: "Домашний уют", trackerList: [
             Tracker(name: "Поливать растения", color: .ypColorSelection10, emojii: "🍇", schedule: [
                 ("Понедельник", true, "Пн"),
-                ("Вторник", false, "Вт"),
-                ("Среда", false, "Ср"),
-                ("Четверг", false, "Чт"),
-                ("Пятница", false, "Пт"),
-                ("Суббота", false, "Сб"),
-                ("Воскресенье", false, "Вс")
+                ("Вторник", true, "Вт"),
+                ("Среда", true, "Ср"),
+                ("Четверг", true, "Чт"),
+                ("Пятница", true, "Пт"),
+                ("Суббота", true, "Сб"),
+                ("Воскресенье", true, "Вс")
             ]),
             Tracker(name: "Сходить погулять", color: .ypColorSelection2, emojii: "🫒", schedule: [
                 ("Понедельник", false, "Пн"),
@@ -108,7 +108,8 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         ]),
     ]
     
-    private var completedTrackers: [UUID: TrackerRecord] = [:]
+    private var completedTrackers: [UUID: [String: TrackerRecord]] = [:]
+    
     private var currentDate: Date = Date()
     private var sectionCount: Int = 0
     
@@ -332,11 +333,17 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         cell.delegate = self
         
         let newCell = filteredCategories[indexPath.section].trackerList[indexPath.row]
+        let result = getAddButtonCountLabelAndState(indexPath: indexPath)
+        let count = result.0
+        let addButtonState = result.1
         
         cell.updateCell(backgroundColor: newCell.color,
                         emojiiLabelText: newCell.emojii,
                         titleLabelText: newCell.name,
+                        count: count,
+                        addButtonState: addButtonState,
                         isPin: false)
+
         return cell
     }
     
@@ -398,27 +405,52 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 extension TrackersViewController: TrackersCollectionViewCellDelegate {
     
-    func trackersViewControllerCellTap(_ cell: TrackersCollectionViewCell) {
-        
-        guard let indexPath = collectionView.indexPath(for: cell)  else { return }
+    func getAddButtonCountLabelAndState(indexPath: IndexPath) -> (Int, Bool) {
+
         let newCell = categories[indexPath.section].trackerList[indexPath.row]
-        let newTrackerRecord = TrackerRecord(id: newCell.id)
+        dateFormatter.dateFormat = "dd.MM.yyyy"
+        let dateAsDictKey = dateFormatter.string(from: currentDate)
+        
+        var cellCount = 0
+        var cellState = false
         
         if completedTrackers.keys.contains(where: { $0 == newCell.id }) {
-            guard let dateComplete = completedTrackers[newCell.id]?.date else { return }
-            let dateString1 = dateFormatter.string(from: dateComplete)
-            let dateString2 = dateFormatter.string(from: currentDate)
+            guard let trackerRecords = completedTrackers[newCell.id] else { return (0, false)}
+            cellCount = trackerRecords.keys.count
             
-            if dateString1 == dateString2 {
-                completedTrackers.removeValue(forKey: newCell.id)
-                cell.decreaseCounter()
+            if trackerRecords.keys.contains(dateAsDictKey) {
+                cellState = true
+            }
+        }
+        return (cellCount, cellState)
+    }
+    
+    func trackersViewControllerCellTap(_ cell: TrackersCollectionViewCell) {
+        guard let indexPath = collectionView.indexPath(for: cell)  else { return }
+        let newCell = categories[indexPath.section].trackerList[indexPath.row]
+        dateFormatter.dateFormat = "dd.MM.yyyy"
+        let dateAsDictKey = dateFormatter.string(from: currentDate)
+        let newTrackerRecord = TrackerRecord(id: newCell.id)
+        var cellState = false
+        
+        if completedTrackers.keys.contains(where: { $0 == newCell.id }) {
+            guard let trackerRecords = completedTrackers[newCell.id] else { return }
+            if trackerRecords.keys.contains(dateAsDictKey) {
+                completedTrackers[newCell.id]?.removeValue(forKey: dateAsDictKey)
+                guard let count = completedTrackers[newCell.id]?.count else { return }
+                cell.updateButtonState(count: count, state: cellState)
             } else {
-                completedTrackers.updateValue(newTrackerRecord, forKey: newCell.id)
-                cell.increaseCounter()
+                completedTrackers[newCell.id]?.updateValue(newTrackerRecord, forKey: dateAsDictKey)
+                guard let count = completedTrackers[newCell.id]?.count else { return }
+                cellState = true
+                cell.updateButtonState(count: count, state: cellState)
             }
         } else {
-            completedTrackers.updateValue(newTrackerRecord, forKey: newCell.id)
-            cell.increaseCounter()
+            let newRecord = [dateAsDictKey: newTrackerRecord]
+            print(newRecord)
+            completedTrackers.updateValue(newRecord, forKey: newCell.id)
+            cellState = true
+            cell.updateButtonState(count: newRecord.keys.count, state: cellState)
         }
     }
 }

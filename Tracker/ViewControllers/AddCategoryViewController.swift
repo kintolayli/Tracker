@@ -80,6 +80,10 @@ class AddCategoryViewController: UIViewController, AddCategoryViewControllerProt
         okButton.isEnabled = false
         
         textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
     
     @objc private func okButtonDidTap() {
@@ -95,5 +99,9 @@ class AddCategoryViewController: UIViewController, AddCategoryViewControllerProt
     @objc func textFieldDidChange(_ textField: UITextField) {
         okButton.isEnabled = !(textField.text?.isEmpty ?? true)
         okButton.backgroundColor = okButton.isEnabled ? .ypBlack : .ypGray
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

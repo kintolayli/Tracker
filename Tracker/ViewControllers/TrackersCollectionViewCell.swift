@@ -9,13 +9,13 @@ import UIKit
 
 protocol TrackersCollectionViewCellDelegate: TrackersViewController {
     func trackersViewControllerCellTap(_ cell: TrackersCollectionViewCell)
+    func getAddButtonCountLabelAndState(indexPath: IndexPath) -> (Int, Bool)
 }
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "TrackersCollectionViewCell"
     weak var delegate: TrackersCollectionViewCellDelegate?
-    private var counter: Int = 0
     
     private let colorView: UIView = {
         let view = UIView()
@@ -130,6 +130,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     func updateCell(backgroundColor: UIColor,
                     emojiiLabelText: String,
                     titleLabelText: String,
+                    count: Int,
+                    addButtonState: Bool,
                     isPin: Bool = false
     ){
         colorView.backgroundColor = backgroundColor
@@ -137,6 +139,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         titleLabel.text = titleLabelText
         addButton.backgroundColor = backgroundColor
         pinImageView.isHidden = isPin ? false : true
+        
+        updateButtonState(count: count, state: addButtonState)
     }
     
     func determineEndOfWord(number: Int) -> String {
@@ -149,28 +153,17 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             return "дней"
         }
     }
-    func increaseCounter() {
-        updateCounterLabel(number: 1)
-    }
     
-    func decreaseCounter() {
-        updateCounterLabel(number: -1)
-    }
-    
-    func updateCounterLabel(number: Int) {
-        counter = counter + number
+    func updateButtonState(count: Int, state: Bool) {
+        addButton.layer.opacity = state ? 0.3 : 1
+        let imageName = state ? "checkmark" : "plus"
+        addButton.setImage(UIImage(systemName: imageName), for: .normal)
         
-        let dayWord = determineEndOfWord(number: counter)
-        
-        counterLabel.text = "\(counter) \(dayWord)"
+        let dayWord = determineEndOfWord(number: count)
+        counterLabel.text = "\(count) \(dayWord)"
     }
     
     @objc private func addButtonDidTap() {
-        let currentState = addButton.layer.opacity == 0.3
-        addButton.layer.opacity = currentState ? 1 : 0.3
-        let imageName = currentState ? "plus" : "checkmark"
-        addButton.setImage(UIImage(systemName: imageName), for: .normal)
-        
         delegate?.trackersViewControllerCellTap(self)
     }
 }

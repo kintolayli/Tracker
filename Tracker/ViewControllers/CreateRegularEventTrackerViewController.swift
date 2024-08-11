@@ -145,6 +145,10 @@ final class CreateRegularEventTrackerViewController: UIViewController, CreateReg
         
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange), name: .categoryDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(scheduleDidChange), name: .scheduleDidChange, object: nil)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
     }
     
     func updateTableViewFirstCell() {
@@ -217,6 +221,10 @@ final class CreateRegularEventTrackerViewController: UIViewController, CreateReg
         
         createButton.isEnabled = !isTextFieldEmpty && !isCategoryEmpty && !isSheduleEmpty
         createButton.backgroundColor = createButton.isEnabled ? .ypBlack : .ypGray
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
