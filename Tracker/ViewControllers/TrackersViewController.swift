@@ -26,6 +26,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     //        TrackerCategory(title: "По умолчанию", trackerList: []),
     //    ]
     
+    var filteredCategories: [TrackerCategory] = []
     var categories: [TrackerCategory] = [
         TrackerCategory(title: "Домашний уют", trackerList: [
             Tracker(name: "Поливать растения", color: .ypColorSelection10, emojii: "🍇", schedule: [
@@ -60,7 +61,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
             Tracker(name: "Кошка заслонила камеру на созвоне", color: .ypColorSelection17, emojii: "🥑", schedule: [
                 ("Понедельник", false, "Пн"),
                 ("Вторник", false, "Вт"),
-                ("Среда", false, "Ср"),
+                ("Среда", true, "Ср"),
                 ("Четверг", true, "Чт"),
                 ("Пятница", false, "Пт"),
                 ("Суббота", false, "Сб"),
@@ -82,7 +83,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
                 ("Четверг", false, "Чт"),
                 ("Пятница", false, "Пт"),
                 ("Суббота", true, "Сб"),
-                ("Воскресенье", false, "Вс")
+                ("Воскресенье", true, "Вс")
             ]),
         ]),
         TrackerCategory(title: "Самочувствие", trackerList: [
@@ -98,11 +99,11 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
             Tracker(name: "Легкая тревожность", color: .ypColorSelection15, emojii: "🙂", schedule: [
                 ("Понедельник", false, "Пн"),
                 ("Вторник", false, "Вт"),
-                ("Среда", false, "Ср"),
+                ("Среда", true, "Ср"),
                 ("Четверг", false, "Чт"),
                 ("Пятница", false, "Пт"),
                 ("Суббота", false, "Сб"),
-                ("Воскресенье", true, "Вс")
+                ("Воскресенье", false, "Вс")
             ]),
         ]),
     ]
@@ -149,7 +150,9 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         hideImageViewIfTrackerIsNotEmpty()
-        sectionCount = categories.count
+        
+        let dayOfWeekString = getDayOfWeekFromDate()
+        updateCollectionView(selectedDate: dayOfWeekString)
     }
     
     override func viewDidLoad() {
@@ -224,7 +227,6 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     }
     
     @objc private func didTapTrackerButton() {
-        
         let viewController = ChooseTypeTrackerViewController()
         viewController.viewController = self
         delegate = viewController
@@ -236,12 +238,11 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         currentDate = selectedDate
-        let formattedDate = dateFormatter.string(from: selectedDate)
-        print("Выбранная дата: \(formattedDate)")
+        let formattedDate = getDayOfWeekFromDate()
+        updateCollectionView(selectedDate: formattedDate)
     }
     
     func add(trackerCategory: TrackerCategory) {
-        
         var oldTrackerCategory: TrackerCategory?
         var oldTrackerCategoryIndex: Int?
         let updatedTrackerList: [Tracker]
@@ -255,28 +256,69 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         guard let oldTrackerCategory else { return }
         updatedTrackerList = trackerCategory.trackerList + oldTrackerCategory.trackerList
-        
         let updatedTrackerCategory = TrackerCategory(title: trackerCategory.title, trackerList: updatedTrackerList)
-        
         guard let oldTrackerCategoryIndex else { return }
         categories[oldTrackerCategoryIndex] = updatedTrackerCategory
         
         hideImageViewIfTrackerIsNotEmpty()
         
-        collectionView.performBatchUpdates {
-            if sectionCount != categories.count {
-                sectionCount = categories.count
-                collectionView.insertSections(IndexSet(integer: sectionCount - 1))
+        let dayOfWeekString = getDayOfWeekFromDate()
+        filteredCategories = filterCategories(for: dayOfWeekString)
+        
+        let trackerDayOfTheWeek = trackerCategory.trackerList[0].schedule.first(where: { $0.0 == dayOfWeekString && $0.1 })
+        if trackerDayOfTheWeek?.0 == dayOfWeekString {
+            
+            collectionView.performBatchUpdates {
+                let newTrackerCategoryIndex = filteredCategories.firstIndex { $0.title == trackerCategory.title } ?? filteredCategories.count - 1
+                
+                if sectionCount != filteredCategories.count {
+                    sectionCount = filteredCategories.count
+                    collectionView.insertSections(IndexSet(integer: newTrackerCategoryIndex))
+                }
+                
+                let indexes = IndexPath(row: 0, section: newTrackerCategoryIndex)
+                collectionView.insertItems(at: [indexes])
             }
-            let indexes = IndexPath(row: 0, section: oldTrackerCategoryIndex)
-            collectionView.insertItems(at: [indexes])
         }
+    }
+    
+    func getDayOfWeekFromDate() -> String {
+        dateFormatter.dateFormat = "EEEE"
+        return dateFormatter.string(from: currentDate).capitalized
     }
 }
 
 extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    func filterCategories(for dayOfWeek: String) -> [TrackerCategory] {
+        var filteredCategories: [TrackerCategory] = []
+        
+        for category in categories {
+            var filteredTrackers: [Tracker] = []
+            
+            for tracker in category.trackerList {
+                for day in tracker.schedule {
+                    let dayName = day.0
+                    let isActive = day.1
+                    
+                    if dayName == dayOfWeek && isActive {
+                        filteredTrackers.append(tracker)
+                        break
+                    }
+                }
+            }
+            
+            if !filteredTrackers.isEmpty {
+                let filteredCategory = TrackerCategory(title: category.title, trackerList: filteredTrackers)
+                filteredCategories.append(filteredCategory)
+            }
+        }
+        
+        return filteredCategories
+    }
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return categories[section].trackerList.count
+        return filteredCategories[section].trackerList.count
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -289,7 +331,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         cell.prepareForReuse()
         cell.delegate = self
         
-        let newCell = categories[indexPath.section].trackerList[indexPath.row]
+        let newCell = filteredCategories[indexPath.section].trackerList[indexPath.row]
         
         cell.updateCell(backgroundColor: newCell.color,
                         emojiiLabelText: newCell.emojii,
@@ -311,7 +353,14 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SupplementaryView
         view.titleLabel.text = categories[indexPath.section].title
+        view.titleLabel.text = filteredCategories[indexPath.section].title
         return view
+    }
+    
+    func updateCollectionView(selectedDate: String) {
+        filteredCategories = filterCategories(for: selectedDate)
+        collectionView.reloadData()
+        sectionCount = filteredCategories.count
     }
 }
 
