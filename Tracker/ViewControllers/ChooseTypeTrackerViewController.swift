@@ -9,13 +9,15 @@ import UIKit
 
 protocol ChooseTypeTrackerViewControllerProtocol: AnyObject {
     var viewController: TrackersViewControllerProtocol? { get set }
-    var delegate: CreateRegularEventTrackerViewControllerProtocol? { get set }
+    var delegateRegularEventTracker: SheduleEventTrackerViewControllerProtocol? { get set }
+    var delegateIrregularEventTracker: BaseEventTrackerViewControllerProtocol? { get set }
     func dismiss(animated: Bool)
 }
 
 final class ChooseTypeTrackerViewController: UIViewController {
-    var viewController: (any TrackersViewControllerProtocol)?
-    var delegate: (any CreateRegularEventTrackerViewControllerProtocol)?
+    var viewController: TrackersViewControllerProtocol?
+    var delegateRegularEventTracker: SheduleEventTrackerViewControllerProtocol?
+    var delegateIrregularEventTracker: BaseEventTrackerViewControllerProtocol?
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -87,14 +89,19 @@ final class ChooseTypeTrackerViewController: UIViewController {
     @objc private func regularEventsButtonDidTap() {
         let viewController = CreateRegularEventTrackerViewController()
         viewController.viewController = self
-        self.delegate = viewController
+        self.delegateRegularEventTracker = viewController
         viewController.modalPresentationStyle = .formSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
     }
     
     @objc private func irregularEventsButtonDidTap() {
-        print("irregularEventsButtonDidTap")
+        let viewController = CreateIrregularEventTrackerViewController()
+        viewController.viewController = self
+        self.delegateIrregularEventTracker = viewController
+        viewController.modalPresentationStyle = .formSheet
+        viewController.modalTransitionStyle = .coverVertical
+        present(viewController, animated: true, completion: nil)
     }
 }
 

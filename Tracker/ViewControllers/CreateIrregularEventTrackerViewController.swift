@@ -1,25 +1,26 @@
 //
-//  CreateRegularEventTrackerViewController.swift
+//  CreateIrregularEventTrackerViewController.swift
 //  Tracker
 //
-//  Created by Ilya Lotnik on 08.08.2024.
+//  Created by Ilya Lotnik on 12.08.2024.
 //
 
 import UIKit
 
 
-protocol SheduleEventTrackerViewControllerProtocol: BaseEventTrackerViewControllerProtocol {
-    var sheduleDelegate: SheduleViewControllerProtocol? { get set }
-    func didSelectDays(_ daysString: String)
-    func updateTableViewSecondCell()
+protocol BaseEventTrackerViewControllerProtocol: AnyObject {
+    var viewController: ChooseTypeTrackerViewControllerProtocol? { get set }
+    var categoryListdelegate: CategoryListViewControllerProtocol? { get set }
+    func didSelectCategory(_ category: String)
+    func updateTableViewFirstCell()
+    func categoryDidChange()
 }
 
 
-final class CreateRegularEventTrackerViewController: UIViewController, SheduleEventTrackerViewControllerProtocol {
+final class CreateIrregularEventTrackerViewController: UIViewController, BaseEventTrackerViewControllerProtocol {
     
     var viewController: ChooseTypeTrackerViewControllerProtocol?
     var categoryListdelegate: CategoryListViewControllerProtocol?
-    var sheduleDelegate: SheduleViewControllerProtocol?
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -47,18 +48,16 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
         tableView.layer.masksToBounds = true
         
         tableView.allowsSelection = true
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "RegularEventTrackerCell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "IrregularEventTrackerCell")
         
         return tableView
     }()
     
     private let menuItems: [String] = [
         "Категория",
-        "Расписание"
     ]
     var menuSecondaryItems: [[String]] = [
         [""],
-        [""]
     ]
     
     private let cancelButton: UIButton = {
@@ -119,7 +118,7 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
             tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
-            tableView.heightAnchor.constraint(equalToConstant: 150),
+            tableView.heightAnchor.constraint(equalToConstant: 75),
             
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             cancelButton.widthAnchor.constraint(equalToConstant: 172),
@@ -141,7 +140,6 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
         textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         
         NotificationCenter.default.addObserver(self, selector: #selector(categoryDidChange), name: .categoryDidChange, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(scheduleDidChange), name: .scheduleDidChange, object: nil)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
@@ -172,45 +170,16 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
         }
     }
     
-    func updateTableViewSecondCell() {
-        let indexPath = IndexPath(row: 1, section: 0)
-        guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        
-        let secondaryText = menuSecondaryItems[indexPath.row][0]
-        
-        if #available(iOS 14.0, *) {
-            var content = UIListContentConfiguration.cell()
-            content.secondaryText = secondaryText
-            content.secondaryTextProperties.font = .systemFont(ofSize: 17, weight: .regular)
-            content.secondaryTextProperties.color = .ypGray
-            cell.contentConfiguration = content
-        } else {
-            cell.detailTextLabel?.text = secondaryText
-            cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-            cell.detailTextLabel?.textColor = .ypGray
-        }
-        
-        tableView.performBatchUpdates {
-            let indexPaths = [indexPath]
-            tableView.reloadRows(at: indexPaths, with: .automatic)
-        }
-    }
-    
     func didSelectCategory(_ category: String) {
         menuSecondaryItems[0] = [category]
         viewController?.viewController?.lastSelectedCategory = category
     }
     
-    func didSelectDays(_ daysString: String) {
-        menuSecondaryItems[1][0] = daysString
-    }
-    
     func updateCreateButtonState() {
         let isCategoryEmpty = menuSecondaryItems[0][0] == ""
-        let isSheduleEmpty = menuSecondaryItems[1][0] == ""
         guard let isTextFieldEmpty = textField.text?.isEmpty else { return }
         
-        createButton.isEnabled = !isTextFieldEmpty && !isCategoryEmpty && !isSheduleEmpty
+        createButton.isEnabled = !isTextFieldEmpty && !isCategoryEmpty
         createButton.backgroundColor = createButton.isEnabled ? .ypBlack : .ypGray
     }
     
@@ -223,10 +192,6 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
     }
     
     @objc func categoryDidChange() {
-        updateCreateButtonState()
-    }
-    
-    @objc func scheduleDidChange() {
         updateCreateButtonState()
     }
     
@@ -267,8 +232,7 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
         let randomIntEmojies = Int.random(in: 0..<emojies.count)
         let emojii = emojies[randomIntEmojies]
         
-        guard let shedule = sheduleDelegate?.getShedule() else { return }
-        let newTracker = Tracker(name: name, color: color, emojii: emojii, schedule: shedule)
+        let newTracker = Tracker(name: name, color: color, emojii: emojii, schedule: nil)
         guard let category = viewController?.viewController?.lastSelectedCategory else { return }
         
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
@@ -283,17 +247,16 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
     }
 }
 
-extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableViewDataSource {
+extension CreateIrregularEventTrackerViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return menuItems.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "RegularEventTrackerCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "IrregularEventTrackerCell", for: indexPath)
         
         cell.prepareForReuse()
-        
         cell.backgroundColor = .ypBackground
         cell.accessoryType = .disclosureIndicator
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
@@ -327,7 +290,7 @@ extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return tableView.frame.size.height / 1.99
+        return tableView.frame.size.height + CGFloat(0.5)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -341,14 +304,6 @@ extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableV
                 viewController.selectedCategory = category
             }
             categoryListdelegate = viewController
-            viewController.modalPresentationStyle = .formSheet
-            viewController.modalTransitionStyle = .coverVertical
-            present(viewController, animated: true, completion: nil)
-        } else {
-            let viewController = SheduleViewController()
-            viewController.viewController = self
-            viewController.updateDays(from: menuSecondaryItems[1][0])
-            sheduleDelegate = viewController
             viewController.modalPresentationStyle = .formSheet
             viewController.modalTransitionStyle = .coverVertical
             present(viewController, animated: true, completion: nil)

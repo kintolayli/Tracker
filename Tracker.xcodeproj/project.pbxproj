@@ -27,6 +27,7 @@
 		8AD814B02C67F4CE008DAA5D /* ExtensionNotificationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814AF2C67F4CE008DAA5D /* ExtensionNotificationName.swift */; };
 		8AD814B32C695567008DAA5D /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814B22C695567008DAA5D /* AlertPresenter.swift */; };
 		8AD814B52C69558D008DAA5D /* AlertModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814B42C69558D008DAA5D /* AlertModel.swift */; };
+		8AD814B72C6A3F87008DAA5D /* CreateIrregularEventTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814B62C6A3F87008DAA5D /* CreateIrregularEventTrackerViewController.swift */; };
 		8ADF935E2C5F5EA3001A4690 /* ExtensionUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF935D2C5F5EA3001A4690 /* ExtensionUIView.swift */; };
 		8ADF93602C5F8E0D001A4690 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF935F2C5F8E0D001A4690 /* TabBarController.swift */; };
 		8ADF93632C5F8EB3001A4690 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */; };
@@ -56,6 +57,7 @@
 		8AD814AF2C67F4CE008DAA5D /* ExtensionNotificationName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionNotificationName.swift; sourceTree = "<group>"; };
 		8AD814B22C695567008DAA5D /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		8AD814B42C69558D008DAA5D /* AlertModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertModel.swift; sourceTree = "<group>"; };
+		8AD814B62C6A3F87008DAA5D /* CreateIrregularEventTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateIrregularEventTrackerViewController.swift; sourceTree = "<group>"; };
 		8ADF935D2C5F5EA3001A4690 /* ExtensionUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionUIView.swift; sourceTree = "<group>"; };
 		8ADF935F2C5F8E0D001A4690 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */,
 				8AD814772C640F5F008DAA5D /* ChooseTypeTrackerViewController.swift */,
 				8AD814792C64BBE2008DAA5D /* CreateRegularEventTrackerViewController.swift */,
+				8AD814B62C6A3F87008DAA5D /* CreateIrregularEventTrackerViewController.swift */,
 				8AD814812C663BBB008DAA5D /* CategoryListViewController.swift */,
 				8AD814832C664236008DAA5D /* AddCategoryViewController.swift */,
 				8AD814AB2C67A382008DAA5D /* SheduleViewController.swift */,
@@ -238,6 +241,7 @@
 				8AD814702C62B789008DAA5D /* TrackerCategory.swift in Sources */,
 				8ADF93602C5F8E0D001A4690 /* TabBarController.swift in Sources */,
 				8AD814762C63B85A008DAA5D /* GeometricParams.swift in Sources */,
+				8AD814B72C6A3F87008DAA5D /* CreateIrregularEventTrackerViewController.swift in Sources */,
 				8AD8147C2C64E1C5008DAA5D /* ExtensionUITextField+MaxLength.swift in Sources */,
 				8AD814B32C695567008DAA5D /* AlertPresenter.swift in Sources */,
 				8AD814AC2C67A382008DAA5D /* SheduleViewController.swift in Sources */,

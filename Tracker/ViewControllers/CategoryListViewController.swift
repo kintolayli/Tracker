@@ -7,14 +7,15 @@
 
 import UIKit
 
+
 protocol CategoryListViewControllerProtocol: AnyObject {
-    var viewController: CreateRegularEventTrackerViewController? { get set }
+    var viewController: BaseEventTrackerViewControllerProtocol? { get set }
     var delegate: AddCategoryViewControllerProtocol? { get set }
     func updateTableViewAnimated()
 }
 
 class CategoryListViewController: UIViewController, CategoryListViewControllerProtocol {
-    var viewController: CreateRegularEventTrackerViewController?
+    var viewController: BaseEventTrackerViewControllerProtocol?
     var delegate: AddCategoryViewControllerProtocol?
     var selectedCategory: String?
     

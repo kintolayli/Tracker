@@ -82,8 +82,8 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         let datePicker = UIDatePicker()
         
-        datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
+        datePicker.datePickerMode = .date
         datePicker.locale = Locale(identifier: "ru_RU")
         datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
@@ -180,8 +180,8 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         let dayOfWeekString = getDayOfWeekFromDate()
         filteredCategories = filterCategories(for: dayOfWeekString)
         
-        let trackerDayOfTheWeek = trackerCategory.trackerList[0].schedule.first(where: { $0.0 == dayOfWeekString && $0.1 })
-        if trackerDayOfTheWeek?.0 == dayOfWeekString {
+        guard let trackerDayOfTheWeek = trackerCategory.trackerList[0].schedule?.first(where: { $0.0 == dayOfWeekString && $0.1 }) else { return }
+        if trackerDayOfTheWeek.0 == dayOfWeekString {
             
             collectionView.performBatchUpdates {
                 let newTrackerCategoryIndex = filteredCategories.firstIndex { $0.title == trackerCategory.title } ?? filteredCategories.count - 1
@@ -213,14 +213,18 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
             var filteredTrackers: [Tracker] = []
             
             for tracker in category.trackerList {
-                for day in tracker.schedule {
-                    let dayName = day.0
-                    let isActive = day.1
-                    
-                    if dayName == dayOfWeek && isActive {
-                        filteredTrackers.append(tracker)
-                        break
+                if let schedule = tracker.schedule {
+                    for day in schedule {
+                        let dayName = day.0
+                        let isActive = day.1
+                        
+                        if dayName == dayOfWeek && isActive {
+                            filteredTrackers.append(tracker)
+                            break
+                        }
                     }
+                } else {
+                    // TODO: тут код фильтрации для нерегулярного события
                 }
             }
             
@@ -372,7 +376,7 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
             }
         } else {
             let alertPresenter = AlertPresenter(viewController: self)
-            let alertModel = AlertModel(title: "Уведомление от системы", message: "Нельзя отметить трекер для будущей даты", buttonTitle: "ОК", buttonAction: nil)
+            let alertModel = AlertModel(title: "Уведомление от системы", message: "Нельзя отметить карточку для будущей даты", buttonTitle: "ОК", buttonAction: nil)
             alertPresenter.show(model: alertModel)
         }
     }
