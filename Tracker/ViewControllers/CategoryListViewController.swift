@@ -37,8 +37,9 @@ class CategoryListViewController: UIViewController, CategoryListViewControllerPr
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.text = "Что будем отслеживать?"
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.numberOfLines = 2
+        label.text = "Привычки и события можно\n объединить по смыслу"
         return label
     }()
     
@@ -64,6 +65,11 @@ class CategoryListViewController: UIViewController, CategoryListViewControllerPr
         return button
     }()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        hideImageViewIfCategoryIsNotEmpty()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -74,9 +80,9 @@ class CategoryListViewController: UIViewController, CategoryListViewControllerPr
         view.backgroundColor = .ypWhite
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,
+            tableView,
             imageView,
             imageViewLabel,
-            tableView,
             addCategoryButton,
         ])
         
@@ -84,7 +90,7 @@ class CategoryListViewController: UIViewController, CategoryListViewControllerPr
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -50),
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             imageViewLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
@@ -109,8 +115,6 @@ class CategoryListViewController: UIViewController, CategoryListViewControllerPr
     }
     
     @objc private func addCategoryButtonDidTap() {
-        print("addCategoryButtonDidTap")
-        
         let viewController = AddCategoryViewController()
         viewController.viewController = self
         delegate = viewController
@@ -118,8 +122,19 @@ class CategoryListViewController: UIViewController, CategoryListViewControllerPr
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
     }
+    
+    private func hideImageViewIfCategoryIsNotEmpty() {
+        guard let categories = viewController?.viewController?.viewController?.categories else { return }
+        
+        if categories.isEmpty {
+            imageView.isHidden = false
+            imageViewLabel.isHidden = false
+        } else {
+            imageView.isHidden = true
+            imageViewLabel.isHidden = true
+        }
+    }
 }
-
 
 extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource {
     
@@ -131,13 +146,12 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryListCell", for: indexPath)
         
-        let category = viewController?.viewController?.viewController?.categories[indexPath.row].title
+        guard let category = viewController?.viewController?.viewController?.categories[indexPath.row].title else { return UITableViewCell()}
         cell.textLabel?.text = category
         cell.accessoryType = (category == selectedCategory) ? .checkmark : .none
         
         cell.backgroundColor = .ypBackground
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        
         return cell
     }
     
@@ -146,6 +160,9 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        guard let selectedCategory = viewController?.viewController?.viewController?.categories[indexPath.row].title else { return }
+        viewController?.viewController?.viewController?.lastSelectedCategory = selectedCategory
         
         tableView.deselectRow(at: indexPath, animated: true)
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
@@ -171,5 +188,6 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
             }
             tableView.insertRows(at: indexPaths, with: .automatic)
         } completion: { _ in }
+        hideImageViewIfCategoryIsNotEmpty()
     }
 }

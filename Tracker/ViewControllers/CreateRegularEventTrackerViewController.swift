@@ -22,7 +22,7 @@ final class CreateRegularEventTrackerViewController: UIViewController, CreateReg
     var viewController: ChooseTypeTrackerViewControllerProtocol?
     var categoryListdelegate: CategoryListViewControllerProtocol?
     var sheduleDelegate: SheduleViewControllerProtocol?
-    lazy var selectedCategory: String = menuSecondaryItems[0][0]
+    //    lazy var selectedCategory: String = menuSecondaryItems[0][0]
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -59,7 +59,7 @@ final class CreateRegularEventTrackerViewController: UIViewController, CreateReg
         "Категория",
         "Расписание"
     ]
-    private var menuSecondaryItems: [[String]] = [
+    var menuSecondaryItems: [[String]] = [
         [""],
         [""]
     ]
@@ -155,28 +155,24 @@ final class CreateRegularEventTrackerViewController: UIViewController, CreateReg
         let indexPath = IndexPath(row: 0, section: 0)
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         
-        let text = menuItems[indexPath.row]
         let secondaryText = menuSecondaryItems[indexPath.row][0]
         
         if #available(iOS 14.0, *) {
             var content = UIListContentConfiguration.cell()
-            content.text = text
             content.secondaryText = secondaryText
-            content.textProperties.font = .systemFont(ofSize: 17, weight: .regular)
-            content.textProperties.color = .ypBlack
             content.secondaryTextProperties.font = .systemFont(ofSize: 17, weight: .regular)
             content.secondaryTextProperties.color = .ypGray
             cell.contentConfiguration = content
         } else {
-            cell.textLabel?.text = text
-            cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-            cell.textLabel?.textColor = .ypBlack
             cell.detailTextLabel?.text = secondaryText
             cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
             cell.detailTextLabel?.textColor = .ypGray
         }
         
-        tableView.reloadData()
+        tableView.performBatchUpdates {
+            let indexPaths = [indexPath]
+            tableView.reloadRows(at: indexPaths, with: .automatic)
+        }
     }
     
     func updateTableViewSecondCell() {
@@ -188,35 +184,33 @@ final class CreateRegularEventTrackerViewController: UIViewController, CreateReg
         if #available(iOS 14.0, *) {
             var content = UIListContentConfiguration.cell()
             content.secondaryText = secondaryText
-            content.textProperties.font = .systemFont(ofSize: 17, weight: .regular)
-            content.textProperties.color = .ypBlack
             content.secondaryTextProperties.font = .systemFont(ofSize: 17, weight: .regular)
             content.secondaryTextProperties.color = .ypGray
             cell.contentConfiguration = content
         } else {
-            cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-            cell.textLabel?.textColor = .ypBlack
             cell.detailTextLabel?.text = secondaryText
             cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
             cell.detailTextLabel?.textColor = .ypGray
         }
         
-        tableView.reloadData()
+        tableView.performBatchUpdates {
+            let indexPaths = [indexPath]
+            tableView.reloadRows(at: indexPaths, with: .automatic)
+        }
     }
     
     func didSelectCategory(_ category: String) {
         menuSecondaryItems[0] = [category]
-        selectedCategory = category
+        viewController?.viewController?.lastSelectedCategory = category
     }
     
     func didSelectDays(_ daysString: String) {
-        menuSecondaryItems[1] = [daysString]
+        menuSecondaryItems[1][0] = daysString
     }
     
     func updateCreateButtonState() {
         let isCategoryEmpty = menuSecondaryItems[0][0] == ""
         let isSheduleEmpty = menuSecondaryItems[1][0] == ""
-        
         guard let isTextFieldEmpty = textField.text?.isEmpty else { return }
         
         createButton.isEnabled = !isTextFieldEmpty && !isCategoryEmpty && !isSheduleEmpty
@@ -278,7 +272,7 @@ final class CreateRegularEventTrackerViewController: UIViewController, CreateReg
         
         guard let shedule = sheduleDelegate?.getShedule() else { return }
         let newTracker = Tracker(name: name, color: color, emojii: emojii, schedule: shedule)
-        let category = selectedCategory
+        guard let category = viewController?.viewController?.lastSelectedCategory else { return }
         
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
         
@@ -308,6 +302,11 @@ extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableV
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
         let text = menuItems[indexPath.row]
+        
+        if let lastSelectedCategory = viewController?.viewController?.lastSelectedCategory {
+            menuSecondaryItems[0][0] = lastSelectedCategory
+        }
+        
         let secondaryText = menuSecondaryItems[indexPath.row][0]
         
         if #available(iOS 14.0, *) {
@@ -327,7 +326,6 @@ extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableV
             cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
             cell.detailTextLabel?.textColor = .ypGray
         }
-        
         return cell
     }
     
@@ -341,7 +339,10 @@ extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableV
         if indexPath.row == 0 {
             let viewController = CategoryListViewController()
             viewController.viewController = self
-            viewController.selectedCategory = selectedCategory
+            
+            if let category = self.viewController?.viewController?.lastSelectedCategory {
+                viewController.selectedCategory = category
+            }
             categoryListdelegate = viewController
             viewController.modalPresentationStyle = .formSheet
             viewController.modalTransitionStyle = .coverVertical

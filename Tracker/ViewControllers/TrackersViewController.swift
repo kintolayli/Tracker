@@ -11,6 +11,7 @@ protocol TrackersViewControllerProtocol: AnyObject {
     var delegate: ChooseTypeTrackerViewControllerProtocol? { get set }
     var categories: [TrackerCategory] { get set }
     func add(trackerCategory: TrackerCategory)
+    var lastSelectedCategory: String? { get set }
 }
 
 final class TrackersViewController: UIViewController & TrackersViewControllerProtocol {
@@ -22,94 +23,10 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         return params
     }()
     
-    //    var categories: [TrackerCategory] = [
-    //        TrackerCategory(title: "По умолчанию", trackerList: []),
-    //    ]
-    
+    var lastSelectedCategory: String?
+    var categories: [TrackerCategory] = []
     var filteredCategories: [TrackerCategory] = []
-    var categories: [TrackerCategory] = [
-        TrackerCategory(title: "Домашний уют", trackerList: [
-            Tracker(name: "Поливать растения", color: .ypColorSelection10, emojii: "🍇", schedule: [
-                ("Понедельник", true, "Пн"),
-                ("Вторник", true, "Вт"),
-                ("Среда", true, "Ср"),
-                ("Четверг", true, "Чт"),
-                ("Пятница", true, "Пт"),
-                ("Суббота", true, "Сб"),
-                ("Воскресенье", true, "Вс")
-            ]),
-            Tracker(name: "Сходить погулять", color: .ypColorSelection2, emojii: "🫒", schedule: [
-                ("Понедельник", false, "Пн"),
-                ("Вторник", true, "Вт"),
-                ("Среда", false, "Ср"),
-                ("Четверг", false, "Чт"),
-                ("Пятница", false, "Пт"),
-                ("Суббота", false, "Сб"),
-                ("Воскресенье", false, "Вс")
-            ]),
-            Tracker(name: "Выкинуть мусор", color: .ypColorSelection13, emojii: "🍆", schedule: [
-                ("Понедельник", false, "Пн"),
-                ("Вторник", false, "Вт"),
-                ("Среда", true, "Ср"),
-                ("Четверг", false, "Чт"),
-                ("Пятница", false, "Пт"),
-                ("Суббота", false, "Сб"),
-                ("Воскресенье", false, "Вс")
-            ]),
-        ]),
-        TrackerCategory(title: "Радостные мелочи", trackerList: [
-            Tracker(name: "Кошка заслонила камеру на созвоне", color: .ypColorSelection17, emojii: "🥑", schedule: [
-                ("Понедельник", false, "Пн"),
-                ("Вторник", false, "Вт"),
-                ("Среда", true, "Ср"),
-                ("Четверг", true, "Чт"),
-                ("Пятница", false, "Пт"),
-                ("Суббота", false, "Сб"),
-                ("Воскресенье", false, "Вс")
-            ]),
-            Tracker(name: "Бабушка прислала открытку в вотсапе", color: .ypColorSelection18, emojii: "🫑", schedule: [
-                ("Понедельник", false, "Пн"),
-                ("Вторник", false, "Вт"),
-                ("Среда", false, "Ср"),
-                ("Четверг", false, "Чт"),
-                ("Пятница", true, "Пт"),
-                ("Суббота", false, "Сб"),
-                ("Воскресенье", false, "Вс")
-            ]),
-            Tracker(name: "Свидания в апреле", color: .ypColorSelection9, emojii: "🥒", schedule: [
-                ("Понедельник", false, "Пн"),
-                ("Вторник", false, "Вт"),
-                ("Среда", false, "Ср"),
-                ("Четверг", false, "Чт"),
-                ("Пятница", false, "Пт"),
-                ("Суббота", true, "Сб"),
-                ("Воскресенье", true, "Вс")
-            ]),
-        ]),
-        TrackerCategory(title: "Самочувствие", trackerList: [
-            Tracker(name: "Хорошее настроение", color: .ypColorSelection14, emojii: "🥝", schedule: [
-                ("Понедельник", false, "Пн"),
-                ("Вторник", false, "Вт"),
-                ("Среда", false, "Ср"),
-                ("Четверг", false, "Чт"),
-                ("Пятница", false, "Пт"),
-                ("Суббота", false, "Сб"),
-                ("Воскресенье", true, "Вс")
-            ]),
-            Tracker(name: "Легкая тревожность", color: .ypColorSelection15, emojii: "🙂", schedule: [
-                ("Понедельник", false, "Пн"),
-                ("Вторник", false, "Вт"),
-                ("Среда", true, "Ср"),
-                ("Четверг", false, "Чт"),
-                ("Пятница", false, "Пт"),
-                ("Суббота", false, "Сб"),
-                ("Воскресенье", false, "Вс")
-            ]),
-        ]),
-    ]
-    
     private var completedTrackers: [UUID: [String: TrackerRecord]] = [:]
-    
     private var currentDate: Date = Date()
     private var sectionCount: Int = 0
     
@@ -150,7 +67,6 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        hideImageViewIfTrackerIsNotEmpty()
         
         let dayOfWeekString = getDayOfWeekFromDate()
         updateCollectionView(selectedDate: dayOfWeekString)
@@ -216,9 +132,9 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     }
     
     private func hideImageViewIfTrackerIsNotEmpty() {
-        let trackerCategoryWithNonEmptyTrackerList = categories.filter { !$0.trackerList.isEmpty }
+        let trackerCategoryWithNonEmptyTrackerList = filteredCategories.filter { !$0.trackerList.isEmpty }
         
-        if trackerCategoryWithNonEmptyTrackerList.count == 0 {
+        if trackerCategoryWithNonEmptyTrackerList.isEmpty {
             imageView.isHidden = false
             imageViewLabel.isHidden = false
         } else {
@@ -261,8 +177,6 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         guard let oldTrackerCategoryIndex else { return }
         categories[oldTrackerCategoryIndex] = updatedTrackerCategory
         
-        hideImageViewIfTrackerIsNotEmpty()
-        
         let dayOfWeekString = getDayOfWeekFromDate()
         filteredCategories = filterCategories(for: dayOfWeekString)
         
@@ -281,6 +195,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
                 collectionView.insertItems(at: [indexes])
             }
         }
+        hideImageViewIfTrackerIsNotEmpty()
     }
     
     func getDayOfWeekFromDate() -> String {
@@ -317,7 +232,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         
         return filteredCategories
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return filteredCategories[section].trackerList.count
     }
@@ -343,7 +258,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
                         count: count,
                         addButtonState: addButtonState,
                         isPin: false)
-
+        
         return cell
     }
     
@@ -368,6 +283,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         filteredCategories = filterCategories(for: selectedDate)
         collectionView.reloadData()
         sectionCount = filteredCategories.count
+        hideImageViewIfTrackerIsNotEmpty()
     }
 }
 
@@ -398,7 +314,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         if !categories[section].trackerList.isEmpty{
             return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
         } else {
-            return CGSize()
+            return CGSize.zero
         }
     }
 }
@@ -406,8 +322,8 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 extension TrackersViewController: TrackersCollectionViewCellDelegate {
     
     func getAddButtonCountLabelAndState(indexPath: IndexPath) -> (Int, Bool) {
-
-        let newCell = categories[indexPath.section].trackerList[indexPath.row]
+        
+        let newCell = filteredCategories[indexPath.section].trackerList[indexPath.row]
         dateFormatter.dateFormat = "dd.MM.yyyy"
         let dateAsDictKey = dateFormatter.string(from: currentDate)
         
@@ -426,31 +342,38 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
     }
     
     func trackersViewControllerCellTap(_ cell: TrackersCollectionViewCell) {
-        guard let indexPath = collectionView.indexPath(for: cell)  else { return }
-        let newCell = categories[indexPath.section].trackerList[indexPath.row]
-        dateFormatter.dateFormat = "dd.MM.yyyy"
-        let dateAsDictKey = dateFormatter.string(from: currentDate)
-        let newTrackerRecord = TrackerRecord(id: newCell.id)
-        var cellState = false
-        
-        if completedTrackers.keys.contains(where: { $0 == newCell.id }) {
-            guard let trackerRecords = completedTrackers[newCell.id] else { return }
-            if trackerRecords.keys.contains(dateAsDictKey) {
-                completedTrackers[newCell.id]?.removeValue(forKey: dateAsDictKey)
-                guard let count = completedTrackers[newCell.id]?.count else { return }
-                cell.updateButtonState(count: count, state: cellState)
+        if currentDate <= Date() {
+            guard let indexPath = collectionView.indexPath(for: cell)  else { return }
+            
+            let newCell = filteredCategories[indexPath.section].trackerList[indexPath.row]
+            
+            let dateAsDictKey = dateFormatter.string(from: currentDate)
+            dateFormatter.dateFormat = "dd.MM.yyyy"
+            let newTrackerRecord = TrackerRecord(id: newCell.id)
+            var cellState = false
+            
+            if completedTrackers.keys.contains(where: { $0 == newCell.id }) {
+                guard let trackerRecords = completedTrackers[newCell.id] else { return }
+                if trackerRecords.keys.contains(dateAsDictKey) {
+                    completedTrackers[newCell.id]?.removeValue(forKey: dateAsDictKey)
+                    guard let count = completedTrackers[newCell.id]?.count else { return }
+                    cell.updateButtonState(count: count, state: cellState)
+                } else {
+                    completedTrackers[newCell.id]?.updateValue(newTrackerRecord, forKey: dateAsDictKey)
+                    guard let count = completedTrackers[newCell.id]?.count else { return }
+                    cellState = true
+                    cell.updateButtonState(count: count, state: cellState)
+                }
             } else {
-                completedTrackers[newCell.id]?.updateValue(newTrackerRecord, forKey: dateAsDictKey)
-                guard let count = completedTrackers[newCell.id]?.count else { return }
+                let newRecord = [dateAsDictKey: newTrackerRecord]
+                completedTrackers.updateValue(newRecord, forKey: newCell.id)
                 cellState = true
-                cell.updateButtonState(count: count, state: cellState)
+                cell.updateButtonState(count: newRecord.keys.count, state: cellState)
             }
         } else {
-            let newRecord = [dateAsDictKey: newTrackerRecord]
-            print(newRecord)
-            completedTrackers.updateValue(newRecord, forKey: newCell.id)
-            cellState = true
-            cell.updateButtonState(count: newRecord.keys.count, state: cellState)
+            let alertPresenter = AlertPresenter(viewController: self)
+            let alertModel = AlertModel(title: "Уведомление от системы", message: "Нельзя отметить трекер для будущей даты", buttonTitle: "ОК", buttonAction: nil)
+            alertPresenter.show(model: alertModel)
         }
     }
 }
