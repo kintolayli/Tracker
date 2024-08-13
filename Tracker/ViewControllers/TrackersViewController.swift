@@ -37,8 +37,6 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         return formatter
     }()
     
-//    private lazy var
-    
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -181,10 +179,6 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
         filteredCategories = filterCategories(for: dayOfWeekString)
-        
-//        guard let trackerCategory.trackerList[0].schedule else {
-//            
-//        }
         
         if (trackerCategory.trackerList[0].schedule?.first(where: { $0.0 == dayOfWeekString && $0.1 })) != nil {
             cellPerformBatchUpdates(trackerCategory)

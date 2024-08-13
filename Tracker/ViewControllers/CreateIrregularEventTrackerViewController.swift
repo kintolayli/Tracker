@@ -31,22 +31,6 @@ final class CreateIrregularEventTrackerViewController: UIViewController, BaseEve
         return label
     }()
     
-//    private let textField: UITextField = {
-//        let textField = UITextField()
-//        textField.placeholder = "Введите название трекера"
-//        textField.backgroundColor = .ypBackground
-//        textField.layer.cornerRadius = 16
-//        textField.layer.masksToBounds = true
-//        textField.textAlignment = .left
-//        textField.maxLength = 38
-//        
-//        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
-//        textField.leftView = paddingView
-//        textField.leftViewMode = .always
-//        
-//        return textField
-//    }()
-    
     private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Введите название трекера"
