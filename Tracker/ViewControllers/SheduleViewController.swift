@@ -41,6 +41,7 @@ class SheduleViewController: UIViewController, SheduleViewControllerProtocol{
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.allowsSelection = false
+        tableView.isScrollEnabled = false
         tableView.register(SheduleTableViewCell.self, forCellReuseIdentifier: SheduleTableViewCell.reuseIdentifier)
         
         return tableView
@@ -122,6 +123,11 @@ extension SheduleViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let cell = cell as? BaseTableViewCell else { return }
+        cell.roundedCornersAndOffLastSeparatorVisibility(indexPath: indexPath, tableView: tableView)
     }
 }
 

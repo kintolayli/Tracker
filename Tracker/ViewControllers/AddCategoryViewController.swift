@@ -24,14 +24,47 @@ class AddCategoryViewController: UIViewController, AddCategoryViewControllerProt
         return label
     }()
     
-    private let textField: UITextField = {
+    //    private let textField: UITextField = {
+    //        let textField = UITextField()
+    //        textField.placeholder = "Введите название категории"
+    //        textField.backgroundColor = .ypBackground
+    //        textField.layer.cornerRadius = 16
+    //        textField.layer.masksToBounds = true
+    //        textField.textAlignment = .left
+    //        textField.maxLength = 38
+    
+    //        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
+    //        textField.leftView = paddingView
+    //        textField.leftViewMode = .always
+    //
+    //        return textField
+    //    }()
+    
+    private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Введите название категории"
         textField.backgroundColor = .ypBackground
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
-        textField.textAlignment = .center
+        textField.textAlignment = .left
         textField.maxLength = 38
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        
+        let clearButton = UIButton(type: .custom)
+        clearButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        clearButton.addTarget(self, action: #selector(clearText), for: .touchUpInside)
+        clearButton.tintColor = .ypGray
+        
+        let rightPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 28, height: 28))
+        rightPaddingView.addSubview(clearButton)
+        clearButton.frame = CGRect(x: 0, y: 6, width: 16, height: 16)
+        
+        textField.rightView = rightPaddingView
+        textField.rightViewMode = .never
+        
         return textField
     }()
     
@@ -96,7 +129,18 @@ class AddCategoryViewController: UIViewController, AddCategoryViewControllerProt
         self.dismiss(animated: true)
     }
     
+    @objc private func clearText() {
+        textField.text = ""
+        textField.sendActions(for: .editingChanged)
+    }
+    
     @objc func textFieldDidChange(_ textField: UITextField) {
+        if let text = textField.text, !text.isEmpty {
+            textField.rightViewMode = .always
+        } else {
+            textField.rightViewMode = .never
+        }
+        
         okButton.isEnabled = !(textField.text?.isEmpty ?? true)
         okButton.backgroundColor = okButton.isEnabled ? .ypBlack : .ypGray
     }

@@ -12,7 +12,7 @@ protocol SheduleTableViewCellDelegate: SheduleViewController {
     func switchValueChanged(isOn: Bool, cell: SheduleTableViewCell)
 }
 
-class SheduleTableViewCell: UITableViewCell {
+class SheduleTableViewCell: BaseTableViewCell {
     
     weak var delegate: SheduleTableViewCellDelegate?
     

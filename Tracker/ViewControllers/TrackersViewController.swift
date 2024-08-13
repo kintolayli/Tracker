@@ -30,12 +30,14 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     private var currentDate: Date = Date()
     private var sectionCount: Int = 0
     
-    private lazy var dateFormatter: DateFormatter = {
+    private var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter
     }()
+    
+//    private lazy var
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -68,7 +70,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        let dayOfWeekString = getDayOfWeekFromDate()
+        let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
         updateCollectionView(selectedDate: dayOfWeekString)
     }
     
@@ -155,7 +157,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         currentDate = selectedDate
-        let formattedDate = getDayOfWeekFromDate()
+        let formattedDate = getDayOfWeekFromDate(date: currentDate)
         updateCollectionView(selectedDate: formattedDate)
     }
     
@@ -177,30 +179,41 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         guard let oldTrackerCategoryIndex else { return }
         categories[oldTrackerCategoryIndex] = updatedTrackerCategory
         
-        let dayOfWeekString = getDayOfWeekFromDate()
+        let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
         filteredCategories = filterCategories(for: dayOfWeekString)
         
-        guard let trackerDayOfTheWeek = trackerCategory.trackerList[0].schedule?.first(where: { $0.0 == dayOfWeekString && $0.1 }) else { return }
-        if trackerDayOfTheWeek.0 == dayOfWeekString {
-            
-            collectionView.performBatchUpdates {
-                let newTrackerCategoryIndex = filteredCategories.firstIndex { $0.title == trackerCategory.title } ?? filteredCategories.count - 1
-                
-                if sectionCount != filteredCategories.count {
-                    sectionCount = filteredCategories.count
-                    collectionView.insertSections(IndexSet(integer: newTrackerCategoryIndex))
-                }
-                
-                let indexes = IndexPath(row: 0, section: newTrackerCategoryIndex)
-                collectionView.insertItems(at: [indexes])
-            }
+//        guard let trackerCategory.trackerList[0].schedule else {
+//            
+//        }
+        
+        if (trackerCategory.trackerList[0].schedule?.first(where: { $0.0 == dayOfWeekString && $0.1 })) != nil {
+            cellPerformBatchUpdates(trackerCategory)
         }
+        
+        if trackerCategory.trackerList[0].schedule == nil {
+            cellPerformBatchUpdates(trackerCategory)
+        }
+        
         hideImageViewIfTrackerIsNotEmpty()
     }
     
-    func getDayOfWeekFromDate() -> String {
+    func cellPerformBatchUpdates(_ trackerCategory: TrackerCategory) {
+        collectionView.performBatchUpdates {
+            let newTrackerCategoryIndex = filteredCategories.firstIndex { $0.title == trackerCategory.title } ?? filteredCategories.count - 1
+            
+            if sectionCount != filteredCategories.count {
+                sectionCount = filteredCategories.count
+                collectionView.insertSections(IndexSet(integer: newTrackerCategoryIndex))
+            }
+            
+            let indexes = IndexPath(row: 0, section: newTrackerCategoryIndex)
+            collectionView.insertItems(at: [indexes])
+        }
+    }
+    
+    func getDayOfWeekFromDate(date: Date) -> String {
         dateFormatter.dateFormat = "EEEE"
-        return dateFormatter.string(from: currentDate).capitalized
+        return dateFormatter.string(from: date).capitalized
     }
 }
 
@@ -224,7 +237,17 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
                         }
                     }
                 } else {
-                    // TODO: тут код фильтрации для нерегулярного события
+                    dateFormatter.dateFormat = "dd.MM.yyyy"
+                    let todayDate = dateFormatter.string(from: currentDate)
+                    
+                    if let completeDateString = isIrregularTrackerComplete(id: tracker.id) {
+                        if todayDate == completeDateString {
+                            filteredTrackers.append(tracker)
+                        }
+                    } else {
+                        filteredTrackers.append(tracker)
+                    }
+                    
                 }
             }
             
@@ -247,7 +270,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.reuseIdentifier, for: indexPath) as? TrackersCollectionViewCell else { fatalError("cell did not initialize") }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.reuseIdentifier, for: indexPath) as? TrackersCollectionViewCell else { return UICollectionViewCell() }
         cell.prepareForReuse()
         cell.delegate = self
         
@@ -256,12 +279,14 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         let count = result.0
         let addButtonState = result.1
         
+        
         cell.updateCell(backgroundColor: newCell.color,
                         emojiiLabelText: newCell.emojii,
                         titleLabelText: newCell.name,
                         count: count,
                         addButtonState: addButtonState,
-                        isPin: false)
+                        isPin: false,
+                        isIrregularTracker: newCell.schedule == nil)
         
         return cell
     }
@@ -325,9 +350,22 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 extension TrackersViewController: TrackersCollectionViewCellDelegate {
     
-    func getAddButtonCountLabelAndState(indexPath: IndexPath) -> (Int, Bool) {
+    func isIrregularTrackerComplete(id: UUID) -> String? {
+        var completedDate: String?
         
+        if completedTrackers.keys.contains(where: { $0 == id }) {
+            guard let trackerRecords = completedTrackers[id] else { return nil }
+            guard let completed = trackerRecords.first?.value else { return nil }
+            
+            dateFormatter.dateFormat = "dd.MM.yyyy"
+            completedDate = dateFormatter.string(from: completed.date)
+        }
+        return completedDate
+    }
+    
+    func getAddButtonCountLabelAndState(indexPath: IndexPath) -> (Int, Bool) {
         let newCell = filteredCategories[indexPath.section].trackerList[indexPath.row]
+        
         dateFormatter.dateFormat = "dd.MM.yyyy"
         let dateAsDictKey = dateFormatter.string(from: currentDate)
         
@@ -353,7 +391,7 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
             
             let dateAsDictKey = dateFormatter.string(from: currentDate)
             dateFormatter.dateFormat = "dd.MM.yyyy"
-            let newTrackerRecord = TrackerRecord(id: newCell.id)
+            let newTrackerRecord = TrackerRecord(id: newCell.id, date: currentDate)
             var cellState = false
             
             if completedTrackers.keys.contains(where: { $0 == newCell.id }) {
@@ -361,18 +399,18 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
                 if trackerRecords.keys.contains(dateAsDictKey) {
                     completedTrackers[newCell.id]?.removeValue(forKey: dateAsDictKey)
                     guard let count = completedTrackers[newCell.id]?.count else { return }
-                    cell.updateButtonState(count: count, state: cellState)
+                    cell.updateButtonState(count: count, state: cellState, isIrregularTracker: newCell.schedule == nil)
                 } else {
                     completedTrackers[newCell.id]?.updateValue(newTrackerRecord, forKey: dateAsDictKey)
                     guard let count = completedTrackers[newCell.id]?.count else { return }
                     cellState = true
-                    cell.updateButtonState(count: count, state: cellState)
+                    cell.updateButtonState(count: count, state: cellState, isIrregularTracker: newCell.schedule == nil)
                 }
             } else {
                 let newRecord = [dateAsDictKey: newTrackerRecord]
                 completedTrackers.updateValue(newRecord, forKey: newCell.id)
                 cellState = true
-                cell.updateButtonState(count: newRecord.keys.count, state: cellState)
+                cell.updateButtonState(count: newRecord.keys.count, state: cellState, isIrregularTracker: newCell.schedule == nil)
             }
         } else {
             let alertPresenter = AlertPresenter(viewController: self)

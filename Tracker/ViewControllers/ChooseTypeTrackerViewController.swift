@@ -69,7 +69,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            regularEventButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 395),
+            regularEventButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 350),
             regularEventButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             regularEventButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             regularEventButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),

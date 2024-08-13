@@ -132,7 +132,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
                     titleLabelText: String,
                     count: Int,
                     addButtonState: Bool,
-                    isPin: Bool = false
+                    isPin: Bool = false,
+                    isIrregularTracker: Bool
     ){
         colorView.backgroundColor = backgroundColor
         emojiiLabel.text = emojiiLabelText
@@ -140,7 +141,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         addButton.backgroundColor = backgroundColor
         pinImageView.isHidden = isPin ? false : true
         
-        updateButtonState(count: count, state: addButtonState)
+        updateButtonState(count: count, state: addButtonState, isIrregularTracker: isIrregularTracker)
     }
     
     func determineEndOfWord(number: Int) -> String {
@@ -154,13 +155,17 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func updateButtonState(count: Int, state: Bool) {
+    func updateButtonState(count: Int, state: Bool, isIrregularTracker: Bool) {
         addButton.layer.opacity = state ? 0.3 : 1
         let imageName = state ? "checkmark" : "plus"
         addButton.setImage(UIImage(systemName: imageName), for: .normal)
         
-        let dayWord = determineEndOfWord(number: count)
-        counterLabel.text = "\(count) \(dayWord)"
+        if isIrregularTracker {
+            counterLabel.text = state ? "Выполнено" : "Не выполнено"
+        } else {
+            let dayWord = determineEndOfWord(number: count)
+            counterLabel.text = "\(count) \(dayWord)"
+        }
     }
     
     @objc private func addButtonDidTap() {

@@ -27,18 +27,51 @@ final class CreateIrregularEventTrackerViewController: UIViewController, BaseEve
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = "Новая привычка"
+        label.text = "Новое нерегулярное событие"
         return label
     }()
     
-    private let textField: UITextField = {
+//    private let textField: UITextField = {
+//        let textField = UITextField()
+//        textField.placeholder = "Введите название трекера"
+//        textField.backgroundColor = .ypBackground
+//        textField.layer.cornerRadius = 16
+//        textField.layer.masksToBounds = true
+//        textField.textAlignment = .left
+//        textField.maxLength = 38
+//        
+//        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
+//        textField.leftView = paddingView
+//        textField.leftViewMode = .always
+//        
+//        return textField
+//    }()
+    
+    private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Введите название трекера"
         textField.backgroundColor = .ypBackground
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
-        textField.textAlignment = .center
+        textField.textAlignment = .left
         textField.maxLength = 38
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        
+        let clearButton = UIButton(type: .custom)
+        clearButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        clearButton.addTarget(self, action: #selector(clearText), for: .touchUpInside)
+        clearButton.tintColor = .ypGray
+        
+        let rightPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 28, height: 28))
+        rightPaddingView.addSubview(clearButton)
+        clearButton.frame = CGRect(x: 0, y: 6, width: 16, height: 16)
+        
+        textField.rightView = rightPaddingView
+        textField.rightViewMode = .never
+        
         return textField
     }()
     
@@ -46,9 +79,9 @@ final class CreateIrregularEventTrackerViewController: UIViewController, BaseEve
         let tableView = UITableView()
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
-        
+        tableView.isScrollEnabled = false
         tableView.allowsSelection = true
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "IrregularEventTrackerCell")
+        tableView.register(BaseTableViewCell.self, forCellReuseIdentifier: "IrregularEventTrackerCell")
         
         return tableView
     }()
@@ -171,7 +204,7 @@ final class CreateIrregularEventTrackerViewController: UIViewController, BaseEve
     }
     
     func didSelectCategory(_ category: String) {
-        menuSecondaryItems[0] = [category]
+        menuSecondaryItems[0][0] = category
         viewController?.viewController?.lastSelectedCategory = category
     }
     
@@ -188,7 +221,18 @@ final class CreateIrregularEventTrackerViewController: UIViewController, BaseEve
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
+        if let text = textField.text, !text.isEmpty {
+            textField.rightViewMode = .always
+        } else {
+            textField.rightViewMode = .never
+        }
+        
         updateCreateButtonState()
+    }
+    
+    @objc private func clearText() {
+        textField.text = ""
+        textField.sendActions(for: .editingChanged)
     }
     
     @objc func categoryDidChange() {
@@ -238,6 +282,7 @@ final class CreateIrregularEventTrackerViewController: UIViewController, BaseEve
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
         
         self.viewController?.viewController?.add(trackerCategory: newTrackerCategory)
+        
         self.dismiss(animated: true)
         self.viewController?.dismiss(animated: true)
     }
@@ -257,9 +302,7 @@ extension CreateIrregularEventTrackerViewController: UITableViewDelegate, UITabl
         let cell = tableView.dequeueReusableCell(withIdentifier: "IrregularEventTrackerCell", for: indexPath)
         
         cell.prepareForReuse()
-        cell.backgroundColor = .ypBackground
         cell.accessoryType = .disclosureIndicator
-        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
         let text = menuItems[indexPath.row]
         
@@ -290,23 +333,26 @@ extension CreateIrregularEventTrackerViewController: UITableViewDelegate, UITabl
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return tableView.frame.size.height + CGFloat(0.5)
+        return 75
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.row == 0 {
-            let viewController = CategoryListViewController()
-            viewController.viewController = self
-            
-            if let category = self.viewController?.viewController?.lastSelectedCategory {
-                viewController.selectedCategory = category
-            }
-            categoryListdelegate = viewController
-            viewController.modalPresentationStyle = .formSheet
-            viewController.modalTransitionStyle = .coverVertical
-            present(viewController, animated: true, completion: nil)
+        let viewController = CategoryListViewController()
+        viewController.viewController = self
+        
+        if let category = self.viewController?.viewController?.lastSelectedCategory {
+            viewController.selectedCategory = category
         }
+        categoryListdelegate = viewController
+        viewController.modalPresentationStyle = .formSheet
+        viewController.modalTransitionStyle = .coverVertical
+        present(viewController, animated: true, completion: nil)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let cell = cell as? BaseTableViewCell else { return }
+        cell.roundedCornersAndOffLastSeparatorVisibility(indexPath: indexPath, tableView: tableView)
     }
 }

@@ -50,7 +50,7 @@ class CategoryListViewController: UIViewController, CategoryListViewControllerPr
         tableView.layer.masksToBounds = true
         
         tableView.allowsSelection = true
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryListCell")
+        tableView.register(BaseTableViewCell.self, forCellReuseIdentifier: "CategoryListCell")
         
         return tableView
     }()
@@ -152,7 +152,7 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
         cell.accessoryType = (category == selectedCategory) ? .checkmark : .none
         
         cell.backgroundColor = .ypBackground
-        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
         return cell
     }
     
@@ -188,7 +188,19 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
                 IndexPath(row: i, section: 0)
             }
             tableView.insertRows(at: indexPaths, with: .automatic)
-        } completion: { _ in }
+        } completion: { [ weak self ] _ in
+            self?.updateVisibleCells()
+        }
         hideImageViewIfCategoryIsNotEmpty()
+    }
+    
+    func updateVisibleCells() {
+        let visibleIndexPaths = tableView.indexPathsForVisibleRows ?? []
+        tableView.reloadRows(at: visibleIndexPaths, with: .none)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let cell = cell as? BaseTableViewCell else { return }
+        cell.roundedCornersAndOffLastSeparatorVisibility(indexPath: indexPath, tableView: tableView)
     }
 }
