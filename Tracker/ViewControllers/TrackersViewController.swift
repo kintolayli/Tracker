@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TrackersViewControllerProtocol: AnyObject {
-    var delegate: ChooseTypeTrackerViewControllerProtocol? { get set }
+    var chooseTypeTrackerDelegate: ChooseTypeTrackerViewControllerProtocol? { get set }
     var categories: [TrackerCategory] { get set }
     func add(trackerCategory: TrackerCategory)
     var lastSelectedCategory: String? { get set }
@@ -16,7 +16,7 @@ protocol TrackersViewControllerProtocol: AnyObject {
 
 final class TrackersViewController: UIViewController & TrackersViewControllerProtocol {
     
-    weak var delegate: ChooseTypeTrackerViewControllerProtocol?
+    weak var chooseTypeTrackerDelegate: ChooseTypeTrackerViewControllerProtocol?
     
     private let params: GeometricParams = {
         let params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
@@ -145,8 +145,8 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     
     @objc private func didTapTrackerButton() {
         let viewController = ChooseTypeTrackerViewController()
-        viewController.viewController = self
-        delegate = viewController
+        viewController.trackersViewController = self
+        chooseTypeTrackerDelegate = viewController
         viewController.modalPresentationStyle = .formSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
@@ -407,9 +407,8 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
                 cell.updateButtonState(count: newRecord.keys.count, state: cellState, isIrregularTracker: newCell.schedule == nil)
             }
         } else {
-            let alertPresenter = AlertPresenter(viewController: self)
             let alertModel = AlertModel(title: "Уведомление от системы", message: "Нельзя отметить карточку для будущей даты", buttonTitle: "ОК", buttonAction: nil)
-            alertPresenter.show(model: alertModel)
+            AlertPresenter.show(model: alertModel, viewController: self)
         }
     }
 }

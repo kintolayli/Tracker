@@ -8,16 +8,16 @@
 import UIKit
 
 protocol ChooseTypeTrackerViewControllerProtocol: AnyObject {
-    var viewController: TrackersViewControllerProtocol? { get set }
-    var delegateRegularEventTracker: SheduleEventTrackerViewControllerProtocol? { get set }
-    var delegateIrregularEventTracker: BaseEventTrackerViewControllerProtocol? { get set }
+    var trackersViewController: TrackersViewControllerProtocol? { get set }
+    var regularEventTrackerDelegate: SheduleEventTrackerViewControllerProtocol? { get set }
+    var irregularEventTrackerDelegate: BaseEventTrackerViewControllerProtocol? { get set }
     func dismiss(animated: Bool)
 }
 
 final class ChooseTypeTrackerViewController: UIViewController {
-    var viewController: TrackersViewControllerProtocol?
-    var delegateRegularEventTracker: SheduleEventTrackerViewControllerProtocol?
-    var delegateIrregularEventTracker: BaseEventTrackerViewControllerProtocol?
+    weak var trackersViewController: TrackersViewControllerProtocol?
+    weak var regularEventTrackerDelegate: SheduleEventTrackerViewControllerProtocol?
+    weak var irregularEventTrackerDelegate: BaseEventTrackerViewControllerProtocol?
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -88,8 +88,8 @@ final class ChooseTypeTrackerViewController: UIViewController {
     
     @objc private func regularEventsButtonDidTap() {
         let viewController = CreateRegularEventTrackerViewController()
-        viewController.viewController = self
-        self.delegateRegularEventTracker = viewController
+        viewController.chooseTypeTrackerViewController = self
+        self.regularEventTrackerDelegate = viewController
         viewController.modalPresentationStyle = .formSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
@@ -97,8 +97,8 @@ final class ChooseTypeTrackerViewController: UIViewController {
     
     @objc private func irregularEventsButtonDidTap() {
         let viewController = CreateIrregularEventTrackerViewController()
-        viewController.viewController = self
-        self.delegateIrregularEventTracker = viewController
+        viewController.chooseTypeTrackerViewController = self
+        self.irregularEventTrackerDelegate = viewController
         viewController.modalPresentationStyle = .formSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)

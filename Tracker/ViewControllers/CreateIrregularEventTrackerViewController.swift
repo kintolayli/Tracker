@@ -9,8 +9,8 @@ import UIKit
 
 
 protocol BaseEventTrackerViewControllerProtocol: AnyObject {
-    var viewController: ChooseTypeTrackerViewControllerProtocol? { get set }
-    var categoryListdelegate: CategoryListViewControllerProtocol? { get set }
+    var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol? { get set }
+    var categoryListDelegate: CategoryListViewControllerProtocol? { get set }
     func didSelectCategory(_ category: String)
     func updateTableViewFirstCell()
     func categoryDidChange()
@@ -19,8 +19,8 @@ protocol BaseEventTrackerViewControllerProtocol: AnyObject {
 
 final class CreateIrregularEventTrackerViewController: UIViewController, BaseEventTrackerViewControllerProtocol {
     
-    var viewController: ChooseTypeTrackerViewControllerProtocol?
-    var categoryListdelegate: CategoryListViewControllerProtocol?
+    weak var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol?
+    weak var categoryListDelegate: CategoryListViewControllerProtocol?
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -103,7 +103,7 @@ final class CreateIrregularEventTrackerViewController: UIViewController, BaseEve
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard let menuSecondaryItemFirst = viewController?.viewController?.categories.first else { return }
+        guard let menuSecondaryItemFirst = chooseTypeTrackerViewController?.trackersViewController?.categories.first else { return }
         menuSecondaryItems[0] = [menuSecondaryItemFirst.title]
     }
     
@@ -189,7 +189,7 @@ final class CreateIrregularEventTrackerViewController: UIViewController, BaseEve
     
     func didSelectCategory(_ category: String) {
         menuSecondaryItems[0][0] = category
-        viewController?.viewController?.lastSelectedCategory = category
+        chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory = category
     }
     
     func updateCreateButtonState() {
@@ -261,14 +261,14 @@ final class CreateIrregularEventTrackerViewController: UIViewController, BaseEve
         let emojii = emojies[randomIntEmojies]
         
         let newTracker = Tracker(name: name, color: color, emojii: emojii, schedule: nil)
-        guard let category = viewController?.viewController?.lastSelectedCategory else { return }
+        guard let category = chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory else { return }
         
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
         
-        self.viewController?.viewController?.add(trackerCategory: newTrackerCategory)
+        self.chooseTypeTrackerViewController?.trackersViewController?.add(trackerCategory: newTrackerCategory)
         
         self.dismiss(animated: true)
-        self.viewController?.dismiss(animated: true)
+        self.chooseTypeTrackerViewController?.dismiss(animated: true)
     }
     
     deinit {
@@ -290,7 +290,7 @@ extension CreateIrregularEventTrackerViewController: UITableViewDelegate, UITabl
         
         let text = menuItems[indexPath.row]
         
-        if let lastSelectedCategory = viewController?.viewController?.lastSelectedCategory {
+        if let lastSelectedCategory = chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory {
             menuSecondaryItems[0][0] = lastSelectedCategory
         }
         
@@ -326,10 +326,10 @@ extension CreateIrregularEventTrackerViewController: UITableViewDelegate, UITabl
         let viewController = CategoryListViewController()
         viewController.viewController = self
         
-        if let category = self.viewController?.viewController?.lastSelectedCategory {
+        if let category = self.chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory {
             viewController.selectedCategory = category
         }
-        categoryListdelegate = viewController
+        categoryListDelegate = viewController
         viewController.modalPresentationStyle = .formSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)

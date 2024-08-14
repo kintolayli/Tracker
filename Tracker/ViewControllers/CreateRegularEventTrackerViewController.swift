@@ -17,8 +17,8 @@ protocol SheduleEventTrackerViewControllerProtocol: BaseEventTrackerViewControll
 
 final class CreateRegularEventTrackerViewController: UIViewController, SheduleEventTrackerViewControllerProtocol {
     
-    var viewController: ChooseTypeTrackerViewControllerProtocol?
-    var categoryListdelegate: CategoryListViewControllerProtocol?
+    weak var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol?
+    weak var categoryListDelegate: CategoryListViewControllerProtocol?
     var sheduleDelegate: SheduleViewControllerProtocol?
     
     private let titleLabel: UILabel = {
@@ -104,7 +104,7 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard let menuSecondaryItemFirst = viewController?.viewController?.categories.first else { return }
+        guard let menuSecondaryItemFirst = chooseTypeTrackerViewController?.trackersViewController?.categories.first else { return }
         menuSecondaryItems[0] = [menuSecondaryItemFirst.title]
     }
     
@@ -215,7 +215,7 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
     
     func didSelectCategory(_ category: String) {
         menuSecondaryItems[0] = [category]
-        viewController?.viewController?.lastSelectedCategory = category
+        chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory = category
     }
     
     func didSelectDays(_ daysString: String) {
@@ -297,13 +297,13 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
         
         guard let shedule = sheduleDelegate?.getShedule() else { return }
         let newTracker = Tracker(name: name, color: color, emojii: emojii, schedule: shedule)
-        guard let category = viewController?.viewController?.lastSelectedCategory else { return }
+        guard let category = chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory else { return }
         
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
         
-        self.viewController?.viewController?.add(trackerCategory: newTrackerCategory)
+        self.chooseTypeTrackerViewController?.trackersViewController?.add(trackerCategory: newTrackerCategory)
         self.dismiss(animated: true)
-        self.viewController?.dismiss(animated: true)
+        self.chooseTypeTrackerViewController?.dismiss(animated: true)
     }
     
     deinit {
@@ -325,7 +325,7 @@ extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableV
         
         let text = menuItems[indexPath.row]
         
-        if let lastSelectedCategory = viewController?.viewController?.lastSelectedCategory {
+        if let lastSelectedCategory = chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory {
             menuSecondaryItems[0][0] = lastSelectedCategory
         }
         
@@ -362,16 +362,16 @@ extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableV
             let viewController = CategoryListViewController()
             viewController.viewController = self
             
-            if let category = self.viewController?.viewController?.lastSelectedCategory {
+            if let category = self.chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory {
                 viewController.selectedCategory = category
             }
-            categoryListdelegate = viewController
+            categoryListDelegate = viewController
             viewController.modalPresentationStyle = .formSheet
             viewController.modalTransitionStyle = .coverVertical
             present(viewController, animated: true, completion: nil)
         } else {
             let viewController = SheduleViewController()
-            viewController.viewController = self
+            viewController.createRegularEventTrackerViewController = self
             viewController.updateDays(from: menuSecondaryItems[1][0])
             sheduleDelegate = viewController
             viewController.modalPresentationStyle = .formSheet

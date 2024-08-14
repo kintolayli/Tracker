@@ -7,20 +7,20 @@
 
 import UIKit
 
-private var kAssociationKeyMaxLength: Int = 0
+private var аssociationKeyMaxLength: Int = 0
 
 extension UITextField {
     
     @IBInspectable var maxLength: Int {
         get {
-            if let length = objc_getAssociatedObject(self, &kAssociationKeyMaxLength) as? Int {
+            if let length = objc_getAssociatedObject(self, &аssociationKeyMaxLength) as? Int {
                 return length
             } else {
                 return Int.max
             }
         }
         set {
-            objc_setAssociatedObject(self, &kAssociationKeyMaxLength, newValue, .OBJC_ASSOCIATION_RETAIN)
+            objc_setAssociatedObject(self, &аssociationKeyMaxLength, newValue, .OBJC_ASSOCIATION_RETAIN)
             addTarget(self, action: #selector(checkMaxLength), for: .editingChanged)
         }
     }

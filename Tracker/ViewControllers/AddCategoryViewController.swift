@@ -8,12 +8,12 @@
 import UIKit
 
 protocol AddCategoryViewControllerProtocol: AnyObject {
-    var viewController: CategoryListViewControllerProtocol? { get set }
+    var categoryListViewController: CategoryListViewControllerProtocol? { get set }
 }
 
-class AddCategoryViewController: UIViewController, AddCategoryViewControllerProtocol {
+final class AddCategoryViewController: UIViewController, AddCategoryViewControllerProtocol {
     
-    var viewController: CategoryListViewControllerProtocol?
+    weak var categoryListViewController: CategoryListViewControllerProtocol?
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -108,8 +108,8 @@ class AddCategoryViewController: UIViewController, AddCategoryViewControllerProt
         guard let text = textField.text else { return }
         let newCategory = TrackerCategory(title: text, trackerList: [])
         
-        viewController?.viewController?.viewController?.viewController?.categories.append(newCategory)
-        viewController?.updateTableViewAnimated()
+        categoryListViewController?.viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.append(newCategory)
+        categoryListViewController?.updateTableViewAnimated()
         self.dismiss(animated: true)
     }
     

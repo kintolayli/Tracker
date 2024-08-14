@@ -10,13 +10,13 @@ import UIKit
 
 protocol CategoryListViewControllerProtocol: AnyObject {
     var viewController: BaseEventTrackerViewControllerProtocol? { get set }
-    var delegate: AddCategoryViewControllerProtocol? { get set }
+    var addCategoryDelegate: AddCategoryViewControllerProtocol? { get set }
     func updateTableViewAnimated()
 }
 
-class CategoryListViewController: UIViewController, CategoryListViewControllerProtocol {
-    var viewController: BaseEventTrackerViewControllerProtocol?
-    var delegate: AddCategoryViewControllerProtocol?
+final class CategoryListViewController: UIViewController, CategoryListViewControllerProtocol {
+    weak var viewController: BaseEventTrackerViewControllerProtocol?
+    weak var addCategoryDelegate: AddCategoryViewControllerProtocol?
     var selectedCategory: String?
     
     private let titleLabel: UILabel = {
@@ -117,15 +117,15 @@ class CategoryListViewController: UIViewController, CategoryListViewControllerPr
     
     @objc private func addCategoryButtonDidTap() {
         let viewController = AddCategoryViewController()
-        viewController.viewController = self
-        delegate = viewController
+        viewController.categoryListViewController = self
+        addCategoryDelegate = viewController
         viewController.modalPresentationStyle = .formSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
     }
     
     private func hideImageViewIfCategoryIsNotEmpty() {
-        guard let categories = viewController?.viewController?.viewController?.categories else { return }
+        guard let categories = viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories else { return }
         
         if categories.isEmpty {
             imageView.isHidden = false
@@ -140,14 +140,14 @@ class CategoryListViewController: UIViewController, CategoryListViewControllerPr
 extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let categoriesCount = viewController?.viewController?.viewController?.categories.count else { return 0 }
+        guard let categoriesCount = viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.count else { return 0 }
         return categoriesCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryListCell", for: indexPath)
         
-        guard let category = viewController?.viewController?.viewController?.categories[indexPath.row].title else { return UITableViewCell()}
+        guard let category = viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories[indexPath.row].title else { return UITableViewCell()}
         cell.textLabel?.text = category
         cell.accessoryType = (category == selectedCategory) ? .checkmark : .none
         
@@ -162,8 +162,8 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        guard let selectedCategory = viewController?.viewController?.viewController?.categories[indexPath.row].title else { return }
-        viewController?.viewController?.viewController?.lastSelectedCategory = selectedCategory
+        guard let selectedCategory = viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories[indexPath.row].title else { return }
+        viewController?.chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory = selectedCategory
         
         tableView.deselectRow(at: indexPath, animated: true)
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
@@ -181,7 +181,7 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func updateTableViewAnimated() {
-        guard let newCount = viewController?.viewController?.viewController?.categories.count else { return }
+        guard let newCount = viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.count else { return }
         
         tableView.performBatchUpdates {
             let indexPaths = ((newCount - 1)..<newCount).map { i in
