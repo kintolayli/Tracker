@@ -9,13 +9,13 @@ import UIKit
 
 
 protocol CategoryListViewControllerProtocol: AnyObject {
-    var viewController: BaseEventTrackerViewControllerProtocol? { get set }
+    var createEventTrackerViewController: BaseEventTrackerViewControllerProtocol? { get set }
     var addCategoryDelegate: AddCategoryViewControllerProtocol? { get set }
     func updateTableViewAnimated()
 }
 
 final class CategoryListViewController: UIViewController, CategoryListViewControllerProtocol {
-    weak var viewController: BaseEventTrackerViewControllerProtocol?
+    weak var createEventTrackerViewController: BaseEventTrackerViewControllerProtocol?
     weak var addCategoryDelegate: AddCategoryViewControllerProtocol?
     var selectedCategory: String?
     
@@ -125,7 +125,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     }
     
     private func hideImageViewIfCategoryIsNotEmpty() {
-        guard let categories = viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories else { return }
+        guard let categories = createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories else { return }
         
         if categories.isEmpty {
             imageView.isHidden = false
@@ -140,14 +140,14 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
 extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let categoriesCount = viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.count else { return 0 }
+        guard let categoriesCount = createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.count else { return 0 }
         return categoriesCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryListCell", for: indexPath)
         
-        guard let category = viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories[indexPath.row].title else { return UITableViewCell()}
+        guard let category = createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories[indexPath.row].title else { return UITableViewCell()}
         cell.textLabel?.text = category
         cell.accessoryType = (category == selectedCategory) ? .checkmark : .none
         
@@ -162,8 +162,8 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        guard let selectedCategory = viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories[indexPath.row].title else { return }
-        viewController?.chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory = selectedCategory
+        guard let selectedCategory = createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories[indexPath.row].title else { return }
+        createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory = selectedCategory
         
         tableView.deselectRow(at: indexPath, animated: true)
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
@@ -174,14 +174,14 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
         cell.accessoryType = .checkmark
         
         guard let category = cell.textLabel?.text else { return }
-        viewController?.didSelectCategory(category)
-        viewController?.updateTableViewFirstCell()
-        viewController?.categoryDidChange()
+        createEventTrackerViewController?.didSelectCategory(category)
+        createEventTrackerViewController?.updateTableViewFirstCell()
+        createEventTrackerViewController?.categoryDidChange()
         self.dismiss(animated: true)
     }
     
     func updateTableViewAnimated() {
-        guard let newCount = viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.count else { return }
+        guard let newCount = createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.count else { return }
         
         tableView.performBatchUpdates {
             let indexPaths = ((newCount - 1)..<newCount).map { i in

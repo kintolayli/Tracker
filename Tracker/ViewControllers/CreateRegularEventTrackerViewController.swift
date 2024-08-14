@@ -360,7 +360,7 @@ extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableV
         
         if indexPath.row == 0 {
             let viewController = CategoryListViewController()
-            viewController.viewController = self
+            viewController.createEventTrackerViewController = self
             
             if let category = self.chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory {
                 viewController.selectedCategory = category

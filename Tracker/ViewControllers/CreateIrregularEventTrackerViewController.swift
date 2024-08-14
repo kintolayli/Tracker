@@ -324,7 +324,7 @@ extension CreateIrregularEventTrackerViewController: UITableViewDelegate, UITabl
         tableView.deselectRow(at: indexPath, animated: true)
         
         let viewController = CategoryListViewController()
-        viewController.viewController = self
+        viewController.createEventTrackerViewController = self
         
         if let category = self.chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory {
             viewController.selectedCategory = category

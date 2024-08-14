@@ -108,7 +108,7 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         guard let text = textField.text else { return }
         let newCategory = TrackerCategory(title: text, trackerList: [])
         
-        categoryListViewController?.viewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.append(newCategory)
+        categoryListViewController?.createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.append(newCategory)
         categoryListViewController?.updateTableViewAnimated()
         self.dismiss(animated: true)
     }

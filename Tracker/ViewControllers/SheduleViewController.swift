@@ -13,7 +13,7 @@ protocol SheduleViewControllerProtocol: AnyObject {
     func getShedule() -> [(String, Bool, String)]
 }
 
-final class SheduleViewController: UIViewController, SheduleViewControllerProtocol{
+final class SheduleViewController: UIViewController, SheduleViewControllerProtocol {
     
     weak var createRegularEventTrackerViewController: CreateRegularEventTrackerViewController?
     
@@ -132,6 +132,7 @@ extension SheduleViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension SheduleViewController: SheduleTableViewCellDelegate {
+    
     func switchValueChanged(isOn: Bool, cell: SheduleTableViewCell) {
         if let indexPath = tableView.indexPath(for: cell) {
             days[indexPath.row].1 = isOn

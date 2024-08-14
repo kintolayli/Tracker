@@ -15,7 +15,6 @@ protocol SheduleTableViewCellDelegate: SheduleViewController {
 final class SheduleTableViewCell: BaseTableViewCell {
     
     weak var delegate: SheduleTableViewCellDelegate?
-    
     static var reuseIdentifier = "SheduleListCell"
     
     private let titleLabel: UILabel = {
