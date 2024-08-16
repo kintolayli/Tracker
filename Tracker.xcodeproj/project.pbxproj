@@ -29,6 +29,8 @@
 		8AD814B52C69558D008DAA5D /* AlertModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814B42C69558D008DAA5D /* AlertModel.swift */; };
 		8AD814B72C6A3F87008DAA5D /* CreateIrregularEventTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814B62C6A3F87008DAA5D /* CreateIrregularEventTrackerViewController.swift */; };
 		8AD814B92C6A6DEF008DAA5D /* BaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814B82C6A6DEF008DAA5D /* BaseTableViewCell.swift */; };
+		8AD814DC2C6E1829008DAA5D /* EmojiesColorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814DB2C6E1829008DAA5D /* EmojiesColorCollectionViewCell.swift */; };
+		8AD814DE2C6E2151008DAA5D /* EmojiiColorSuplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD814DD2C6E2151008DAA5D /* EmojiiColorSuplementaryView.swift */; };
 		8ADF935E2C5F5EA3001A4690 /* ExtensionUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF935D2C5F5EA3001A4690 /* ExtensionUIView.swift */; };
 		8ADF93602C5F8E0D001A4690 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF935F2C5F8E0D001A4690 /* TabBarController.swift */; };
 		8ADF93632C5F8EB3001A4690 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */; };
@@ -60,6 +62,8 @@
 		8AD814B42C69558D008DAA5D /* AlertModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertModel.swift; sourceTree = "<group>"; };
 		8AD814B62C6A3F87008DAA5D /* CreateIrregularEventTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateIrregularEventTrackerViewController.swift; sourceTree = "<group>"; };
 		8AD814B82C6A6DEF008DAA5D /* BaseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewCell.swift; sourceTree = "<group>"; };
+		8AD814DB2C6E1829008DAA5D /* EmojiesColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiesColorCollectionViewCell.swift; sourceTree = "<group>"; };
+		8AD814DD2C6E2151008DAA5D /* EmojiiColorSuplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiiColorSuplementaryView.swift; sourceTree = "<group>"; };
 		8ADF935D2C5F5EA3001A4690 /* ExtensionUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionUIView.swift; sourceTree = "<group>"; };
 		8ADF935F2C5F8E0D001A4690 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
@@ -169,8 +173,10 @@
 			children = (
 				8AD814B82C6A6DEF008DAA5D /* BaseTableViewCell.swift */,
 				8AD814AD2C67A7E2008DAA5D /* SheduleTableViewCell.swift */,
-				8AD814732C63A105008DAA5D /* TrackersCollectionViewCell.swift */,
 				8AD8147F2C66313D008DAA5D /* SupplementaryView.swift */,
+				8AD814732C63A105008DAA5D /* TrackersCollectionViewCell.swift */,
+				8AD814DB2C6E1829008DAA5D /* EmojiesColorCollectionViewCell.swift */,
+				8AD814DD2C6E2151008DAA5D /* EmojiiColorSuplementaryView.swift */,
 			);
 			path = ViewControllersCells;
 			sourceTree = "<group>";
@@ -251,6 +257,7 @@
 				8AD814B92C6A6DEF008DAA5D /* BaseTableViewCell.swift in Sources */,
 				8AD814782C640F5F008DAA5D /* ChooseTypeTrackerViewController.swift in Sources */,
 				8AD814702C62B789008DAA5D /* TrackerCategory.swift in Sources */,
+				8AD814DE2C6E2151008DAA5D /* EmojiiColorSuplementaryView.swift in Sources */,
 				8ADF93602C5F8E0D001A4690 /* TabBarController.swift in Sources */,
 				8AD814762C63B85A008DAA5D /* GeometricParams.swift in Sources */,
 				8AD814B72C6A3F87008DAA5D /* CreateIrregularEventTrackerViewController.swift in Sources */,
@@ -263,6 +270,7 @@
 				8AD8147A2C64BBE2008DAA5D /* CreateRegularEventTrackerViewController.swift in Sources */,
 				8ADF93632C5F8EB3001A4690 /* TrackersViewController.swift in Sources */,
 				8ADF935E2C5F5EA3001A4690 /* ExtensionUIView.swift in Sources */,
+				8AD814DC2C6E1829008DAA5D /* EmojiesColorCollectionViewCell.swift in Sources */,
 				8AD814842C664236008DAA5D /* AddCategoryViewController.swift in Sources */,
 				8AD814802C66313D008DAA5D /* SupplementaryView.swift in Sources */,
 				8AD814742C63A105008DAA5D /* TrackersCollectionViewCell.swift in Sources */,
