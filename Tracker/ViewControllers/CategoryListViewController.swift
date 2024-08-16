@@ -9,13 +9,13 @@ import UIKit
 
 
 protocol CategoryListViewControllerProtocol: AnyObject {
-    var createEventTrackerViewController: BaseEventTrackerViewControllerProtocol? { get set }
+    var createEventTrackerViewController: CreateEventTrackerViewControllerProtocol? { get set }
     var addCategoryDelegate: AddCategoryViewControllerProtocol? { get set }
     func updateTableViewAnimated()
 }
 
 final class CategoryListViewController: UIViewController, CategoryListViewControllerProtocol {
-    weak var createEventTrackerViewController: BaseEventTrackerViewControllerProtocol?
+    weak var createEventTrackerViewController: CreateEventTrackerViewControllerProtocol?
     weak var addCategoryDelegate: AddCategoryViewControllerProtocol?
     var selectedCategory: String?
     

@@ -8,20 +8,25 @@
 import UIKit
 
 
-protocol SheduleEventTrackerViewControllerProtocol: BaseEventTrackerViewControllerProtocol {
+protocol CreateEventTrackerViewControllerProtocol: AnyObject {
+    var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol? { get set }
+    var categoryListDelegate: CategoryListViewControllerProtocol? { get set }
     var sheduleDelegate: SheduleViewControllerProtocol? { get set }
+    func categoryDidChange()
+    func didSelectCategory(_ category: String)
     func didSelectDays(_ daysString: String)
+    func updateTableViewFirstCell()
     func updateTableViewSecondCell()
 }
 
 
-final class CreateRegularEventTrackerViewController: UIViewController, SheduleEventTrackerViewControllerProtocol {
+final class CreateEventTrackerViewController: UIViewController, CreateEventTrackerViewControllerProtocol {
     
     weak var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol?
     weak var categoryListDelegate: CategoryListViewControllerProtocol?
     var sheduleDelegate: SheduleViewControllerProtocol?
     
-    private let emojies = [ "🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍒", "🍓", "🫐", "🥝", "🍅", "🫒", "🥥",]
+    private let emojies = [ "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪",]
     private var selectedEmojii: String?
     private let colors: [UIColor] = [
         .ypColorSelection1,
@@ -45,7 +50,8 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
     ]
     private var selectedColor: UIColor?
     private let suplementaryViewHeaderList = ["Emojii", "Цвет"]
-    private let menuItems: [String] = ["Категория", "Расписание"]
+    private var menuItems: [String] = ["Категория"]
+    private var isCreateRegularEventTracker: Bool = false
     var menuSecondaryItems: [[String]] = [[""], [""]]
     private let params: GeometricParams = {
         let params = GeometricParams(cellCount: 6, leftInset: 16, rightInset: 16, cellSpacing: 6)
@@ -57,7 +63,7 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = "Новая привычка"
+        label.text = "Новое нерегулярное событие"
         return label
     }()
     
@@ -181,7 +187,7 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            contentView.heightAnchor.constraint(equalToConstant: 970),
+            contentView.heightAnchor.constraint(equalToConstant: 820 + CGFloat(menuItems.count * 75)),
             
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 27),
             titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -194,7 +200,7 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
             tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            tableView.heightAnchor.constraint(equalToConstant: 150),
+            tableView.heightAnchor.constraint(equalToConstant: CGFloat(menuItems.count * 75)),
             
             collectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 20),
             collectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
@@ -235,6 +241,12 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
+    }
+    
+    func didSelectCreateRegularEvent() {
+        menuItems.append("Расписание")
+        titleLabel.text = "Новая привычка"
+        isCreateRegularEventTracker = true
     }
     
     func updateTableViewFirstCell() {
@@ -301,7 +313,11 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
         let isEmojiiNotNil = (selectedEmojii != nil)
         let isColorNotNil = (selectedColor != nil)
         
-        createButton.isEnabled = !isTextFieldEmpty && !isCategoryEmpty && !isSheduleEmpty && isEmojiiNotNil && isColorNotNil
+        if isCreateRegularEventTracker {
+            createButton.isEnabled = !isTextFieldEmpty && !isCategoryEmpty && !isSheduleEmpty && isEmojiiNotNil && isColorNotNil
+        } else {
+            createButton.isEnabled = !isTextFieldEmpty && !isCategoryEmpty && isEmojiiNotNil && isColorNotNil
+        }
         createButton.backgroundColor = createButton.isEnabled ? .ypBlack : .ypGray
     }
     
@@ -349,8 +365,11 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
         guard let name = textField.text else { return }
         guard let color = selectedColor else { return }
         guard let emojii = selectedEmojii else { return }
+        var shedule: [(String, Bool, String)]? = nil
         
-        guard let shedule = sheduleDelegate?.getShedule() else { return }
+        if isCreateRegularEventTracker {
+            shedule = sheduleDelegate?.getShedule()
+        }
         let newTracker = Tracker(name: name, color: color, emojii: emojii, schedule: shedule)
         guard let category = chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory else { return }
         
@@ -366,7 +385,7 @@ final class CreateRegularEventTrackerViewController: UIViewController, SheduleEv
     }
 }
 
-extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableViewDataSource {
+extension CreateEventTrackerViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return menuItems.count
@@ -426,7 +445,7 @@ extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableV
             present(viewController, animated: true, completion: nil)
         } else {
             let viewController = SheduleViewController()
-            viewController.createRegularEventTrackerViewController = self
+            viewController.createEventTrackerViewController = self
             viewController.updateDays(from: menuSecondaryItems[1][0])
             sheduleDelegate = viewController
             viewController.modalPresentationStyle = .formSheet
@@ -442,7 +461,7 @@ extension CreateRegularEventTrackerViewController: UITableViewDelegate, UITableV
 }
 
 
-extension CreateRegularEventTrackerViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension CreateEventTrackerViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return emojies.count
@@ -519,7 +538,7 @@ extension CreateRegularEventTrackerViewController: UICollectionViewDelegate, UIC
     }
 }
 
-extension CreateRegularEventTrackerViewController: UICollectionViewDelegateFlowLayout {
+extension CreateEventTrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let availableWidth = collectionView.frame.width - params.paddingWidth

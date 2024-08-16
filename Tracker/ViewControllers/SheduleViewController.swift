@@ -9,13 +9,13 @@ import UIKit
 
 
 protocol SheduleViewControllerProtocol: AnyObject {
-    var createRegularEventTrackerViewController: CreateRegularEventTrackerViewController? { get set }
+    var createEventTrackerViewController: CreateEventTrackerViewController? { get set }
     func getShedule() -> [(String, Bool, String)]
 }
 
 final class SheduleViewController: UIViewController, SheduleViewControllerProtocol {
     
-    weak var createRegularEventTrackerViewController: CreateRegularEventTrackerViewController?
+    weak var createEventTrackerViewController: CreateEventTrackerViewController?
     
     private var days: [(String, Bool, String)] = [
         ("Понедельник", false, "Пн"),
@@ -139,9 +139,9 @@ extension SheduleViewController: SheduleTableViewCellDelegate {
         }
         
         let selectedDaysString = shortStringFromSelectedDays()
-        createRegularEventTrackerViewController?.didSelectDays(selectedDaysString)
-        createRegularEventTrackerViewController?.updateTableViewSecondCell()
-        createRegularEventTrackerViewController?.scheduleDidChange()
+        createEventTrackerViewController?.didSelectDays(selectedDaysString)
+        createEventTrackerViewController?.updateTableViewSecondCell()
+        createEventTrackerViewController?.scheduleDidChange()
     }
     
     private func shortStringFromSelectedDays() -> String {

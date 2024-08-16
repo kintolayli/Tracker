@@ -297,7 +297,6 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         }
         
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SupplementaryView
-//        view.titleLabel.text = categories[indexPath.section].title
         view.titleLabel.text = filteredCategories[indexPath.section].title
         return view
     }
