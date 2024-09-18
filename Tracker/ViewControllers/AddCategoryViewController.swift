@@ -13,8 +13,9 @@ protocol AddCategoryViewControllerProtocol: AnyObject {
 
 final class AddCategoryViewController: UIViewController, AddCategoryViewControllerProtocol {
     
-    weak var categoryListViewController: CategoryListViewControllerProtocol?
+    private let trackerCategoryStore = TrackerCategoryStore()
     
+    weak var categoryListViewController: CategoryListViewControllerProtocol?
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
@@ -23,7 +24,6 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         label.text = "Новая категория"
         return label
     }()
-    
     private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Введите название категории"
@@ -51,7 +51,6 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         
         return textField
     }()
-    
     private let okButton: UIButton = {
         let button = UIButton()
         button.setTitle("Готово", for: .normal)
@@ -108,9 +107,13 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         guard let text = textField.text else { return }
         let newCategory = TrackerCategory(title: text, trackerList: [])
         
-        categoryListViewController?.createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.append(newCategory)
-        categoryListViewController?.updateTableViewAnimated()
-        self.dismiss(animated: true)
+        do {
+            try trackerCategoryStore.addCategory(newCategory)
+            NotificationCenter.default.post(name: .didAddCategory, object: nil)
+            self.dismiss(animated: true)
+        } catch {
+            print("Failed to save category: \(error)")
+        }
     }
     
     @objc private func clearText() {

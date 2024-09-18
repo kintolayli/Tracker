@@ -76,7 +76,7 @@ class EmojiesColorCollectionViewCell: UICollectionViewCell {
             emojiiLabel.widthAnchor.constraint(equalToConstant: 40),
         ])
     }
- 
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -95,4 +95,3 @@ class EmojiesColorCollectionViewCell: UICollectionViewCell {
         colorSelectionView.isHidden = isHideColorViewSelection
     }
 }
-    

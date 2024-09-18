@@ -10,21 +10,21 @@ import UIKit
 
 protocol SheduleViewControllerProtocol: AnyObject {
     var createEventTrackerViewController: CreateEventTrackerViewController? { get set }
-    func getShedule() -> [(String, Bool, String)]
+    func getShedule() -> [Day]
 }
 
 final class SheduleViewController: UIViewController, SheduleViewControllerProtocol {
     
     weak var createEventTrackerViewController: CreateEventTrackerViewController?
     
-    private var days: [(String, Bool, String)] = [
-        ("Понедельник", false, "Пн"),
-        ("Вторник", false, "Вт"),
-        ("Среда", false, "Ср"),
-        ("Четверг", false, "Чт"),
-        ("Пятница", false, "Пт"),
-        ("Суббота", false, "Сб"),
-        ("Воскресенье", false, "Вс")
+    private var days: [Day] = [
+        Day(name: "Понедельник", isActive: false, abbreviation: "Пн"),
+        Day(name: "Вторник", isActive: false, abbreviation: "Вт"),
+        Day(name: "Среда", isActive: false, abbreviation: "Ср"),
+        Day(name: "Четверг", isActive: false, abbreviation: "Чт"),
+        Day(name: "Пятница", isActive: false, abbreviation: "Пт"),
+        Day(name: "Суббота", isActive: false, abbreviation: "Сб"),
+        Day(name: "Воскресенье", isActive: false, abbreviation: "Вс")
     ]
     
     private let titleLabel: UILabel = {
@@ -97,7 +97,7 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
         dismiss(animated: true)
     }
     
-    func getShedule() -> [(String, Bool, String)] {
+    func getShedule() -> [Day] {
         return days
     }
 }
@@ -135,7 +135,7 @@ extension SheduleViewController: SheduleTableViewCellDelegate {
     
     func switchValueChanged(isOn: Bool, cell: SheduleTableViewCell) {
         if let indexPath = tableView.indexPath(for: cell) {
-            days[indexPath.row].1 = isOn
+            days[indexPath.row].isActive = isOn
         }
         
         let selectedDaysString = shortStringFromSelectedDays()
@@ -148,8 +148,8 @@ extension SheduleViewController: SheduleTableViewCellDelegate {
         var daysArray: [String] = []
         
         for day in days {
-            if day.1 {
-                daysArray.append(day.2)
+            if day.isActive {
+                daysArray.append(day.abbreviation)
             }
         }
         
@@ -164,13 +164,13 @@ extension SheduleViewController: SheduleTableViewCellDelegate {
     func updateDays(from string: String) {
         if string == "Каждый день" {
             for i in 0..<days.count {
-                days[i].1 = true
+                days[i].isActive = true
             }
         } else {
             let shortDaysArray = string.components(separatedBy: ", ").map { $0.trimmingCharacters(in: .whitespaces) }
             for i in 0..<days.count {
-                if shortDaysArray.contains(days[i].2) {
-                    days[i].1 = true
+                if shortDaysArray.contains(days[i].abbreviation) {
+                    days[i].isActive = true
                 }
             }
         }

@@ -6,14 +6,17 @@
 //
 
 import UIKit
+import CoreData
 
 
 protocol CreateEventTrackerViewControllerProtocol: AnyObject {
     var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol? { get set }
     var categoryListDelegate: CategoryListViewControllerProtocol? { get set }
     var sheduleDelegate: SheduleViewControllerProtocol? { get set }
+    var selectedCategory: String? { get set }
     func categoryDidChange()
     func didSelectCategory(_ category: String)
+    func loadLastSelectedCategory()
     func didSelectDays(_ daysString: String)
     func updateTableViewFirstCell()
     func updateTableViewSecondCell()
@@ -26,6 +29,18 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     weak var categoryListDelegate: CategoryListViewControllerProtocol?
     var sheduleDelegate: SheduleViewControllerProtocol?
     
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
+    let context: NSManagedObjectContext = {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.persistentContainer.viewContext
+    }()
+    
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
+    
+    var selectedCategory: String?
+    private var schedule: [Day]?
     private let emojies = [ "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪",]
     private var selectedEmojii: String?
     private let colors: [UIColor] = [
@@ -49,10 +64,13 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         .ypColorSelection18,
     ]
     private var selectedColor: UIColor?
+    
     private let suplementaryViewHeaderList = ["Emojii", "Цвет"]
+    
     private var menuItems: [String] = ["Категория"]
+    private var menuSecondaryItems: [[String]] = [[""], [""]]
+    
     private var isCreateRegularEventTracker: Bool = false
-    var menuSecondaryItems: [[String]] = [[""], [""]]
     private let params: GeometricParams = {
         let params = GeometricParams(cellCount: 6, leftInset: 16, rightInset: 16, cellSpacing: 6)
         return params
@@ -149,13 +167,13 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard let menuSecondaryItemFirst = chooseTypeTrackerViewController?.trackersViewController?.categories.first else { return }
-        menuSecondaryItems[0] = [menuSecondaryItemFirst.title]
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        loadLastSelectedCategory()
     }
     
     private func setupUI() {
@@ -205,7 +223,6 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
             collectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 20),
             collectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             collectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            collectionView.heightAnchor.constraint(equalToConstant: 460),
             
             cancelButton.topAnchor.constraint(equalTo: collectionView.bottomAnchor),
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
@@ -241,6 +258,23 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
+    }
+    
+    func loadLastSelectedCategory() {
+        //        if let lastSelectedCategory = UserDefaults.standard.string(forKey: "lastSelectedCategory") {
+        //            selectedCategory = lastSelectedCategory
+        //            menuSecondaryItems[0][0] = lastSelectedCategory
+        //        }
+        guard var visibleCategories = chooseTypeTrackerViewController?.trackersViewController?.visibleCategories else { return }
+        let tracker = TrackerCategory(title: "Базовая категория", trackerList: [])
+        if !visibleCategories.contains(where: { $0.title == "Базовая категория" }) {
+            visibleCategories.append(tracker)
+        }
+        let firstCategoryTitle = visibleCategories[0].title
+        
+        selectedCategory = firstCategoryTitle
+        menuSecondaryItems[0][0] = firstCategoryTitle
+        updateTableViewFirstCell()
     }
     
     func didSelectCreateRegularEvent() {
@@ -298,8 +332,8 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     }
     
     func didSelectCategory(_ category: String) {
-        menuSecondaryItems[0] = [category]
-        chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory = category
+        menuSecondaryItems[0][0] = category
+        selectedCategory = category
     }
     
     func didSelectDays(_ daysString: String) {
@@ -361,18 +395,16 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     }
     
     @objc private func createButtonDidTap() {
-        
+        let id = UUID()
         guard let name = textField.text else { return }
-        guard let color = selectedColor else { return }
-        guard let emojii = selectedEmojii else { return }
-        var shedule: [(String, Bool, String)]? = nil
-        
+        guard let category = selectedCategory else { return }
         if isCreateRegularEventTracker {
-            shedule = sheduleDelegate?.getShedule()
+            schedule = sheduleDelegate?.getShedule()
         }
-        let newTracker = Tracker(name: name, color: color, emojii: emojii, schedule: shedule)
-        guard let category = chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory else { return }
+        guard let emojii = selectedEmojii else { return }
+        guard let color = selectedColor else { return }
         
+        let newTracker = Tracker(id: id, name: name, color: color, emojii: emojii, schedule: schedule)
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
         
         self.chooseTypeTrackerViewController?.trackersViewController?.add(trackerCategory: newTrackerCategory)
@@ -399,7 +431,7 @@ extension CreateEventTrackerViewController: UITableViewDelegate, UITableViewData
         
         let text = menuItems[indexPath.row]
         
-        if let lastSelectedCategory = chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory {
+        if let lastSelectedCategory = selectedCategory {
             menuSecondaryItems[0][0] = lastSelectedCategory
         }
         
@@ -433,16 +465,14 @@ extension CreateEventTrackerViewController: UITableViewDelegate, UITableViewData
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.row == 0 {
-            let viewController = CategoryListViewController()
-            viewController.createEventTrackerViewController = self
+            //Экран с категориями был реализован еще в предыдущем спринте, но так как в этом спринте была задача поженить core data и наш проект, а в требованиях реализовывать экран категорий не нужно - закоментирую переход до следующего спринта, где его надо будет реализовать с MVVM. Было бы больше времени - разобрался бы, но скоро дедлайн и надо успеть все в срок
             
-            if let category = self.chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory {
-                viewController.selectedCategory = category
-            }
-            categoryListDelegate = viewController
-            viewController.modalPresentationStyle = .formSheet
-            viewController.modalTransitionStyle = .coverVertical
-            present(viewController, animated: true, completion: nil)
+            //            let viewController = CategoryListViewController()
+            //            viewController.createEventTrackerViewController = self
+            //            categoryListDelegate = viewController
+            //            viewController.modalPresentationStyle = .formSheet
+            //            viewController.modalTransitionStyle = .coverVertical
+            //            present(viewController, animated: true, completion: nil)
         } else {
             let viewController = SheduleViewController()
             viewController.createEventTrackerViewController = self

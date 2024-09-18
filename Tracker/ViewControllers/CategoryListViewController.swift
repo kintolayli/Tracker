@@ -7,17 +7,17 @@
 
 import UIKit
 
-
 protocol CategoryListViewControllerProtocol: AnyObject {
     var createEventTrackerViewController: CreateEventTrackerViewControllerProtocol? { get set }
     var addCategoryDelegate: AddCategoryViewControllerProtocol? { get set }
-    func updateTableViewAnimated()
 }
 
 final class CategoryListViewController: UIViewController, CategoryListViewControllerProtocol {
     weak var createEventTrackerViewController: CreateEventTrackerViewControllerProtocol?
     weak var addCategoryDelegate: AddCategoryViewControllerProtocol?
-    var selectedCategory: String?
+    var categories: [TrackerCategory] = []
+    
+    private let trackerCategoryStore = TrackerCategoryStore()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -68,13 +68,17 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        updateTableView()
         hideImageViewIfCategoryIsNotEmpty()
+        createEventTrackerViewController?.loadLastSelectedCategory()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTableView), name: .didAddCategory, object: nil)
     }
     
     private func setupUI() {
@@ -125,8 +129,6 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     }
     
     private func hideImageViewIfCategoryIsNotEmpty() {
-        guard let categories = createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories else { return }
-        
         if categories.isEmpty {
             imageView.isHidden = false
             imageViewLabel.isHidden = false
@@ -140,16 +142,16 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
 extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let categoriesCount = createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.count else { return 0 }
-        return categoriesCount
+        return categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryListCell", for: indexPath)
         
-        guard let category = createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories[indexPath.row].title else { return UITableViewCell()}
-        cell.textLabel?.text = category
-        cell.accessoryType = (category == selectedCategory) ? .checkmark : .none
+        let categoryTitle = categories[indexPath.row].title
+        
+        cell.textLabel?.text = categoryTitle
+        cell.accessoryType = (categoryTitle == createEventTrackerViewController?.selectedCategory) ? .checkmark : .none
         
         cell.backgroundColor = .ypBackground
         
@@ -162,8 +164,8 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        guard let selectedCategory = createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories[indexPath.row].title else { return }
-        createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.lastSelectedCategory = selectedCategory
+        let selectedCategory = categories[indexPath.row].title
+        UserDefaults.standard.set(selectedCategory, forKey: "lastSelectedCategory")
         
         tableView.deselectRow(at: indexPath, animated: true)
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
@@ -173,30 +175,20 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
         }
         cell.accessoryType = .checkmark
         
-        guard let category = cell.textLabel?.text else { return }
-        createEventTrackerViewController?.didSelectCategory(category)
+        createEventTrackerViewController?.didSelectCategory(selectedCategory)
         createEventTrackerViewController?.updateTableViewFirstCell()
         createEventTrackerViewController?.categoryDidChange()
         self.dismiss(animated: true)
     }
     
-    func updateTableViewAnimated() {
-        guard let newCount = createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.categories.count else { return }
-        
-        tableView.performBatchUpdates {
-            let indexPaths = ((newCount - 1)..<newCount).map { i in
-                IndexPath(row: i, section: 0)
-            }
-            tableView.insertRows(at: indexPaths, with: .automatic)
-        } completion: { [ weak self ] _ in
-            self?.updateVisibleCells()
+    @objc private func updateTableView() {
+        do {
+            categories = try trackerCategoryStore.fetchCategories()
+            tableView.reloadData()
+            hideImageViewIfCategoryIsNotEmpty()
+        } catch {
+            print("Ошибка загрузки категорий: \(error)")
         }
-        hideImageViewIfCategoryIsNotEmpty()
-    }
-    
-    func updateVisibleCells() {
-        let visibleIndexPaths = tableView.indexPathsForVisibleRows ?? []
-        tableView.reloadRows(at: visibleIndexPaths, with: .none)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
