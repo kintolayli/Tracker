@@ -33,8 +33,9 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     var filteredCategories: [TrackerCategory] = []
     var visibleCategories: [TrackerCategory] = []
     
-    private var completedTrackers: [UUID: [String: TrackerRecord]] = [:]
-    
+//    private var completedTrackers: [UUID: [String: TrackerRecord]] = [:]
+    private var trackerRecords = Set<TrackerRecord>()
+
     private var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
@@ -83,10 +84,11 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         setupUI()
         trackerCategoryStore.delegate = self
-        trackerRecordStore.delegate = self
+//        trackerRecordStore.delegate = self
         
         visibleCategories = trackerCategoryStore.categories
-        completedTrackers = trackerRecordStore.records
+//        completedTrackers = trackerRecordStore.records
+        trackerRecords = trackerRecordStore.records
     }
     
     private func setupUI() {
@@ -296,10 +298,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         //        let newCell = filteredCategories[indexPath.section].trackerList[indexPath.row]
         let newCell = visibleCategories[indexPath.section].trackerList[indexPath.row]
-        
-        let result = getAddButtonCountLabelAndState(indexPath: indexPath)
-        let count = result.0
-        let addButtonState = result.1
+        let (count, addButtonState) = getRecordsCountAndButtonLabelState(indexPath: indexPath)
         
         cell.updateCell(backgroundColor: newCell.color,
                         emojiiLabelText: newCell.emojii,
@@ -334,7 +333,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         visibleCategories = filterCategories(for: selectedDate)
         collectionView.reloadData()
         //        sectionCount = filteredCategories.count
-        sectionCount = visibleCategories.count
+//        sectionCount = visibleCategories.count
         hideImageViewIfTrackerIsNotEmpty()
     }
 }
@@ -376,35 +375,49 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
     func isIrregularTrackerComplete(id: UUID) -> String? {
         var completedDate: String?
         
-        if completedTrackers.keys.contains(where: { $0 == id }) {
-            guard let trackerRecords = completedTrackers[id] else { return nil }
-            guard let completed = trackerRecords.first?.value else { return nil }
-            
-            dateFormatter.dateFormat = "dd.MM.yyyy"
-            completedDate = dateFormatter.string(from: completed.date)
-        }
+//        if completedTrackers.keys.contains(where: { $0 == id }) {
+//            guard let trackerRecords = completedTrackers[id] else { return nil }
+//            guard let completed = trackerRecords.first?.value else { return nil }
+//            
+//            dateFormatter.dateFormat = "dd.MM.yyyy"
+//            completedDate = dateFormatter.string(from: completed.date)
+//        }
         return completedDate
     }
     
-    func getAddButtonCountLabelAndState(indexPath: IndexPath) -> (Int, Bool) {
+    func getRecordsCountAndButtonLabelState(indexPath: IndexPath) -> (Int, Bool) {
         //        let newCell = filteredCategories[indexPath.section].trackerList[indexPath.row]
         let newCell = visibleCategories[indexPath.section].trackerList[indexPath.row]
-        
-        dateFormatter.dateFormat = "dd.MM.yyyy"
-        let dateAsDictKey = dateFormatter.string(from: currentDate)
         
         var cellCount = 0
         var cellState = false
         
-        if completedTrackers.keys.contains(where: { $0 == newCell.id }) {
-            guard let trackerRecords = completedTrackers[newCell.id] else { return (0, false)}
-            cellCount = trackerRecords.keys.count
+        if let recordsFromCurrentCell = try? trackerRecordStore.getTrackerRecordsWithCurrentTrackerId(with: newCell.id) {
+            cellCount = recordsFromCurrentCell.count
             
-            if trackerRecords.keys.contains(dateAsDictKey) {
-                cellState = true
+            for record in recordsFromCurrentCell {
+                if areSameDay(date1: record.date, date2: currentDate) {
+                    cellState = true
+                }
             }
+            
         }
+            
         return (cellCount, cellState)
+    }
+    
+    func areSameDay(date1: Date, date2: Date) -> Bool {
+        let calendar = Calendar.current
+        
+        let day1 = calendar.component(.day, from: date1)
+        let month1 = calendar.component(.month, from: date1)
+        let year1 = calendar.component(.year, from: date1)
+        
+        let day2 = calendar.component(.day, from: date2)
+        let month2 = calendar.component(.month, from: date2)
+        let year2 = calendar.component(.year, from: date2)
+        
+        return day1 == day2 && month1 == month2 && year1 == year2
     }
     
     func trackersViewControllerCellTap(_ cell: TrackersCollectionViewCell) {
@@ -413,45 +426,25 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
             
             //            let newCell = filteredCategories[indexPath.section].trackerList[indexPath.row]
             let newCell = visibleCategories[indexPath.section].trackerList[indexPath.row]
-            
-            let dateAsDictKey = dateFormatter.string(from: currentDate)
-            dateFormatter.dateFormat = "dd.MM.yyyy"
-            let newTrackerRecord = TrackerRecord(id: newCell.id, date: currentDate)
             var cellState = false
             
-            if completedTrackers.keys.contains(where: { $0 == newCell.id }) {
-                guard let trackerRecords = completedTrackers[newCell.id] else { return }
-                if trackerRecords.keys.contains(dateAsDictKey) {
-                    
-//                    completedTrackers[newCell.id]?.removeValue(forKey: dateAsDictKey)
-                    print("before_2:", completedTrackers)
-                    try? trackerRecordStore.removeTrackerRecord(newTrackerRecord)
-                    print("after_2:", completedTrackers)
-                    
-//                    guard let count = completedTrackers[newCell.id]?.count else { return }
-//                    cell.updateButtonState(count: count, state: cellState, isIrregularTracker: newCell.schedule == nil)
-                } else {
-                    
-//                    completedTrackers[newCell.id]?.updateValue(newTrackerRecord, forKey: dateAsDictKey)
-                    print("before_3:", completedTrackers)
-                    try? trackerRecordStore.addTrackerRecord(newTrackerRecord)
-                    print("after_3:", completedTrackers)
-                    
-//                    guard let count = completedTrackers[newCell.id]?.count else { return }
-//                    cellState = true
-//                    cell.updateButtonState(count: count, state: cellState, isIrregularTracker: newCell.schedule == nil)
+            guard let recordsFromcurrentCell = try? trackerRecordStore.getTrackerRecordsWithCurrentTrackerId(with: newCell.id) else { return }
+            
+            if recordsFromcurrentCell.count > 0 {
+                for record in recordsFromcurrentCell {
+                    if areSameDay(date1: record.date, date2: currentDate) {
+                        try? trackerRecordStore.removeTrackerRecord(record)
+                        
+                        let count = recordsFromcurrentCell.count - 1
+                        cell.updateButtonState(count: count, state: cellState, isIrregularTracker: newCell.schedule == nil)
+                    }
                 }
             } else {
-                let newRecord = [dateAsDictKey: newTrackerRecord]
-                
-//                completedTrackers.updateValue(newRecord, forKey: newCell.id)
-                print("before_1:", completedTrackers)
-                try? trackerRecordStore.addTrackerRecord(newTrackerRecord)
-                print("after_1:", completedTrackers)
-                
-//                print(completedTrackers)
-//                cellState = true
-//                cell.updateButtonState(count: newRecord.keys.count, state: cellState, isIrregularTracker: newCell.schedule == nil)
+                let newTrackerRecord = TrackerRecord(id: UUID(), date: currentDate)
+                try? trackerRecordStore.addTrackerRecord(newTrackerRecord, trackerId: newCell.id)
+                let count = recordsFromcurrentCell.count + 1
+                cellState = true
+                cell.updateButtonState(count: count, state: cellState, isIrregularTracker: newCell.schedule == nil)
             }
         } else {
             let alertModel = AlertModel(title: "Уведомление от системы", message: "Нельзя отметить карточку для будущей даты", buttonTitle: "ОК", buttonAction: nil)
@@ -462,38 +455,6 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
 
 extension TrackersViewController: TrackerCategoryStoreDelegate {
     func categoryStore(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
-        visibleCategories = trackerCategoryStore.categories
-        collectionView.performBatchUpdates {
-            
-            if collectionView.numberOfSections == 0 {
-                collectionView.insertSections(IndexSet(integer: 0))
-            }
-            
-            //            let newTrackerCategoryIndex = visibleCategories.count - 1
-            //
-            //            if sectionCount != visibleCategories.count {
-            //                sectionCount = visibleCategories.count
-            //                collectionView.insertSections(IndexSet(integer: newTrackerCategoryIndex))
-            //            }
-            
-            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
-            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
-            let updatedIndexPaths = update.updatedIndexes.map { IndexPath(item: $0, section: 0) }
-            collectionView.insertItems(at: insertedIndexPaths)
-            collectionView.insertItems(at: deletedIndexPaths)
-            collectionView.insertItems(at: updatedIndexPaths)
-            for move in update.movedIndexes {
-                collectionView.moveItem(
-                    at: IndexPath(item: move.oldIndex, section: 0),
-                    to: IndexPath(item: move.newIndex, section: 0)
-                )
-            }
-        }
-    }
-}
-
-extension TrackersViewController: TrackerRecordStoreDelegate {
-    func recordStore(_ store: TrackerRecordStore, didUpdate update: TrackerRecordStoreUpdate) {
         visibleCategories = trackerCategoryStore.categories
         collectionView.performBatchUpdates {
             

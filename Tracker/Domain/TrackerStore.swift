@@ -16,6 +16,7 @@ enum TrackerStoreError: Error {
     case decodingErrorInvalidShedule
     case deleteTrackerError
     case updateTrackerError
+    case getTrackerCoreDataError
 }
 
 final class TrackerStore {
@@ -68,6 +69,17 @@ final class TrackerStore {
             saveContext()
         } else {
             throw TrackerStoreError.updateTrackerError
+        }
+    }
+    
+    func getTrackerById(with trackerId: UUID) throws -> TrackerCoreData {
+        let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", trackerId as CVarArg)
+        
+        if let trackerCoreData = try context.fetch(fetchRequest).first {
+            return trackerCoreData
+        } else {
+            throw TrackerStoreError.getTrackerCoreDataError
         }
     }
     

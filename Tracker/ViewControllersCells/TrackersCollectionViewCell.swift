@@ -9,7 +9,7 @@ import UIKit
 
 protocol TrackersCollectionViewCellDelegate: TrackersViewController {
     func trackersViewControllerCellTap(_ cell: TrackersCollectionViewCell)
-    func getAddButtonCountLabelAndState(indexPath: IndexPath) -> (Int, Bool)
+    func getRecordsCountAndButtonLabelState(indexPath: IndexPath) -> (Int, Bool)
 }
 
 final class TrackersCollectionViewCell: UICollectionViewCell {

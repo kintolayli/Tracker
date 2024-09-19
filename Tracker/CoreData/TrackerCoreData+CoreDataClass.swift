@@ -2,7 +2,7 @@
 //  TrackerCoreData+CoreDataClass.swift
 //  Tracker
 //
-//  Created by Ilya Lotnik on 17.09.2024.
+//  Created by Ilya Lotnik on 18.09.2024.
 //
 //
 
@@ -11,5 +11,5 @@ import CoreData
 
 @objc(TrackerCoreData)
 public class TrackerCoreData: NSManagedObject {
-    
+
 }

@@ -13,6 +13,7 @@ enum TrackerRecordStoreError: Error {
     case decodingErrorInvalidDate
     case updateTrackerRecordError
     case removeTrackerRecordError
+    case getTrackerRecordsWithCurrentTrackerIdError
 }
 
 struct TrackerRecordStoreUpdate {
@@ -26,23 +27,25 @@ struct TrackerRecordStoreUpdate {
     let movedIndexes: Set<Move>
 }
 
-protocol TrackerRecordStoreDelegate: AnyObject {
-    func recordStore(
-        _ store: TrackerRecordStore,
-        didUpdate update: TrackerRecordStoreUpdate
-    )
-}
+//protocol TrackerRecordStoreDelegate: AnyObject {
+//    func recordStore(
+//        _ store: TrackerRecordStore,
+//        didUpdate update: TrackerRecordStoreUpdate
+//    )
+//}
 
 final class TrackerRecordStore: NSObject {
     
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>!
     
-    weak var delegate: TrackerRecordStoreDelegate?
+//    weak var delegate: TrackerRecordStoreDelegate?
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
     private var movedIndexes: Set<TrackerRecordStoreUpdate.Move>?
+    
+    private var trackerStore: TrackerStore
     
     private var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -58,6 +61,7 @@ final class TrackerRecordStore: NSObject {
     
     init(context: NSManagedObjectContext) throws {
         self.context = context
+        trackerStore = TrackerStore(context: context)
         super.init()
         
         let fetchRequest = TrackerRecordCoreData.fetchRequest()
@@ -77,28 +81,31 @@ final class TrackerRecordStore: NSObject {
         try controller.performFetch()
     }
     
-    var records: [UUID: [String: TrackerRecord]] {
-//        guard let objects = self.fetchedResultsController.fetchedObjects,
-//              let recordsCoreData = try? objects.map({ try convertToTrackerRecord(from: $0) }) else { return [:] }
+//    var records: [UUID: [String: TrackerRecord]] {
+    var records: Set<TrackerRecord> {
+        guard let objects = self.fetchedResultsController.fetchedObjects,
+              let recordsCoreData = try? objects.map({ try convertToTrackerRecord(from: $0) }) else { return [] }
         
-        guard let objects = self.fetchedResultsController.fetchedObjects else { return [:] }
+        return Set(recordsCoreData)
         
-        var result: [UUID: [String: TrackerRecord]] = [:]
-        
-        for object in objects {
-            if let convertedRecord = try? convertToTrackerRecord(from: object) {
-                for (id, dateDict) in convertedRecord {
-                    if result[id] == nil {
-//                        result[id] = [:]
-                        result = convertedRecord
-                    }
-                    result[id]?.merge(dateDict) { (_, new) in new }
-                }
-            }
-        }
-        
-        
-        return result
+//        guard let objects = self.fetchedResultsController.fetchedObjects else { return [:] }
+//        
+//        var result: [UUID: [String: TrackerRecord]] = [:]
+//        
+//        for object in objects {
+//            if let convertedRecord = try? convertToTrackerRecord(from: object) {
+//                for (id, dateDict) in convertedRecord {
+//                    if result[id] == nil {
+////                        result[id] = [:]
+//                        result = convertedRecord
+//                    }
+//                    result[id]?.merge(dateDict) { (_, new) in new }
+//                }
+//            }
+//        }
+//        
+//        
+//        return result
     }
     
 //    private func convertToTrackerRecord(from trackerRecordCoreData: TrackerRecordCoreData) throws -> [UUID: [String: TrackerRecord]] {
@@ -113,14 +120,15 @@ final class TrackerRecordStore: NSObject {
 //        return newRecordCard
 //    }
     
-    private func convertToTrackerRecord(from trackerRecordCoreData: TrackerRecordCoreData) throws -> [UUID: [String: TrackerRecord]] {
+//    private func convertToTrackerRecord(from trackerRecordCoreData: TrackerRecordCoreData) throws -> [UUID: [String: TrackerRecord]] {
+    private func convertToTrackerRecord(from trackerRecordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
         guard let id = trackerRecordCoreData.id else { throw TrackerRecordStoreError.decodingErrorInvalidId }
         guard let date = trackerRecordCoreData.date else { throw TrackerRecordStoreError.decodingErrorInvalidDate }
         
-        let newTrackerRecord = TrackerRecord(id: id, date: date)
-        let dateAsDictKey = dateFormatter.string(from: date)
+        return TrackerRecord(id: id, date: date)
+//        let dateAsDictKey = dateFormatter.string(from: date)
         
-        return [id: [dateAsDictKey: newTrackerRecord]]
+//        return [id: [dateAsDictKey: newTrackerRecord]]
     }
     
 //    func fetchRecords() throws -> [TrackerRecord] {
@@ -130,10 +138,25 @@ final class TrackerRecordStore: NSObject {
 //        return try recordsCoreData.map { try convertToTrackerRecord(from: $0) }
 //    }
     
-    func addTrackerRecord(_ trackerRecord: TrackerRecord) throws {
+    func getTrackerRecordsWithCurrentTrackerId(with trackerId: UUID) throws -> [TrackerRecord] {
+        let fetchRequest = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "tracker.id == %@", trackerId as CVarArg)
+        
+        if let trackerRecords = try? context.fetch(fetchRequest) {
+            let recordsFromCurrentTracker = try trackerRecords.map({ try convertToTrackerRecord(from: $0) })
+            return recordsFromCurrentTracker
+        } else {
+            throw TrackerRecordStoreError.getTrackerRecordsWithCurrentTrackerIdError
+        }
+    }
+    
+    func addTrackerRecord(_ trackerRecord: TrackerRecord, trackerId: UUID) throws {
         let trackerRecordCoreData = TrackerRecordCoreData(context: context)
         trackerRecordCoreData.id = trackerRecord.id
         trackerRecordCoreData.date = trackerRecord.date
+        
+        let currentTracker = try? trackerStore.getTrackerById(with: trackerId)
+        trackerRecordCoreData.tracker = currentTracker
         
         saveContext()
     }
