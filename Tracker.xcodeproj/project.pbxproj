@@ -125,10 +125,10 @@
 		8ACDBC232C5CD87B00687ACF /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
-				8A19F94F2C98F052008BC2BD /* CoreData */,
 				8ACDBC242C5CD87B00687ACF /* AppDelegate.swift */,
 				8ACDBC262C5CD87B00687ACF /* SceneDelegate.swift */,
 				8ADF935F2C5F8E0D001A4690 /* TabBarController.swift */,
+				8A19F94F2C98F052008BC2BD /* CoreData */,
 				8AED94282C7539B800EEC2A0 /* Domain */,
 				8AD814B12C695551008DAA5D /* AlertPresenter */,
 				8AD814BA2C6ABC9C008DAA5D /* ViewControllersCells */,

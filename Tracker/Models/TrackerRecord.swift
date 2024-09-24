@@ -15,7 +15,7 @@ struct TrackerRecord: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
-
+    
     static func == (lhs: TrackerRecord, rhs: TrackerRecord) -> Bool {
         return lhs.id == rhs.id
     }
