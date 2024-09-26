@@ -381,9 +381,11 @@ extension TrackersViewController: TrackerCategoryStoreDelegate {
     func categoryStore(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
         visibleCategories = trackerCategoryStore.categories
         let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
+        let oldFilteredTrackerListCount = filteredCategories.first?.trackerList.count ?? 0
         filteredCategories = filterCategories(for: dayOfWeekString)
+        guard let filteredTrackerListCount = filteredCategories.first?.trackerList.count else { return }
         
-        if filteredCategories.count > 0 {
+        if filteredTrackerListCount > oldFilteredTrackerListCount {
             collectionView.performBatchUpdates {
                 
                 addNewSectionIfNeeded()
