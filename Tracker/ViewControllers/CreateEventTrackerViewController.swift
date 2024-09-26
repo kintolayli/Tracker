@@ -6,12 +6,10 @@
 //
 
 import UIKit
-import CoreData
 
 
 protocol CreateEventTrackerViewControllerProtocol: AnyObject {
     var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol? { get set }
-    var categoryListDelegate: CategoryListViewControllerProtocol? { get set }
     var sheduleDelegate: SheduleViewControllerProtocol? { get set }
     var selectedCategory: String? { get set }
     func categoryDidChange()
@@ -24,20 +22,8 @@ protocol CreateEventTrackerViewControllerProtocol: AnyObject {
 
 
 final class CreateEventTrackerViewController: UIViewController, CreateEventTrackerViewControllerProtocol {
-    
     weak var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol?
-    weak var categoryListDelegate: CategoryListViewControllerProtocol?
     var sheduleDelegate: SheduleViewControllerProtocol?
-    
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    
-    let context: NSManagedObjectContext = {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        return appDelegate.persistentContainer.viewContext
-    }()
-    
-    private let trackerCategoryStore = TrackerCategoryStore()
-    private let trackerRecordStore = TrackerRecordStore()
     
     var selectedCategory: String?
     private var schedule: [Day]?
@@ -261,10 +247,6 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     }
     
     func loadLastSelectedCategory() {
-        //        if let lastSelectedCategory = UserDefaults.standard.string(forKey: "lastSelectedCategory") {
-        //            selectedCategory = lastSelectedCategory
-        //            menuSecondaryItems[0][0] = lastSelectedCategory
-        //        }
         guard var visibleCategories = chooseTypeTrackerViewController?.trackersViewController?.visibleCategories else { return }
         let tracker = TrackerCategory(title: "Базовая категория", trackerList: [])
         if !visibleCategories.contains(where: { $0.title == "Базовая категория" }) {
@@ -465,14 +447,7 @@ extension CreateEventTrackerViewController: UITableViewDelegate, UITableViewData
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.row == 0 {
-            //Экран с категориями был реализован еще в предыдущем спринте, но так как в этом спринте была задача поженить core data и наш проект, а в требованиях реализовывать экран категорий не нужно - закоментирую переход до следующего спринта, где его надо будет реализовать с MVVM. Было бы больше времени - разобрался бы, но скоро дедлайн и надо успеть все в срок
-            
-            //            let viewController = CategoryListViewController()
-            //            viewController.createEventTrackerViewController = self
-            //            categoryListDelegate = viewController
-            //            viewController.modalPresentationStyle = .formSheet
-            //            viewController.modalTransitionStyle = .coverVertical
-            //            present(viewController, animated: true, completion: nil)
+
         } else {
             let viewController = SheduleViewController()
             viewController.createEventTrackerViewController = self

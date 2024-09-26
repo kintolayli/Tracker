@@ -59,7 +59,7 @@ final class TrackerCategoryStore: NSObject {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         
         fetchRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \TrackerCategoryCoreData.title, ascending: false)
+            NSSortDescriptor(keyPath: \TrackerCategoryCoreData.title, ascending: true)
         ]
         
         let controller = NSFetchedResultsController(
@@ -80,7 +80,6 @@ final class TrackerCategoryStore: NSObject {
     }
     
     func fetchCategories() throws -> [TrackerCategory] {
-        // функция используется в CategoryListViewController
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.returnsObjectsAsFaults = false
         let categoriesCoreData = try context.fetch(fetchRequest)

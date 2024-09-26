@@ -72,9 +72,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
-        updateCollectionView(selectedDate: dayOfWeekString)
-        hideImageViewIfTrackerIsNotEmpty()
+        updateCollectionView()
     }
     
     override func viewDidLoad() {
@@ -166,8 +164,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         currentDate = selectedDate
-        let formattedDate = getDayOfWeekFromDate(date: currentDate)
-        updateCollectionView(selectedDate: formattedDate)
+        updateCollectionView()
     }
     
     func add(trackerCategory: TrackerCategory) {
@@ -258,7 +255,6 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         if visibleCategories.count > 0 {
             let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SupplementaryView
-            //        view.titleLabel.text = filteredCategories[indexPath.section].title
             view.titleLabel.text = visibleCategories[indexPath.section].title
             return view
         } else {
@@ -267,8 +263,9 @@ extension TrackersViewController: UICollectionViewDataSource {
         
     }
     
-    func updateCollectionView(selectedDate: String) {
-        filteredCategories = filterCategories(for: selectedDate)
+    func updateCollectionView() {
+        let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
+        filteredCategories = filterCategories(for: dayOfWeekString)
         collectionView.reloadData()
         hideImageViewIfTrackerIsNotEmpty()
     }
@@ -382,22 +379,27 @@ extension TrackersViewController: TrackerCategoryStoreDelegate {
     }
     
     func categoryStore(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
-        filteredCategories = trackerCategoryStore.categories
-        collectionView.performBatchUpdates {
-            
-            addNewSectionIfNeeded()
-            
-            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
-            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
-            let updatedIndexPaths = update.updatedIndexes.map { IndexPath(item: $0, section: 0) }
-            collectionView.insertItems(at: insertedIndexPaths)
-            collectionView.insertItems(at: deletedIndexPaths)
-            collectionView.insertItems(at: updatedIndexPaths)
-            for move in update.movedIndexes {
-                collectionView.moveItem(
-                    at: IndexPath(item: move.oldIndex, section: 0),
-                    to: IndexPath(item: move.newIndex, section: 0)
-                )
+        visibleCategories = trackerCategoryStore.categories
+        let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
+        filteredCategories = filterCategories(for: dayOfWeekString)
+        
+        if filteredCategories.count > 0 {
+            collectionView.performBatchUpdates {
+                
+                addNewSectionIfNeeded()
+                
+                let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
+                let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
+                let updatedIndexPaths = update.updatedIndexes.map { IndexPath(item: $0, section: 0) }
+                collectionView.insertItems(at: insertedIndexPaths)
+                collectionView.insertItems(at: deletedIndexPaths)
+                collectionView.insertItems(at: updatedIndexPaths)
+                for move in update.movedIndexes {
+                    collectionView.moveItem(
+                        at: IndexPath(item: move.oldIndex, section: 0),
+                        to: IndexPath(item: move.newIndex, section: 0)
+                    )
+                }
             }
         }
     }
