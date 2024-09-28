@@ -561,8 +561,7 @@
 				8AC3DDB52CA88FF80029C053 /* Model.xcdatamodel */,
 			);
 			currentVersion = 8AC3DDB52CA88FF80029C053 /* Model.xcdatamodel */;
-			name = Model.xcdatamodeld;
-			path = "/Users/kintolayli/dev/Practikum-iOS-Developer/Tracker/Tracker/Model.xcdatamodeld";
+			path = Model.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
