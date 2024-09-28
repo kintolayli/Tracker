@@ -7,7 +7,7 @@
 
 import UIKit
 
-class EmojiesColorCollectionViewCell: UICollectionViewCell {
+final class EmojiesColorCollectionViewCell: UICollectionViewCell {
     
     private let colorView: UIView = {
         let view = UIView()
@@ -81,7 +81,12 @@ class EmojiesColorCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateCell(backgroundColor: UIColor? = nil, emojiiLabelText: String? = nil, isHideColorViewSelection: Bool = true, isHideEmojiiLabelSelectionView: Bool = true) {
+    func updateCell(
+        backgroundColor: UIColor? = nil,
+        emojiiLabelText: String? = nil,
+        isHideColorViewSelection: Bool = true,
+        isHideEmojiiLabelSelectionView: Bool = true
+    ) {
         
         if let backgroundColor {
             colorView.backgroundColor = backgroundColor

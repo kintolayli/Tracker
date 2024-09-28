@@ -10,12 +10,13 @@ import Foundation
 import CoreData
 
 
-extension TrackerCoreData {
-
+@objc(TrackerCoreData)
+public class TrackerCoreData: NSManagedObject, Identifiable {
+    
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackerCoreData> {
         return NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
     }
-
+    
     @NSManaged public var color: String?
     @NSManaged public var emojii: String?
     @NSManaged public var id: UUID?
@@ -33,26 +34,21 @@ extension TrackerCoreData {
             scheduleData = try? JSONEncoder().encode(newValue)
         }
     }
-
+    
 }
 
 // MARK: Generated accessors for trackerRecords
 extension TrackerCoreData {
-
+    
     @objc(addTrackerRecordsObject:)
     @NSManaged public func addToTrackerRecords(_ value: TrackerRecordCoreData)
-
+    
     @objc(removeTrackerRecordsObject:)
     @NSManaged public func removeFromTrackerRecords(_ value: TrackerRecordCoreData)
-
+    
     @objc(addTrackerRecords:)
     @NSManaged public func addToTrackerRecords(_ values: NSSet)
-
+    
     @objc(removeTrackerRecords:)
     @NSManaged public func removeFromTrackerRecords(_ values: NSSet)
-
-}
-
-extension TrackerCoreData : Identifiable {
-
 }

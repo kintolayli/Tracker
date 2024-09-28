@@ -10,7 +10,7 @@ import UIKit
 
 final class EmojiiColorSupplementaryView: UICollectionReusableView {
     
-    let titleLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .left

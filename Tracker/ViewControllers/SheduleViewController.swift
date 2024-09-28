@@ -102,7 +102,6 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
     }
 }
 
-
 extension SheduleViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

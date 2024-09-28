@@ -8,18 +8,11 @@
 import UIKit
 import CoreData
 
-enum TrackerRecordStoreError: Error {
-    case decodingErrorInvalidId
-    case decodingErrorInvalidDate
-    case updateTrackerRecordError
-    case removeTrackerRecordError
-    case getTrackerRecordsWithCurrentTrackerIdError
-}
 
 final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     
     private let context: NSManagedObjectContext
-    private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>!
+    private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     private var trackerStore: TrackerStore
     
     private var dateFormatter: DateFormatter = {
@@ -30,8 +23,12 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     }()
     
     convenience override init() {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        try! self.init(context: context)
+        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else { fatalError(TrackerRecordStoreError.loadContextError.localizedDescription)}
+        do {
+            try self.init(context: context)
+        } catch {
+            fatalError(TrackerRecordStoreError.initError.localizedDescription)
+        }
     }
     
     init(context: NSManagedObjectContext) throws {
@@ -57,7 +54,7 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     }
     
     var records: Set<TrackerRecord> {
-        guard let objects = self.fetchedResultsController.fetchedObjects,
+        guard let objects = self.fetchedResultsController?.fetchedObjects,
               let recordsCoreData = try? objects.map({ try convertToTrackerRecord(from: $0) }) else { return [] }
         
         return Set(recordsCoreData)

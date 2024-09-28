@@ -322,7 +322,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         menuSecondaryItems[1][0] = daysString
     }
     
-    func updateCreateButtonState() {
+    private func updateCreateButtonState() {
         let isCategoryEmpty = menuSecondaryItems[0][0] == ""
         let isSheduleEmpty = menuSecondaryItems[1][0] == ""
         guard let isTextFieldEmpty = textField.text?.isEmpty else { return }
@@ -337,11 +337,13 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         createButton.backgroundColor = createButton.isEnabled ? .ypBlack : .ypGray
     }
     
-    @objc func dismissKeyboard() {
+    @objc
+    private func dismissKeyboard() {
         view.endEditing(true)
     }
     
-    @objc func textFieldDidChange(_ textField: UITextField) {
+    @objc
+    private func textFieldDidChange(_ textField: UITextField) {
         if let text = textField.text, !text.isEmpty {
             textField.rightViewMode = .always
         } else {
@@ -351,32 +353,39 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         updateCreateButtonState()
     }
     
-    @objc private func clearText() {
+    @objc
+    private func clearText() {
         textField.text = ""
         textField.sendActions(for: .editingChanged)
     }
     
-    @objc func categoryDidChange() {
+    @objc
+    func categoryDidChange() {
         updateCreateButtonState()
     }
     
-    @objc func scheduleDidChange() {
+    @objc
+    func scheduleDidChange() {
         updateCreateButtonState()
     }
     
-    @objc func emojiiDidChange() {
+    @objc
+    private func emojiiDidChange() {
         updateCreateButtonState()
     }
     
-    @objc func colorDidChange() {
+    @objc
+    private func colorDidChange() {
         updateCreateButtonState()
     }
     
-    @objc private func cancelButtonDidTap() {
+    @objc
+    private func cancelButtonDidTap() {
         self.dismiss(animated: true)
     }
     
-    @objc private func createButtonDidTap() {
+    @objc
+    private func createButtonDidTap() {
         let id = UUID()
         guard let name = textField.text else { return }
         guard let category = selectedCategory else { return }
@@ -447,7 +456,7 @@ extension CreateEventTrackerViewController: UITableViewDelegate, UITableViewData
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.row == 0 {
-
+            
         } else {
             let viewController = SheduleViewController()
             viewController.createEventTrackerViewController = self
@@ -464,7 +473,6 @@ extension CreateEventTrackerViewController: UITableViewDelegate, UITableViewData
         cell.roundedCornersAndOffLastSeparatorVisibility(indexPath: indexPath, tableView: tableView)
     }
 }
-
 
 extension CreateEventTrackerViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
@@ -502,7 +510,7 @@ extension CreateEventTrackerViewController: UICollectionViewDelegate, UICollecti
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SupplementaryView
         
         guard let view else { return UICollectionReusableView() }
-        view.titleLabel.text = suplementaryViewHeaderList[indexPath.section]
+        view.updateLabel(text: suplementaryViewHeaderList[indexPath.section])
         
         return view
     }
@@ -523,7 +531,7 @@ extension CreateEventTrackerViewController: UICollectionViewDelegate, UICollecti
         }
     }
     
-    func selectCell(in indexPath: IndexPath, selectedCell: EmojiesColorCollectionViewCell) {
+    private func selectCell(in indexPath: IndexPath, selectedCell: EmojiesColorCollectionViewCell) {
         if indexPath.section == 0 {
             selectedCell.updateCell(isHideEmojiiLabelSelectionView: false)
             selectedEmojii = emojies[indexPath.row]

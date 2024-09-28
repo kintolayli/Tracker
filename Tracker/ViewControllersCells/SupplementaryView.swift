@@ -10,7 +10,7 @@ import UIKit
 
 final class SupplementaryView: UICollectionReusableView {
     
-    let titleLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .left
@@ -28,6 +28,10 @@ final class SupplementaryView: UICollectionReusableView {
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
+    }
+    
+    func updateLabel(text: String) {
+        titleLabel.text = text
     }
     
     required init?(coder: NSCoder) {

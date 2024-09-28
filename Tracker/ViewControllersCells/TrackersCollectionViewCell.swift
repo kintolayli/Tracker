@@ -141,7 +141,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         updateButtonState(count: count, state: addButtonState, schedule: cell.schedule)
     }
     
-    func determineEndOfWord(number: Int) -> String {
+    private func determineEndOfWord(number: Int) -> String {
         let remainder = number % 10
         if remainder == 1 && number % 100 != 11 {
             return "день"

@@ -28,8 +28,8 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
     
-    var categories: [TrackerCategory] = []
-    var filteredCategories: [TrackerCategory] = []
+    private var categories: [TrackerCategory] = []
+    private var filteredCategories: [TrackerCategory] = []
     var visibleCategories: [TrackerCategory] = []
     
     private var trackerRecords = Set<TrackerRecord>()
@@ -173,7 +173,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         hideImageViewIfTrackerIsNotEmpty()
     }
     
-    func getDayOfWeekFromDate(date: Date) -> String {
+    private func getDayOfWeekFromDate(date: Date) -> String {
         dateFormatter.dateFormat = "EEEE"
         return dateFormatter.string(from: date).capitalized
     }
@@ -181,7 +181,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
 
 extension TrackersViewController: UICollectionViewDataSource {
     
-    func filterCategories(for dayOfWeek: String) -> [TrackerCategory] {
+    private func filterCategories(for dayOfWeek: String) -> [TrackerCategory] {
         var filteredCategories: [TrackerCategory] = []
         
         for category in visibleCategories {
@@ -254,8 +254,8 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         
         if visibleCategories.count > 0 {
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SupplementaryView
-            view.titleLabel.text = visibleCategories[indexPath.section].title
+            guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SupplementaryView else { return UICollectionReusableView() }
+            view.updateLabel(text: visibleCategories[indexPath.section].title)
             return view
         } else {
             return UICollectionReusableView()
@@ -263,7 +263,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         
     }
     
-    func updateCollectionView() {
+    private func updateCollectionView() {
         let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
         filteredCategories = filterCategories(for: dayOfWeekString)
         collectionView.reloadData()
@@ -322,7 +322,7 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
         return (cellCount, cellState)
     }
     
-    func areSameDay(date1: Date, date2: Date) -> Bool {
+    private func areSameDay(date1: Date, date2: Date) -> Bool {
         let calendar = Calendar.current
         
         let day1 = calendar.component(.day, from: date1)
@@ -336,7 +336,7 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
         return day1 == day2 && month1 == month2 && year1 == year2
     }
     
-    func checkExistsRecord(in records: [TrackerRecord], with date: Date) -> TrackerRecord? {
+    private func checkExistsRecord(in records: [TrackerRecord], with date: Date) -> TrackerRecord? {
         var resultRecord: TrackerRecord?
         
         for record in records {
@@ -370,7 +370,7 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
 
 extension TrackersViewController: TrackerCategoryStoreDelegate {
     
-    func addNewSectionIfNeeded() {
+    private func addNewSectionIfNeeded() {
         if collectionView.numberOfSections != filteredCategories.count {
             
             let newSectionIndex = filteredCategories.count - 1

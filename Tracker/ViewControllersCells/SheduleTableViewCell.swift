@@ -25,7 +25,7 @@ final class SheduleTableViewCell: BaseTableViewCell {
         return label
     }()
     
-    let swith: UISwitch = {
+    private let swith: UISwitch = {
         let swith = UISwitch()
         swith.onTintColor = .ypBlue
         return swith

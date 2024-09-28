@@ -8,16 +8,6 @@
 import UIKit
 import CoreData
 
-enum TrackerStoreError: Error {
-    case decodingErrorInvalidId
-    case decodingErrorInvalidName
-    case decodingErrorInvalidColor
-    case decodingErrorInvalidEmojii
-    case decodingErrorInvalidShedule
-    case deleteTrackerError
-    case updateTrackerError
-    case getTrackerCoreDataError
-}
 
 final class TrackerStore {
     
@@ -30,7 +20,7 @@ final class TrackerStore {
     }
     
     convenience init() {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else { fatalError(TrackerStoreError.initError.localizedDescription) }
         self.init(context: context)
     }
     
