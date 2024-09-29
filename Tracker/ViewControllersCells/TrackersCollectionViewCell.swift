@@ -9,7 +9,7 @@ import UIKit
 
 protocol TrackersCollectionViewCellDelegate: TrackersViewController {
     func trackersViewControllerCellTap(_ cell: TrackersCollectionViewCell)
-    func getAddButtonCountLabelAndState(indexPath: IndexPath) -> (Int, Bool)
+    func getRecordsCountAndButtonLabelState(indexPath: IndexPath) -> (Int, Bool)
 }
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
@@ -127,24 +127,21 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateCell(backgroundColor: UIColor,
-                    emojiiLabelText: String,
-                    titleLabelText: String,
+    func updateCell(cell: Tracker,
                     count: Int,
                     addButtonState: Bool,
-                    isPin: Bool = false,
-                    isIrregularTracker: Bool
+                    isPin: Bool = false
     ){
-        colorView.backgroundColor = backgroundColor
-        emojiiLabel.text = emojiiLabelText
-        titleLabel.text = titleLabelText
-        addButton.backgroundColor = backgroundColor
+        colorView.backgroundColor = cell.color
+        emojiiLabel.text = cell.emojii
+        titleLabel.text = cell.name
+        addButton.backgroundColor = cell.color
         pinImageView.isHidden = isPin ? false : true
         
-        updateButtonState(count: count, state: addButtonState, isIrregularTracker: isIrregularTracker)
+        updateButtonState(count: count, state: addButtonState, schedule: cell.schedule)
     }
     
-    func determineEndOfWord(number: Int) -> String {
+    private func determineEndOfWord(number: Int) -> String {
         let remainder = number % 10
         if remainder == 1 && number % 100 != 11 {
             return "день"
@@ -155,16 +152,16 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func updateButtonState(count: Int, state: Bool, isIrregularTracker: Bool) {
+    func updateButtonState(count: Int, state: Bool, schedule: [Day]?) {
         addButton.layer.opacity = state ? 0.3 : 1
         let imageName = state ? "checkmark" : "plus"
         addButton.setImage(UIImage(systemName: imageName), for: .normal)
         
-        if isIrregularTracker {
-            counterLabel.text = state ? "Выполнено" : "Не выполнено"
-        } else {
+        if let _ = schedule {
             let dayWord = determineEndOfWord(number: count)
             counterLabel.text = "\(count) \(dayWord)"
+        } else {
+            counterLabel.text = state ? "Выполнено" : "Не выполнено"
         }
     }
     

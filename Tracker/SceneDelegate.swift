@@ -19,5 +19,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
+    
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        delegate.saveContext()
+    }
 }
 

@@ -8,7 +8,7 @@
 import UIKit
 
 class BaseTableViewCell: UITableViewCell {
-    var isLastCell: Bool = false {
+    private var isLastCell: Bool = false {
         didSet {
             updateSeparatorVisibility()
         }
@@ -20,7 +20,7 @@ class BaseTableViewCell: UITableViewCell {
         self.backgroundColor = .ypBackground
     }
     
-    func roundCorners(corners: UIRectCorner, radius: CGFloat) {
+    private func roundCorners(corners: UIRectCorner, radius: CGFloat) {
         DispatchQueue.main.async {
             let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
             let mask = CAShapeLayer()
