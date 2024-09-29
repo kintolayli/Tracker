@@ -30,7 +30,8 @@ final class TrackerCategoryStore: NSObject {
     private var trackerStore: TrackerStore
     
     convenience override init() {
-        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else { fatalError(TrackerCategoryStoreError.loadContextError.localizedDescription) }
+        let delegate = UIApplication.shared.delegate as? AppDelegate
+        guard let context = delegate?.persistentContainer.viewContext else { fatalError(TrackerCategoryStoreError.loadContextError.localizedDescription) }
         do {
             try self.init(context: context)
         } catch {
@@ -38,7 +39,7 @@ final class TrackerCategoryStore: NSObject {
         }
     }
     
-    init(context: NSManagedObjectContext) throws {
+    private init(context: NSManagedObjectContext) throws {
         self.context = context
         self.trackerStore = TrackerStore(context: context)
         super.init()

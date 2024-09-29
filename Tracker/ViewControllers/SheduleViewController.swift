@@ -18,13 +18,13 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
     weak var createEventTrackerViewController: CreateEventTrackerViewController?
     
     private var days: [Day] = [
-        Day(name: "Понедельник", isActive: false, abbreviation: "Пн"),
-        Day(name: "Вторник", isActive: false, abbreviation: "Вт"),
-        Day(name: "Среда", isActive: false, abbreviation: "Ср"),
-        Day(name: "Четверг", isActive: false, abbreviation: "Чт"),
-        Day(name: "Пятница", isActive: false, abbreviation: "Пт"),
-        Day(name: "Суббота", isActive: false, abbreviation: "Сб"),
-        Day(name: "Воскресенье", isActive: false, abbreviation: "Вс")
+        .init(name: "Понедельник", isActive: false, abbreviation: "Пн"),
+        .init(name: "Вторник", isActive: false, abbreviation: "Вт"),
+        .init(name: "Среда", isActive: false, abbreviation: "Ср"),
+        .init(name: "Четверг", isActive: false, abbreviation: "Чт"),
+        .init(name: "Пятница", isActive: false, abbreviation: "Пт"),
+        .init(name: "Суббота", isActive: false, abbreviation: "Сб"),
+        .init(name: "Воскресенье", isActive: false, abbreviation: "Вс")
     ]
     
     private let titleLabel: UILabel = {

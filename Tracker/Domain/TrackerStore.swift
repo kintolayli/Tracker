@@ -20,7 +20,8 @@ final class TrackerStore {
     }
     
     convenience init() {
-        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else { fatalError(TrackerStoreError.initError.localizedDescription) }
+        let delegate = UIApplication.shared.delegate as? AppDelegate
+        guard let context = delegate?.persistentContainer.viewContext else { fatalError(TrackerStoreError.initError.localizedDescription) }
         self.init(context: context)
     }
     

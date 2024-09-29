@@ -15,15 +15,9 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     private var trackerStore: TrackerStore
     
-    private var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateFormat = "dd.MM.yyyy"
-        return formatter
-    }()
-    
     convenience override init() {
-        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else { fatalError(TrackerRecordStoreError.loadContextError.localizedDescription)}
+        let delegate = UIApplication.shared.delegate as? AppDelegate
+        guard let context = delegate?.persistentContainer.viewContext else { fatalError(TrackerRecordStoreError.loadContextError.localizedDescription)}
         do {
             try self.init(context: context)
         } catch {
@@ -31,7 +25,7 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
-    init(context: NSManagedObjectContext) throws {
+    private init(context: NSManagedObjectContext) throws {
         self.context = context
         trackerStore = TrackerStore(context: context)
         super.init()
@@ -54,10 +48,14 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     }
     
     var records: Set<TrackerRecord> {
-        guard let objects = self.fetchedResultsController?.fetchedObjects,
-              let recordsCoreData = try? objects.map({ try convertToTrackerRecord(from: $0) }) else { return [] }
+//        guard let objects = self.fetchedResultsController?.fetchedObjects,
+//              let recordsCoreData = try? objects.map({ try convertToTrackerRecord(from: $0) }) else { return [] }
         
-        return Set(recordsCoreData)
+        let objects = self.fetchedResultsController?.fetchedObjects
+        let recordsCoreData = try? objects?.compactMap({ try convertToTrackerRecord(from: $0) })
+        
+//        return Set(recordsCoreData)
+        return Set(recordsCoreData ?? [])
     }
     
     private func convertToTrackerRecord(from trackerRecordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
