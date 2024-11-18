@@ -48,13 +48,10 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     }
     
     var records: Set<TrackerRecord> {
-//        guard let objects = self.fetchedResultsController?.fetchedObjects,
-//              let recordsCoreData = try? objects.map({ try convertToTrackerRecord(from: $0) }) else { return [] }
         
         let objects = self.fetchedResultsController?.fetchedObjects
         let recordsCoreData = try? objects?.compactMap({ try convertToTrackerRecord(from: $0) })
         
-//        return Set(recordsCoreData)
         return Set(recordsCoreData ?? [])
     }
     

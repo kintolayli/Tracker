@@ -11,6 +11,7 @@ protocol TrackersViewControllerProtocol: AnyObject {
     var chooseTypeTrackerDelegate: ChooseTypeTrackerViewControllerProtocol? { get set }
     var visibleCategories: [TrackerCategory] { get set }
     func add(trackerCategory: TrackerCategory)
+    func updateCollectionView()
 }
 
 final class TrackersViewController: UIViewController & TrackersViewControllerProtocol {
@@ -263,7 +264,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         
     }
     
-    private func updateCollectionView() {
+    func updateCollectionView() {
         let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
         filteredCategories = filterCategories(for: dayOfWeekString)
         collectionView.reloadData()
@@ -386,23 +387,7 @@ extension TrackersViewController: TrackerCategoryStoreDelegate {
         guard let filteredTrackerListCount = filteredCategories.first?.trackerList.count else { return }
         
         if filteredTrackerListCount > oldFilteredTrackerListCount {
-            collectionView.performBatchUpdates {
-                
-                addNewSectionIfNeeded()
-                
-                let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
-                let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
-                let updatedIndexPaths = update.updatedIndexes.map { IndexPath(item: $0, section: 0) }
-                collectionView.insertItems(at: insertedIndexPaths)
-                collectionView.insertItems(at: deletedIndexPaths)
-                collectionView.insertItems(at: updatedIndexPaths)
-                for move in update.movedIndexes {
-                    collectionView.moveItem(
-                        at: IndexPath(item: move.oldIndex, section: 0),
-                        to: IndexPath(item: move.newIndex, section: 0)
-                    )
-                }
-            }
+            collectionView.reloadData()
         }
     }
 }

@@ -399,6 +399,9 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
         
         self.chooseTypeTrackerViewController?.trackersViewController?.add(trackerCategory: newTrackerCategory)
+        
+        chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
+        
         self.dismiss(animated: true)
         self.chooseTypeTrackerViewController?.dismiss(animated: true)
     }
@@ -456,7 +459,11 @@ extension CreateEventTrackerViewController: UITableViewDelegate, UITableViewData
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.row == 0 {
-            
+            let viewController = CategoryListViewController()
+            viewController.createEventTrackerViewController = self
+            viewController.modalPresentationStyle = .formSheet
+            viewController.modalTransitionStyle = .coverVertical
+            present(viewController, animated: true, completion: nil)
         } else {
             let viewController = SheduleViewController()
             viewController.createEventTrackerViewController = self
