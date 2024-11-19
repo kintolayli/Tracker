@@ -19,9 +19,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
         
-        let onboardingViewController = OnboardingViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
-        onboardingViewController.modalPresentationStyle = .fullScreen
-        tabBarController.present(onboardingViewController, animated: true, completion: nil)
+        showOnboardingIfNeeded(from: tabBarController)
+    }
+    
+    private func showOnboardingIfNeeded(from tabBarController: TabBarController) {
+        let isOnboardingHidden = UserDefaults.standard.bool(forKey: "isOnboardingHidden")
+        
+        if !isOnboardingHidden {
+            let onboardingViewController = OnboardingViewController(
+                transitionStyle: .scroll,
+                navigationOrientation: .horizontal
+            )
+            onboardingViewController.modalPresentationStyle = .fullScreen
+            tabBarController.present(onboardingViewController, animated: true, completion: nil)
+        }
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {

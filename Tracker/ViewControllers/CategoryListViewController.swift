@@ -9,16 +9,13 @@ import UIKit
 
 protocol CategoryListViewControllerProtocol: AnyObject {
     var createEventTrackerViewController: CreateEventTrackerViewControllerProtocol? { get set }
-    var addCategoryDelegate: AddCategoryViewControllerProtocol? { get set }
-    func fetchCategories()
+    var viewModel: CategoryListViewModel { get }
 }
 
 final class CategoryListViewController: UIViewController, CategoryListViewControllerProtocol {
     weak var createEventTrackerViewController: CreateEventTrackerViewControllerProtocol?
-    weak var addCategoryDelegate: AddCategoryViewControllerProtocol?
-    var categories: [TrackerCategory] = []
     
-    private let trackerCategoryStore = TrackerCategoryStore()
+    let viewModel = CategoryListViewModel()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -69,7 +66,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        fetchCategories()
+        viewModel.fetchCategories()
         hideImageViewIfCategoryIsNotEmpty()
         createEventTrackerViewController?.loadLastSelectedCategory()
     }
@@ -78,6 +75,19 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         super.viewDidLoad()
         
         setupUI()
+        
+        viewModel.didFetchCategories = { [weak self] categories in
+            self?.viewModel.categories = categories
+            self?.tableView.reloadData()
+            self?.hideImageViewIfCategoryIsNotEmpty()
+        }
+        
+        viewModel.didSelectCategoryHandler = { [weak self] categoryTitle in
+            self?.createEventTrackerViewController?.didSelectCategory(categoryTitle)
+            self?.createEventTrackerViewController?.updateTableViewFirstCell()
+            self?.createEventTrackerViewController?.categoryDidChange()
+            self?.dismiss(animated: true)
+        }
     }
     
     private func setupUI() {
@@ -121,33 +131,27 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     @objc private func addCategoryButtonDidTap() {
         let viewController = AddCategoryViewController()
         viewController.categoryListViewController = self
-        addCategoryDelegate = viewController
         viewController.modalPresentationStyle = .formSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
     }
     
     private func hideImageViewIfCategoryIsNotEmpty() {
-        if categories.isEmpty {
-            imageView.isHidden = false
-            imageViewLabel.isHidden = false
-        } else {
-            imageView.isHidden = true
-            imageViewLabel.isHidden = true
-        }
+        imageView.isHidden = !viewModel.categories.isEmpty
+        imageViewLabel.isHidden = !viewModel.categories.isEmpty
     }
 }
 
 extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return viewModel.categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryListCell", for: indexPath)
         
-        let categoryTitle = categories[indexPath.row].title
+        let categoryTitle = viewModel.categories[indexPath.row].title
         
         cell.textLabel?.text = categoryTitle
         cell.accessoryType = (categoryTitle == createEventTrackerViewController?.selectedCategory) ? .checkmark : .none
@@ -163,8 +167,8 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let selectedCategory = categories[indexPath.row].title
-        UserDefaults.standard.set(selectedCategory, forKey: "lastSelectedCategory")
+        let selectedCategory = viewModel.categories[indexPath.row].title
+        viewModel.saveLastSelectedCategory(selectedCategoryTitle: selectedCategory)
         
         tableView.deselectRow(at: indexPath, animated: true)
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
@@ -174,20 +178,7 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
         }
         cell.accessoryType = .checkmark
         
-        createEventTrackerViewController?.didSelectCategory(selectedCategory)
-        createEventTrackerViewController?.updateTableViewFirstCell()
-        createEventTrackerViewController?.categoryDidChange()
-        self.dismiss(animated: true)
-    }
-    
-    @objc func fetchCategories() {
-        do {
-            categories = try trackerCategoryStore.fetchCategories()
-            tableView.reloadData()
-            hideImageViewIfCategoryIsNotEmpty()
-        } catch {
-            print("Ошибка загрузки категорий: \(error)")
-        }
+        viewModel.didSelectCategory(selectedCategory)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

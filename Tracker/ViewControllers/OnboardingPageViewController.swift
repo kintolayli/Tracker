@@ -87,7 +87,12 @@ class OnboardingPageViewController: UIViewController {
         button.addTarget(self, action: #selector(OkButtonDidTap), for: .touchUpInside)
     }
     
+    func completeOnboarding() {
+        UserDefaults.standard.set(true, forKey: "isOnboardingHidden")
+    }
+
     @objc func OkButtonDidTap() {
+        completeOnboarding()
         self.dismiss(animated: true)
     }
 }

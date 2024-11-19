@@ -247,16 +247,11 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     }
     
     func loadLastSelectedCategory() {
-        guard var visibleCategories = chooseTypeTrackerViewController?.trackersViewController?.visibleCategories else { return }
-        let tracker = TrackerCategory(title: "Базовая категория", trackerList: [])
-        if !visibleCategories.contains(where: { $0.title == "Базовая категория" }) {
-            visibleCategories.append(tracker)
+        if let lastSelectedCategory = UserDefaults.standard.string(forKey: "lastSelectedCategory") {
+            selectedCategory = lastSelectedCategory
+            menuSecondaryItems[0][0] = lastSelectedCategory
+            updateTableViewFirstCell()
         }
-        let firstCategoryTitle = visibleCategories[0].title
-        
-        selectedCategory = firstCategoryTitle
-        menuSecondaryItems[0][0] = firstCategoryTitle
-        updateTableViewFirstCell()
     }
     
     func didSelectCreateRegularEvent() {

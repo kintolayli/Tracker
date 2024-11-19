@@ -12,10 +12,9 @@ protocol AddCategoryViewControllerProtocol: AnyObject {
 }
 
 final class AddCategoryViewController: UIViewController, AddCategoryViewControllerProtocol {
-    
     private let trackerCategoryStore = TrackerCategoryStore()
-    
     weak var categoryListViewController: CategoryListViewControllerProtocol?
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
@@ -103,17 +102,9 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
     }
     
     @objc private func okButtonDidTap() {
-        
         guard let text = textField.text else { return }
-        let newCategory = TrackerCategory(title: text, trackerList: [])
-        
-        do {
-            try trackerCategoryStore.updateTrackerCategory(newCategory)
-            categoryListViewController?.fetchCategories()
-            self.dismiss(animated: true)
-        } catch {
-            print("Failed to save category: \(error)")
-        }
+        categoryListViewController?.viewModel.saveCategories(text: text)
+        self.dismiss(animated: true)
     }
     
     @objc private func clearText() {
