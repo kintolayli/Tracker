@@ -13,8 +13,8 @@ protocol CategoryListViewControllerProtocol: AnyObject {
 }
 
 final class CategoryListViewController: UIViewController, CategoryListViewControllerProtocol {
-    weak var createEventTrackerViewController: CreateEventTrackerViewControllerProtocol?
     
+    weak var createEventTrackerViewController: CreateEventTrackerViewControllerProtocol?
     let viewModel = CategoryListViewModel()
     
     private let titleLabel: UILabel = {
@@ -75,7 +75,10 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         super.viewDidLoad()
         
         setupUI()
-        
+        setupBindings()
+    }
+    
+    private func setupBindings() {
         viewModel.didFetchCategories = { [weak self] categories in
             self?.viewModel.categories = categories
             self?.tableView.reloadData()
@@ -137,8 +140,9 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     }
     
     private func hideImageViewIfCategoryIsNotEmpty() {
-        imageView.isHidden = !viewModel.categories.isEmpty
-        imageViewLabel.isHidden = !viewModel.categories.isEmpty
+        let isEmpty = viewModel.categories.isEmpty
+        imageView.isHidden = !isEmpty
+        imageViewLabel.isHidden = !isEmpty
     }
 }
 
@@ -150,12 +154,10 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryListCell", for: indexPath)
-        
         let categoryTitle = viewModel.categories[indexPath.row].title
         
         cell.textLabel?.text = categoryTitle
         cell.accessoryType = (categoryTitle == createEventTrackerViewController?.selectedCategory) ? .checkmark : .none
-        
         cell.backgroundColor = .ypBackground
         
         return cell

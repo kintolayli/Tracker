@@ -103,7 +103,7 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
     
     @objc private func okButtonDidTap() {
         guard let text = textField.text else { return }
-        categoryListViewController?.viewModel.saveCategories(text: text)
+        categoryListViewController?.viewModel.saveCategory(text: text)
         self.dismiss(animated: true)
     }
     

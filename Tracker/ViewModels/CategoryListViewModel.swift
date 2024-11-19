@@ -9,6 +9,8 @@ import Foundation
 
 typealias Binding<T> = (T) -> Void
 
+
+
 final class CategoryListViewModel {
     var categories: [TrackerCategory] = []
     var didFetchCategories: Binding<[TrackerCategory]>?
@@ -29,7 +31,7 @@ final class CategoryListViewModel {
         }
     }
     
-    func saveCategories(text: String) {
+    func saveCategory(text: String) {
         let newCategory = TrackerCategory(title: text, trackerList: [])
         
         do {
