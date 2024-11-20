@@ -1,14 +1,14 @@
 //
-//  SupplementaryView.swift
+//  EmojiiColorSuplementaryView.swift
 //  Tracker
 //
-//  Created by Ilya Lotnik on 09.08.2024.
+//  Created by Ilya Lotnik on 15.08.2024.
 //
 
 import UIKit
 
 
-final class SupplementaryView: UICollectionReusableView {
+final class EmojiiColorSupplementaryView: UICollectionReusableView {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -25,16 +25,13 @@ final class SupplementaryView: UICollectionReusableView {
         
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 32),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
-    }
-    
-    func updateLabel(text: String) {
-        titleLabel.text = text
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
+

@@ -9,22 +9,22 @@ import UIKit
 
 
 protocol SheduleViewControllerProtocol: AnyObject {
-    var createRegularEventTrackerViewController: CreateRegularEventTrackerViewController? { get set }
-    func getShedule() -> [(String, Bool, String)]
+    var createEventTrackerViewController: CreateEventTrackerViewController? { get set }
+    func getShedule() -> [Day]
 }
 
 final class SheduleViewController: UIViewController, SheduleViewControllerProtocol {
     
-    weak var createRegularEventTrackerViewController: CreateRegularEventTrackerViewController?
+    weak var createEventTrackerViewController: CreateEventTrackerViewController?
     
-    private var days: [(String, Bool, String)] = [
-        ("Понедельник", false, "Пн"),
-        ("Вторник", false, "Вт"),
-        ("Среда", false, "Ср"),
-        ("Четверг", false, "Чт"),
-        ("Пятница", false, "Пт"),
-        ("Суббота", false, "Сб"),
-        ("Воскресенье", false, "Вс")
+    private var days: [Day] = [
+        .init(name: "Понедельник", isActive: false, abbreviation: "Пн"),
+        .init(name: "Вторник", isActive: false, abbreviation: "Вт"),
+        .init(name: "Среда", isActive: false, abbreviation: "Ср"),
+        .init(name: "Четверг", isActive: false, abbreviation: "Чт"),
+        .init(name: "Пятница", isActive: false, abbreviation: "Пт"),
+        .init(name: "Суббота", isActive: false, abbreviation: "Сб"),
+        .init(name: "Воскресенье", isActive: false, abbreviation: "Вс")
     ]
     
     private let titleLabel: UILabel = {
@@ -97,11 +97,10 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
         dismiss(animated: true)
     }
     
-    func getShedule() -> [(String, Bool, String)] {
+    func getShedule() -> [Day] {
         return days
     }
 }
-
 
 extension SheduleViewController: UITableViewDelegate, UITableViewDataSource {
     
@@ -135,21 +134,21 @@ extension SheduleViewController: SheduleTableViewCellDelegate {
     
     func switchValueChanged(isOn: Bool, cell: SheduleTableViewCell) {
         if let indexPath = tableView.indexPath(for: cell) {
-            days[indexPath.row].1 = isOn
+            days[indexPath.row].isActive = isOn
         }
         
         let selectedDaysString = shortStringFromSelectedDays()
-        createRegularEventTrackerViewController?.didSelectDays(selectedDaysString)
-        createRegularEventTrackerViewController?.updateTableViewSecondCell()
-        createRegularEventTrackerViewController?.scheduleDidChange()
+        createEventTrackerViewController?.didSelectDays(selectedDaysString)
+        createEventTrackerViewController?.updateTableViewSecondCell()
+        createEventTrackerViewController?.scheduleDidChange()
     }
     
     private func shortStringFromSelectedDays() -> String {
         var daysArray: [String] = []
         
         for day in days {
-            if day.1 {
-                daysArray.append(day.2)
+            if day.isActive {
+                daysArray.append(day.abbreviation)
             }
         }
         
@@ -164,13 +163,13 @@ extension SheduleViewController: SheduleTableViewCellDelegate {
     func updateDays(from string: String) {
         if string == "Каждый день" {
             for i in 0..<days.count {
-                days[i].1 = true
+                days[i].isActive = true
             }
         } else {
             let shortDaysArray = string.components(separatedBy: ", ").map { $0.trimmingCharacters(in: .whitespaces) }
             for i in 0..<days.count {
-                if shortDaysArray.contains(days[i].2) {
-                    days[i].1 = true
+                if shortDaysArray.contains(days[i].abbreviation) {
+                    days[i].isActive = true
                 }
             }
         }

@@ -9,15 +9,13 @@ import UIKit
 
 protocol ChooseTypeTrackerViewControllerProtocol: AnyObject {
     var trackersViewController: TrackersViewControllerProtocol? { get set }
-    var regularEventTrackerDelegate: SheduleEventTrackerViewControllerProtocol? { get set }
-    var irregularEventTrackerDelegate: BaseEventTrackerViewControllerProtocol? { get set }
+    var eventTrackerDelegate: CreateEventTrackerViewControllerProtocol? { get set }
     func dismiss(animated: Bool)
 }
 
 final class ChooseTypeTrackerViewController: UIViewController {
     weak var trackersViewController: TrackersViewControllerProtocol?
-    weak var regularEventTrackerDelegate: SheduleEventTrackerViewControllerProtocol?
-    weak var irregularEventTrackerDelegate: BaseEventTrackerViewControllerProtocol?
+    weak var eventTrackerDelegate: CreateEventTrackerViewControllerProtocol?
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -87,18 +85,19 @@ final class ChooseTypeTrackerViewController: UIViewController {
     }
     
     @objc private func regularEventsButtonDidTap() {
-        let viewController = CreateRegularEventTrackerViewController()
+        let viewController = CreateEventTrackerViewController()
         viewController.chooseTypeTrackerViewController = self
-        self.regularEventTrackerDelegate = viewController
+        self.eventTrackerDelegate = viewController
+        viewController.didSelectCreateRegularEvent()
         viewController.modalPresentationStyle = .formSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
     }
     
     @objc private func irregularEventsButtonDidTap() {
-        let viewController = CreateIrregularEventTrackerViewController()
+        let viewController = CreateEventTrackerViewController()
         viewController.chooseTypeTrackerViewController = self
-        self.irregularEventTrackerDelegate = viewController
+        self.eventTrackerDelegate = viewController
         viewController.modalPresentationStyle = .formSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)

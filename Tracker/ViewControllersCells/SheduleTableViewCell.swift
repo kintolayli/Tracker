@@ -25,7 +25,7 @@ final class SheduleTableViewCell: BaseTableViewCell {
         return label
     }()
     
-    let swith: UISwitch = {
+    private let swith: UISwitch = {
         let swith = UISwitch()
         swith.onTintColor = .ypBlue
         return swith
@@ -66,8 +66,8 @@ final class SheduleTableViewCell: BaseTableViewCell {
         delegate?.switchValueChanged(isOn: sender.isOn, cell: self)
     }
     
-    func configure(with day: (String, Bool, String)) {
-        titleLabel.text = day.0
-        swith.isOn = day.1
+    func configure(with day: Day) {
+        titleLabel.text = day.name
+        swith.isOn = day.isActive
     }
 }

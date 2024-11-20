@@ -11,4 +11,6 @@ import Foundation
 extension Notification.Name {
     static let categoryDidChange = Notification.Name("categoryDidChange")
     static let scheduleDidChange = Notification.Name("scheduleDidChange")
+    static let emojiiDidChange = Notification.Name("emojiiDidChange")
+    static let colorDidChange = Notification.Name("colorDidChange")
 }
