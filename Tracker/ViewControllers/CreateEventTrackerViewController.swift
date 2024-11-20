@@ -62,7 +62,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         return params
     }()
     
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -99,7 +99,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         return textField
     }()
     
-    private let tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
@@ -110,14 +110,14 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         return tableView
     }()
     
-    private let collectionView: UICollectionView = {
+    private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.isScrollEnabled = false
         return collectionView
     }()
     
-    private let cancelButton: UIButton = {
+    private lazy var cancelButton: UIButton = {
         let button = UIButton()
         button.setTitle("Отменить", for: .normal)
         button.setTitleColor(.ypRed, for: .normal)
@@ -130,7 +130,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         return button
     }()
     
-    private let createButton: UIButton = {
+    private lazy var createButton: UIButton = {
         let button = UIButton()
         button.setTitle("Создать", for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
@@ -141,12 +141,12 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         return button
     }()
     
-    private let scrollView: UIScrollView = {
+    private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         return scrollView
     }()
     
-    private let contentView: UIView = {
+    private lazy var contentView: UIView = {
         let view = UIView()
         return view
     }()
@@ -247,16 +247,11 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     }
     
     func loadLastSelectedCategory() {
-        guard var visibleCategories = chooseTypeTrackerViewController?.trackersViewController?.visibleCategories else { return }
-        let tracker = TrackerCategory(title: "Базовая категория", trackerList: [])
-        if !visibleCategories.contains(where: { $0.title == "Базовая категория" }) {
-            visibleCategories.append(tracker)
+        if let lastSelectedCategory = UserDefaults.standard.string(forKey: "lastSelectedCategory") {
+            selectedCategory = lastSelectedCategory
+            menuSecondaryItems[0][0] = lastSelectedCategory
+            updateTableViewFirstCell()
         }
-        let firstCategoryTitle = visibleCategories[0].title
-        
-        selectedCategory = firstCategoryTitle
-        menuSecondaryItems[0][0] = firstCategoryTitle
-        updateTableViewFirstCell()
     }
     
     func didSelectCreateRegularEvent() {
@@ -337,13 +332,11 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         createButton.backgroundColor = createButton.isEnabled ? .ypBlack : .ypGray
     }
     
-    @objc
-    private func dismissKeyboard() {
+    @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
     
-    @objc
-    private func textFieldDidChange(_ textField: UITextField) {
+    @objc private func textFieldDidChange(_ textField: UITextField) {
         if let text = textField.text, !text.isEmpty {
             textField.rightViewMode = .always
         } else {
@@ -353,14 +346,12 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         updateCreateButtonState()
     }
     
-    @objc
-    private func clearText() {
+    @objc private func clearText() {
         textField.text = ""
         textField.sendActions(for: .editingChanged)
     }
     
-    @objc
-    func categoryDidChange() {
+    @objc func categoryDidChange() {
         updateCreateButtonState()
     }
     
@@ -399,6 +390,9 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
         
         self.chooseTypeTrackerViewController?.trackersViewController?.add(trackerCategory: newTrackerCategory)
+        
+        chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
+        
         self.dismiss(animated: true)
         self.chooseTypeTrackerViewController?.dismiss(animated: true)
     }
@@ -456,7 +450,11 @@ extension CreateEventTrackerViewController: UITableViewDelegate, UITableViewData
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.row == 0 {
-            
+            let viewController = CategoryListViewController()
+            viewController.createEventTrackerViewController = self
+            viewController.modalPresentationStyle = .formSheet
+            viewController.modalTransitionStyle = .coverVertical
+            present(viewController, animated: true, completion: nil)
         } else {
             let viewController = SheduleViewController()
             viewController.createEventTrackerViewController = self
@@ -519,7 +517,7 @@ extension CreateEventTrackerViewController: UICollectionViewDelegate, UICollecti
         return suplementaryViewHeaderList.count
     }
     
-    func clearSelectionFromCells(in section: Int) {
+    private func clearSelectionFromCells(in section: Int) {
         for cell in collectionView.visibleCells {
             if let cell = cell as? EmojiesColorCollectionViewCell, let indexPath = collectionView.indexPath(for: cell), indexPath.section == section {
                 if section == 0 {

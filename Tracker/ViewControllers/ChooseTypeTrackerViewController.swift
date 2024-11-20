@@ -17,7 +17,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
     weak var trackersViewController: TrackersViewControllerProtocol?
     weak var eventTrackerDelegate: CreateEventTrackerViewControllerProtocol?
     
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -26,7 +26,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
         return label
     }()
     
-    private let regularEventButton: UIButton = {
+    private lazy var regularEventButton: UIButton = {
         let button = UIButton()
         button.setTitle("Привычка", for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
@@ -37,7 +37,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
         return button
     }()
     
-    private let irregularEventButton: UIButton = {
+    private lazy var irregularEventButton: UIButton = {
         let button = UIButton()
         button.setTitle("Нерегулярное событие", for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)

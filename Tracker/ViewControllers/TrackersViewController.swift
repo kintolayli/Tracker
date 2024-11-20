@@ -10,14 +10,16 @@ import UIKit
 protocol TrackersViewControllerProtocol: AnyObject {
     var chooseTypeTrackerDelegate: ChooseTypeTrackerViewControllerProtocol? { get set }
     var visibleCategories: [TrackerCategory] { get set }
+    var trackerCategoryStore: TrackerCategoryStore { get }
     func add(trackerCategory: TrackerCategory)
+    func updateCollectionView()
 }
 
 final class TrackersViewController: UIViewController & TrackersViewControllerProtocol {
     
     weak var chooseTypeTrackerDelegate: ChooseTypeTrackerViewControllerProtocol?
     
-    private let params: GeometricParams = {
+    private lazy var params: GeometricParams = {
         let params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
         return params
     }()
@@ -25,8 +27,27 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     private var currentDate: Date = Date()
     private var sectionCount: Int = 0
     
-    private let trackerCategoryStore = TrackerCategoryStore()
-    private let trackerRecordStore = TrackerRecordStore()
+    let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+    
+    lazy var trackerCategoryStore: TrackerCategoryStore = {
+        guard let context = context else {
+            assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
+            
+            let fallbackContext = DefaultContext(concurrencyType: .mainQueueConcurrencyType)
+            return TrackerCategoryStore(context: fallbackContext)
+        }
+        return TrackerCategoryStore(context: context)
+    }()
+    
+    private lazy var trackerRecordStore: TrackerRecordStore = {
+        guard let context = context else {
+            assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
+            
+            let fallbackContext = DefaultContext(concurrencyType: .mainQueueConcurrencyType)
+            return TrackerRecordStore(context: fallbackContext)
+        }
+        return TrackerRecordStore(context: context)
+    }()
     
     private var categories: [TrackerCategory] = []
     private var filteredCategories: [TrackerCategory] = []
@@ -34,33 +55,33 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     
     private var trackerRecords = Set<TrackerRecord>()
     
-    private var dateFormatter: DateFormatter = {
+    private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter
     }()
     
-    private let collectionView: UICollectionView = {
+    private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         return collectionView
     }()
     
-    private let searchBar: UISearchBar = {
+    private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.placeholder = "Поиск"
         searchBar.searchBarStyle = .minimal
         return searchBar
     }()
     
-    private let imageView: UIImageView = {
+    private lazy var imageView: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "dizzy")
         return view
     }()
     
-    private let imageViewLabel: UILabel = {
+    private lazy var imageViewLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -161,7 +182,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         present(viewController, animated: true, completion: nil)
     }
     
-    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+    @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         currentDate = selectedDate
         updateCollectionView()
@@ -263,7 +284,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         
     }
     
-    private func updateCollectionView() {
+    func updateCollectionView() {
         let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
         filteredCategories = filterCategories(for: dayOfWeekString)
         collectionView.reloadData()
@@ -386,23 +407,7 @@ extension TrackersViewController: TrackerCategoryStoreDelegate {
         guard let filteredTrackerListCount = filteredCategories.first?.trackerList.count else { return }
         
         if filteredTrackerListCount > oldFilteredTrackerListCount {
-            collectionView.performBatchUpdates {
-                
-                addNewSectionIfNeeded()
-                
-                let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
-                let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
-                let updatedIndexPaths = update.updatedIndexes.map { IndexPath(item: $0, section: 0) }
-                collectionView.insertItems(at: insertedIndexPaths)
-                collectionView.insertItems(at: deletedIndexPaths)
-                collectionView.insertItems(at: updatedIndexPaths)
-                for move in update.movedIndexes {
-                    collectionView.moveItem(
-                        at: IndexPath(item: move.oldIndex, section: 0),
-                        to: IndexPath(item: move.newIndex, section: 0)
-                    )
-                }
-            }
+            collectionView.reloadData()
         }
     }
 }

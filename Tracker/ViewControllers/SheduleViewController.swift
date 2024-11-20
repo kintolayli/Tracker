@@ -17,7 +17,7 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
     
     weak var createEventTrackerViewController: CreateEventTrackerViewController?
     
-    private var days: [Day] = [
+    private lazy var days: [Day] = [
         .init(name: "Понедельник", isActive: false, abbreviation: "Пн"),
         .init(name: "Вторник", isActive: false, abbreviation: "Вт"),
         .init(name: "Среда", isActive: false, abbreviation: "Ср"),
@@ -27,7 +27,7 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
         .init(name: "Воскресенье", isActive: false, abbreviation: "Вс")
     ]
     
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -36,18 +36,18 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
         return label
     }()
     
-    private let tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.allowsSelection = false
         tableView.isScrollEnabled = false
-        tableView.register(SheduleTableViewCell.self, forCellReuseIdentifier: SheduleTableViewCell.reuseIdentifier)
+        tableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.reuseIdentifier)
         
         return tableView
     }()
     
-    private let okButton: UIButton = {
+    private lazy var okButton: UIButton = {
         let button = UIButton()
         button.setTitle("Готово", for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
@@ -109,7 +109,7 @@ extension SheduleViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: SheduleTableViewCell.reuseIdentifier, for: indexPath) as? SheduleTableViewCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseIdentifier, for: indexPath) as? ScheduleTableViewCell else { return UITableViewCell() }
         
         cell.prepareForReuse()
         cell.delegate = self
@@ -132,7 +132,7 @@ extension SheduleViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension SheduleViewController: SheduleTableViewCellDelegate {
     
-    func switchValueChanged(isOn: Bool, cell: SheduleTableViewCell) {
+    func switchValueChanged(isOn: Bool, cell: ScheduleTableViewCell) {
         if let indexPath = tableView.indexPath(for: cell) {
             days[indexPath.row].isActive = isOn
         }

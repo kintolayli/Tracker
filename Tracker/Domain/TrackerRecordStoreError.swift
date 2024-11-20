@@ -16,4 +16,5 @@ enum TrackerRecordStoreError: Error {
     case getTrackerRecordsWithCurrentTrackerIdError
     case loadContextError
     case initError
+    case performFetchError
 }

@@ -14,5 +14,6 @@ enum TrackerCategoryStoreError: Error {
     case updateTrackerCategoryError
     case removeTrackerCategoryError
     case loadContextError
-    case initError
+    case initErro
+    case performFetchError
 }
