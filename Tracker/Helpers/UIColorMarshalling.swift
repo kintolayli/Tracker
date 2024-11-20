@@ -1,6 +1,6 @@
 //
 //  UIColorMarshalling.swift
-//  Tracker
+//  Tracker	
 //
 //  Created by Ilya Lotnik on 13.09.2024.
 //
@@ -8,7 +8,7 @@
 import UIKit
 
 final class UIColorMarshalling {
-    func hexString(from color: UIColor) -> String {
+    static func hexString(from color: UIColor) -> String {
         let components = color.cgColor.components
         let r: CGFloat = components?[0] ?? 0.0
         let g: CGFloat = components?[1] ?? 0.0
@@ -24,7 +24,7 @@ final class UIColorMarshalling {
         return hexString
     }
     
-    func color(from hexString: String) -> UIColor {
+    static func color(from hexString: String) -> UIColor {
         var rgb: UInt64 = 0
         Scanner(string: hexString).scanHexInt64(&rgb)
         

@@ -5,7 +5,6 @@
 //  Created by Ilya Lotnik on 20.08.2024.
 //
 
-import UIKit
 import CoreData
 
 
@@ -29,17 +28,7 @@ final class TrackerCategoryStore: NSObject {
     
     private var trackerStore: TrackerStore
     
-    convenience override init() {
-        let delegate = UIApplication.shared.delegate as? AppDelegate
-        guard let context = delegate?.persistentContainer.viewContext else { fatalError(TrackerCategoryStoreError.loadContextError.localizedDescription) }
-        do {
-            try self.init(context: context)
-        } catch {
-            fatalError(TrackerCategoryStoreError.initError.localizedDescription)
-        }
-    }
-    
-    private init(context: NSManagedObjectContext) throws {
+    init(context: NSManagedObjectContext) {
         self.context = context
         self.trackerStore = TrackerStore(context: context)
         super.init()
@@ -58,7 +47,12 @@ final class TrackerCategoryStore: NSObject {
         )
         controller.delegate = self
         self.fetchedResultsController = controller
-        try controller.performFetch()
+        
+        do {
+            try controller.performFetch()
+        } catch {
+            assertionFailure(TrackerCategoryStoreError.performFetchError.localizedDescription)
+        }
     }
     
     var categories: [TrackerCategory] {
@@ -145,7 +139,7 @@ final class TrackerCategoryStore: NSObject {
                 try context.save()
             } catch {
                 let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                assertionFailure("Save context error \(nserror), \(nserror.userInfo)")
             }
         }
     }
@@ -186,13 +180,21 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         
         switch type {
         case .insert, .delete, .update:
-            guard let indexPath = newIndexPath else { fatalError() }
+            guard let indexPath = newIndexPath else {
+                assertionFailure("Invalid state: `newIndexPath` is nil for type \(type)")
+                return
+            }
             updatedIndexes?.insert(indexPath.item)
+            
         case .move:
-            guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else { fatalError() }
+            guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else {
+                assertionFailure("Invalid state: `indexPath` or `newIndexPath` is nil for type .move")
+                return
+            }
             movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
         @unknown default:
-            fatalError()
+            assertionFailure("Unhandled case in switch: \(type)")
+            return
         }
     }
 }

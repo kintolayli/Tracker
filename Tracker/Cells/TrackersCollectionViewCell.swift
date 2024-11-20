@@ -17,14 +17,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     static let reuseIdentifier = "TrackersCollectionViewCell"
     weak var delegate: TrackersCollectionViewCellDelegate?
     
-    private let colorView: UIView = {
+    private lazy var colorView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
         return view
     }()
     
-    private let emojiiLabelView: UIView = {
+    private lazy var emojiiLabelView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 12
         view.backgroundColor = .ypWhite
@@ -32,19 +32,19 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    private let emojiiLabel: UILabel = {
+    private lazy var emojiiLabel: UILabel = {
         let label = UILabel()
         return label
     }()
     
-    private var pinImageView: UIImageView = {
+    private lazy var pinImageView: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "pinImage")
         view.tintColor = .ypWhite
         return view
     }()
     
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 2
         label.textColor = .ypWhite
@@ -53,7 +53,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private let counterLabel: UILabel = {
+    private lazy var counterLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .left
@@ -62,7 +62,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private let addButton: UIButton = {
+    private lazy var addButton: UIButton = {
         let button = UIButton()
         button.tintColor = .ypWhite
         button.setImage(UIImage(systemName: "plus"), for: .normal)

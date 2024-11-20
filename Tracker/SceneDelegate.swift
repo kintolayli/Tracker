@@ -23,9 +23,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func showOnboardingIfNeeded(from tabBarController: TabBarController) {
-        let isOnboardingHidden = UserDefaults.standard.bool(forKey: "isOnboardingHidden")
-        
-        if !isOnboardingHidden {
+
+        if !AppSettings.shared.isOnboardiingHidden {
             let onboardingViewController = OnboardingViewController(
                 transitionStyle: .scroll,
                 navigationOrientation: .horizontal

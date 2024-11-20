@@ -9,15 +9,15 @@ import UIKit
 
 
 protocol SheduleTableViewCellDelegate: SheduleViewController {
-    func switchValueChanged(isOn: Bool, cell: SheduleTableViewCell)
+    func switchValueChanged(isOn: Bool, cell: ScheduleTableViewCell)
 }
 
-final class SheduleTableViewCell: BaseTableViewCell {
+final class ScheduleTableViewCell: BaseTableViewCell {
     
     weak var delegate: SheduleTableViewCellDelegate?
     static var reuseIdentifier = "SheduleListCell"
     
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .left
@@ -25,7 +25,7 @@ final class SheduleTableViewCell: BaseTableViewCell {
         return label
     }()
     
-    private let swith: UISwitch = {
+    private lazy var swith: UISwitch = {
         let swith = UISwitch()
         swith.onTintColor = .ypBlue
         return swith

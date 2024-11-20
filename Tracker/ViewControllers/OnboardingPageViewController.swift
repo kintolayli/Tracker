@@ -7,16 +7,12 @@
 
 import UIKit
 
-class OnboardingPageViewController: UIViewController {
+final class OnboardingPageViewController: UIViewController {
     
-    private let imageName: String
-    private let labelName: String
-    private let buttonName: String
+    private let pageModel: PageModel
     
-    init(imageName: String, labelName: String, buttonName: String) {
-        self.imageName = imageName
-        self.labelName = labelName
-        self.buttonName = buttonName
+    init(pageModel: PageModel) {
+        self.pageModel = pageModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -24,7 +20,7 @@ class OnboardingPageViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let label: UILabel = {
+    private lazy var label: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -33,7 +29,7 @@ class OnboardingPageViewController: UIViewController {
         return label
     }()
     
-    private let button: UIButton = {
+    private lazy var button: UIButton = {
         let button = UIButton()
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -42,7 +38,7 @@ class OnboardingPageViewController: UIViewController {
         button.layer.masksToBounds = true
         return button
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -51,13 +47,13 @@ class OnboardingPageViewController: UIViewController {
     
     private func setupUI() {
         
-        let backgroundImage = UIImage(named: imageName)
+        let backgroundImage = UIImage(named: pageModel.imageName)
         let backgroundImageView = UIImageView(frame: self.view.bounds)
         backgroundImageView.image = backgroundImage
         backgroundImageView.contentMode = .scaleAspectFill
         
-        label.text = labelName
-        button.setTitle(buttonName, for: .normal)
+        label.text = pageModel.labelName
+        button.setTitle(pageModel.buttonName, for: .normal)
         
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             backgroundImageView,
@@ -87,11 +83,11 @@ class OnboardingPageViewController: UIViewController {
         button.addTarget(self, action: #selector(OkButtonDidTap), for: .touchUpInside)
     }
     
-    func completeOnboarding() {
-        UserDefaults.standard.set(true, forKey: "isOnboardingHidden")
+    private func completeOnboarding() {
+        AppSettings.shared.isOnboardiingHidden = true
     }
-
-    @objc func OkButtonDidTap() {
+    
+    @objc private func OkButtonDidTap() {
         completeOnboarding()
         self.dismiss(animated: true)
     }

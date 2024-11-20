@@ -15,9 +15,23 @@ protocol CategoryListViewControllerProtocol: AnyObject {
 final class CategoryListViewController: UIViewController, CategoryListViewControllerProtocol {
     
     weak var createEventTrackerViewController: CreateEventTrackerViewControllerProtocol?
-    let viewModel = CategoryListViewModel()
     
-    private let titleLabel: UILabel = {
+    lazy var viewModel: CategoryListViewModel = {
+        lazy var trackerCategoryStore: TrackerCategoryStore = {
+            guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
+                assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
+                
+                let fallbackContext = DefaultContext(concurrencyType: .mainQueueConcurrencyType)
+                return TrackerCategoryStore(context: fallbackContext)
+            }
+            return TrackerCategoryStore(context: context)
+        }()
+        
+        let viewModel = CategoryListViewModel(trackerCategoryStore: trackerCategoryStore)
+        return viewModel
+    }()
+    
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -26,13 +40,13 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         return label
     }()
     
-    private let imageView: UIImageView = {
+    private lazy var imageView: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "dizzy")
         return view
     }()
     
-    private let imageViewLabel: UILabel = {
+    private lazy var imageViewLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -42,7 +56,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         return label
     }()
     
-    private let tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
@@ -53,7 +67,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         return tableView
     }()
     
-    private let addCategoryButton: UIButton = {
+    private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
         button.setTitle("Добавить категорию", for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)

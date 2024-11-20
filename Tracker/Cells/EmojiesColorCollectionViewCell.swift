@@ -9,14 +9,14 @@ import UIKit
 
 final class EmojiesColorCollectionViewCell: UICollectionViewCell {
     
-    private let colorView: UIView = {
+    private lazy var colorView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
         view.layer.masksToBounds = true
         return view
     }()
     
-    private let colorSelectionView: UIView = {
+    private lazy var colorSelectionView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
         view.layer.borderWidth = 3
@@ -28,7 +28,7 @@ final class EmojiesColorCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    private let emojiiLabel: UILabel = {
+    private lazy var emojiiLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.text = ""
@@ -37,7 +37,7 @@ final class EmojiesColorCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private let emojiiLabelSelectionView: UIView = {
+    private lazy var emojiiLabelSelectionView: UIView = {
         let view = UIView()
         view.backgroundColor = .ypLightGray
         view.layer.cornerRadius = 16

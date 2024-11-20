@@ -7,18 +7,16 @@
 
 import Foundation
 
-typealias Binding<T> = (T) -> Void
-
-
 
 final class CategoryListViewModel {
     var categories: [TrackerCategory] = []
     var didFetchCategories: Binding<[TrackerCategory]>?
     var didSelectCategoryHandler: Binding<String>?
     
-    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerCategoryStore: TrackerCategoryStore
     
-    init() {
+    init(trackerCategoryStore: TrackerCategoryStore) {
+        self.trackerCategoryStore = trackerCategoryStore
         fetchCategories()
     }
     

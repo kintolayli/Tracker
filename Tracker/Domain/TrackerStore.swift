@@ -5,24 +5,16 @@
 //  Created by Ilya Lotnik on 20.08.2024.
 //
 
-import UIKit
 import CoreData
 
 
 final class TrackerStore {
     
     private let context: NSManagedObjectContext
-    private let uiColorMarshalling = UIColorMarshalling()
     private let daysValueTransformer = DaysValueTransformer()
     
     init(context: NSManagedObjectContext) {
         self.context = context
-    }
-    
-    convenience init() {
-        let delegate = UIApplication.shared.delegate as? AppDelegate
-        guard let context = delegate?.persistentContainer.viewContext else { fatalError(TrackerStoreError.initError.localizedDescription) }
-        self.init(context: context)
     }
     
     func fetchTrackers() throws -> [Tracker] {
@@ -36,7 +28,7 @@ final class TrackerStore {
         let trackerCoreData = TrackerCoreData(context: context)
         trackerCoreData.id = tracker.id
         trackerCoreData.name = tracker.name
-        trackerCoreData.color = uiColorMarshalling.hexString(from: tracker.color)
+        trackerCoreData.color = UIColorMarshalling.hexString(from: tracker.color)
         trackerCoreData.emojii = tracker.emojii
         trackerCoreData.schedule = tracker.schedule
         
@@ -51,7 +43,7 @@ final class TrackerStore {
         
         if let existingTracker = try context.fetch(fetchRequest).first {
             existingTracker.name = tracker.name
-            existingTracker.color = uiColorMarshalling.hexString(from: tracker.color)
+            existingTracker.color = UIColorMarshalling.hexString(from: tracker.color)
             existingTracker.emojii = tracker.emojii
             existingTracker.schedule = tracker.schedule
             
@@ -96,7 +88,7 @@ final class TrackerStore {
         return Tracker(
             id: id,
             name: name,
-            color: uiColorMarshalling.color(from: colorHex),
+            color: UIColorMarshalling.color(from: colorHex),
             emojii: emojii,
             schedule: schedule
         )
@@ -110,9 +102,8 @@ final class TrackerStore {
                 try context.save()
             } catch {
                 let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                assertionFailure("Save context error \(nserror), \(nserror.userInfo)")
             }
         }
     }
-    
 }

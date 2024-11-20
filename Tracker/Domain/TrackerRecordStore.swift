@@ -5,7 +5,6 @@
 //  Created by Ilya Lotnik on 20.08.2024.
 //
 
-import UIKit
 import CoreData
 
 
@@ -15,17 +14,7 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     private var trackerStore: TrackerStore
     
-    convenience override init() {
-        let delegate = UIApplication.shared.delegate as? AppDelegate
-        guard let context = delegate?.persistentContainer.viewContext else { fatalError(TrackerRecordStoreError.loadContextError.localizedDescription)}
-        do {
-            try self.init(context: context)
-        } catch {
-            fatalError(TrackerRecordStoreError.initError.localizedDescription)
-        }
-    }
-    
-    private init(context: NSManagedObjectContext) throws {
+    init(context: NSManagedObjectContext) {
         self.context = context
         trackerStore = TrackerStore(context: context)
         super.init()
@@ -44,7 +33,11 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         )
         controller.delegate = self
         self.fetchedResultsController = controller
-        try controller.performFetch()
+        do {
+            try controller.performFetch()
+        } catch {
+            assertionFailure(TrackerRecordStoreError.performFetchError.localizedDescription)
+        }
     }
     
     var records: Set<TrackerRecord> {
@@ -105,7 +98,7 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
                 try context.save()
             } catch {
                 let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                assertionFailure("Save context error \(nserror), \(nserror.userInfo)")
             }
         }
     }

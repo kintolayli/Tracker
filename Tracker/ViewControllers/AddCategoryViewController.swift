@@ -12,10 +12,20 @@ protocol AddCategoryViewControllerProtocol: AnyObject {
 }
 
 final class AddCategoryViewController: UIViewController, AddCategoryViewControllerProtocol {
-    private let trackerCategoryStore = TrackerCategoryStore()
+    
+    private lazy var trackerCategoryStore: TrackerCategoryStore = {
+        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
+            assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
+            
+            let fallbackContext = DefaultContext(concurrencyType: .mainQueueConcurrencyType)
+            return TrackerCategoryStore(context: fallbackContext)
+        }
+        return TrackerCategoryStore(context: context)
+    }()
+    
     weak var categoryListViewController: CategoryListViewControllerProtocol?
     
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -23,6 +33,7 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         label.text = "Новая категория"
         return label
     }()
+    
     private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Введите название категории"
@@ -50,7 +61,8 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         
         return textField
     }()
-    private let okButton: UIButton = {
+    
+    private lazy var okButton: UIButton = {
         let button = UIButton()
         button.setTitle("Готово", for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
@@ -112,7 +124,7 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         textField.sendActions(for: .editingChanged)
     }
     
-    @objc func textFieldDidChange(_ textField: UITextField) {
+    @objc private func textFieldDidChange(_ textField: UITextField) {
         if let text = textField.text, !text.isEmpty {
             textField.rightViewMode = .always
         } else {
@@ -123,7 +135,7 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         okButton.backgroundColor = okButton.isEnabled ? .ypBlack : .ypGray
     }
     
-    @objc func dismissKeyboard() {
+    @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
 }

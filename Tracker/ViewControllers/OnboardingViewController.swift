@@ -8,25 +8,16 @@
 import UIKit
 
 
-class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
-    lazy var pages: [UIViewController] = {
-
-        let firstPage = OnboardingPageViewController(
-            imageName: "startScreenImage1",
-            labelName: "Отслеживайте только то, что хотите",
-            buttonName: "Вот это технологии!"
-        )
+final class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+    private lazy var pages: [UIViewController] = {
         
-        let secondPage = OnboardingPageViewController(
-            imageName: "startScreenImage2",
-            labelName: "Даже если это не литры воды и йога",
-            buttonName: "Вот это технологии!"
-        )
+        let firstPageVC = OnboardingPageViewController(pageModel: PageModel.firstPage)
+        let secondPageVC = OnboardingPageViewController(pageModel: PageModel.secondPage)
         
-        return [firstPage, secondPage]
+        return [firstPageVC, secondPageVC]
     }()
     
-    lazy var pageControl: UIPageControl = {
+    private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
@@ -51,7 +42,7 @@ class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSo
         setupUI()
     }
     
-    func setupUI() {
+    private func setupUI() {
         view.addSubview(pageControl)
         
         NSLayoutConstraint.activate([
