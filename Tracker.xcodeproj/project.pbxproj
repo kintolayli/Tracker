@@ -148,11 +148,18 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		8ACDBC182C5CD87B00687ACF = {
+		8A5E2D682CF633430036A6BC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				8A5E2D632CF6111D0036A6BC /* Localizable.stringsdict */,
 				8AD382252CF5E1FB00A0F2C4 /* Localizable.strings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		8ACDBC182C5CD87B00687ACF = {
+			isa = PBXGroup;
+			children = (
 				8ACDBC232C5CD87B00687ACF /* Tracker */,
 				8ACDBC222C5CD87B00687ACF /* Products */,
 			);
@@ -183,6 +190,7 @@
 				8AD814A92C67A13E008DAA5D /* Models */,
 				8AD814A72C67A10C008DAA5D /* Helpers */,
 				8AD814A82C67A126008DAA5D /* Extensions */,
+				8A5E2D682CF633430036A6BC /* Resources */,
 				8ACDBC2D2C5CD87D00687ACF /* Assets.xcassets */,
 				8ACDBC2F2C5CD87D00687ACF /* LaunchScreen.storyboard */,
 				8ACDBC322C5CD87D00687ACF /* Info.plist */,
