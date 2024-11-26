@@ -25,7 +25,7 @@ final class CategoryListViewModel {
             categories = try trackerCategoryStore.fetchCategories()
             didFetchCategories?(categories as [TrackerCategory])
         } catch {
-            print("Ошибка загрузки категорий: \(error)")
+            print("Failed to load category: \(error)")
         }
     }
     

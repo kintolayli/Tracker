@@ -1,0 +1,66 @@
+/*
+ Localizable.strings
+ Tracker
+ 
+ Created by Ilya Lotnik on 26.11.2024.
+ 
+ */
+"tabBarController.title.tracker" = "Trackers";
+"tabBarController.title.statistics" = "Statistics";
+
+"pageModel.labelName.firstPage" = "Track only what you want";
+"pageModel.labelName.secondPage" = "Even if it’s not water intake and yoga";
+"pageModel.buttonName" = "This is technology!";
+
+"trackersCollectionViewCell.updateButtonState.completed" = "Completed";
+"trackersCollectionViewCell.updateButtonState.notCompleted" = "Not completed";
+
+"trackersViewController.navigationItem.title" = "Trackers";
+"trackersViewController.searchBar.placeholder" = "Search";
+"trackersViewController.imageViewLabel.text" = "What will we track?";
+"trackersViewController.trackersViewControllerCellTap.alertModel.title" = "System Notification";
+"trackersViewController.trackersViewControllerCellTap.alertModel.message" = "You cannot mark a card for a future date";
+"trackersViewController.trackersViewControllerCellTap.alertModel.buttonTitle" = "OK";
+
+"chooseTypeTrackerViewController.titleLabel.text" = "Create Tracker";
+"chooseTypeTrackerViewController.regularEventButton.title" = "Habit";
+"chooseTypeTrackerViewController.irregularEventButton.title" = "Irregular Event";
+
+"createEventTrackerViewController.regularEventTracker.titleLabel.text" = "New Habit";
+"createEventTrackerViewController.irregularEventTracker.titleLabel.text" = "New Irregular Event";
+"createEventTrackerViewController.textField.placeholder" = "Enter tracker name";
+"createEventTrackerViewController.menuItems.item1" = "Category";
+"createEventTrackerViewController.menuItems.item2" = "Schedule";
+"createEventTrackerViewController.suplementaryViewHeaderList.item1" = "Emoji";
+"createEventTrackerViewController.suplementaryViewHeaderList.item2" = "Color";
+"createEventTrackerViewController.cancelButton.title" = "Cancel";
+"createEventTrackerViewController.createButton.title" = "Create";
+
+"categoryListViewController.titleLabel.text" = "Category";
+"categoryListViewController.imageViewLabel.text" = "Habits and events\ncan be grouped meaningfully";
+"categoryListViewController.addCategoryButton.title" = "Add Category";
+
+"addCategoryViewController.titleLabel.text" = "New Category";
+"addCategoryViewController.textField.placeholder" = "Enter category name";
+"addCategoryViewController.okButton.title" = "Done";
+
+"sheduleViewController.titleLabel.text" = "Schedule";
+"sheduleViewController.okButton.title" = "Done";
+
+"dayLocalizeModel.fullDayName.monday" = "Monday";
+"dayLocalizeModel.fullDayName.tuesday" = "Tuesday";
+"dayLocalizeModel.fullDayName.wednesday" = "Wednesday";
+"dayLocalizeModel.fullDayName.thursday" = "Thursday";
+"dayLocalizeModel.fullDayName.friday" = "Friday";
+"dayLocalizeModel.fullDayName.saturday" = "Saturday";
+"dayLocalizeModel.fullDayName.sunday" = "Sunday";
+
+"dayLocalizeModel.shortDayName.monday" = "Mon";
+"dayLocalizeModel.shortDayName.tuesday" = "Tue";
+"dayLocalizeModel.shortDayName.wednesday" = "Wed";
+"dayLocalizeModel.shortDayName.thursday" = "Thu";
+"dayLocalizeModel.shortDayName.friday" = "Fri";
+"dayLocalizeModel.shortDayName.saturday" = "Sat";
+"dayLocalizeModel.shortDayName.sunday" = "Sun";
+
+"sheduleViewController.allDays" = "Every day";

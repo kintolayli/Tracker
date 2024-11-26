@@ -30,13 +30,13 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = "Новая категория"
+        label.text = NSLocalizedString("addCategoryViewController.titleLabel.text", comment: "Page title")
         return label
     }()
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название категории"
+        textField.placeholder = NSLocalizedString("addCategoryViewController.textField.placeholder", comment: "Text field placeholder")
         textField.backgroundColor = .ypBackground
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
@@ -64,7 +64,8 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
     
     private lazy var okButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Готово", for: .normal)
+        let title = NSLocalizedString("addCategoryViewController.okButton.title", comment: "Button title")
+        button.setTitle(title, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypGray

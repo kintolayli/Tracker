@@ -57,7 +57,9 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .left
-        label.text = "0 дней"
+        label.text = String.localizedStringWithFormat(
+            NSLocalizedString("numberOfDays", comment: "Number of marked days"), 0
+        )
         label.font = .systemFont(ofSize: 12, weight: .medium)
         return label
     }()
@@ -141,27 +143,21 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         updateButtonState(count: count, state: addButtonState, schedule: cell.schedule)
     }
     
-    private func determineEndOfWord(number: Int) -> String {
-        let remainder = number % 10
-        if remainder == 1 && number % 100 != 11 {
-            return "день"
-        } else if (2...4).contains(remainder) && !(12...14).contains(number % 100) {
-            return "дня"
-        } else {
-            return "дней"
-        }
-    }
-    
     func updateButtonState(count: Int, state: Bool, schedule: [Day]?) {
         addButton.layer.opacity = state ? 0.3 : 1
         let imageName = state ? "checkmark" : "plus"
         addButton.setImage(UIImage(systemName: imageName), for: .normal)
         
         if let _ = schedule {
-            let dayWord = determineEndOfWord(number: count)
-            counterLabel.text = "\(count) \(dayWord)"
+            let localizedString = String.localizedStringWithFormat(
+                NSLocalizedString("daysCountLabel", comment: "Number of marked days"),
+                count
+            )
+            counterLabel.text = localizedString
         } else {
-            counterLabel.text = state ? "Выполнено" : "Не выполнено"
+            let completed = NSLocalizedString("trackersCollectionViewCell.updateButtonState.completed", comment: "Completed tracker button title")
+            let notCompleted = NSLocalizedString("trackersCollectionViewCell.updateButtonState.notCompleted", comment: "Not completed tracker button title")
+            counterLabel.text = state ? completed : notCompleted
         }
     }
     

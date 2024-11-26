@@ -51,9 +51,23 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     ]
     private var selectedColor: UIColor?
     
-    private let suplementaryViewHeaderList = ["Emojii", "Цвет"]
+    private let suplementaryViewHeaderList = [
+        NSLocalizedString(
+            "createEventTrackerViewController.suplementaryViewHeaderList.item1",
+            comment:"Suplementary view header title"
+        ),
+        NSLocalizedString(
+            "createEventTrackerViewController.suplementaryViewHeaderList.item2",
+            comment:"Suplementary view header title"
+        )
+    ]
     
-    private var menuItems: [String] = ["Категория"]
+    private var menuItems: [String] = [
+        NSLocalizedString(
+            "createEventTrackerViewController.menuItems.item1",
+            comment:"Menu item title"
+        )
+    ]
     private var menuSecondaryItems: [[String]] = [[""], [""]]
     
     private var isCreateRegularEventTracker: Bool = false
@@ -67,13 +81,19 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = "Новое нерегулярное событие"
+        label.text = NSLocalizedString(
+            "createEventTrackerViewController.irregularEventTracker.titleLabel.text",
+            comment:"Page title"
+        )
         return label
     }()
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = NSLocalizedString(
+            "createEventTrackerViewController.textField.placeholder",
+            comment:"Text field placeholder"
+        )
         textField.backgroundColor = .ypBackground
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
@@ -119,7 +139,11 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Отменить", for: .normal)
+        let title =  NSLocalizedString(
+            "createEventTrackerViewController.cancelButton.title",
+            comment:"Cancel button title"
+        )
+        button.setTitle(title, for: .normal)
         button.setTitleColor(.ypRed, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .clear
@@ -132,7 +156,11 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     private lazy var createButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Создать", for: .normal)
+        let title =  NSLocalizedString(
+            "createEventTrackerViewController.createButton.title",
+            comment:"Create button title"
+        )
+        button.setTitle(title, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypGray
@@ -255,8 +283,16 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     }
     
     func didSelectCreateRegularEvent() {
-        menuItems.append("Расписание")
-        titleLabel.text = "Новая привычка"
+        menuItems.append(
+            NSLocalizedString(
+                "createEventTrackerViewController.menuItems.item2",
+                comment:"Menu item title"
+            )
+        )
+        titleLabel.text = NSLocalizedString(
+            "createEventTrackerViewController.regularEventTracker.titleLabel.text",
+            comment:"Menu item title"
+        )
         isCreateRegularEventTracker = true
     }
     

@@ -23,13 +23,13 @@ enum PageModel {
     var labelName: String {
         switch self {
         case .firstPage:
-            return "Отслеживайте только то, что хотите"
+            return NSLocalizedString("pageModel.labelName.firstPage", comment:"Onboarding page message")
         case .secondPage:
-            return "Даже если это не литры воды и йога"
+            return NSLocalizedString("pageModel.labelName.secondPage", comment:"Onboarding page message")
         }
     }
     
     var buttonName: String {
-        return "Вот это технологии!"
+        return NSLocalizedString("pageModel.buttonName", comment:"Button title")
     }
 }

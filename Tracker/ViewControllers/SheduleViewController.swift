@@ -17,14 +17,30 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
     
     weak var createEventTrackerViewController: CreateEventTrackerViewController?
     
+    private lazy var allDays: String = NSLocalizedString("sheduleViewController.allDays", comment: "All days name")
+    
     private lazy var days: [Day] = [
-        .init(name: "Понедельник", isActive: false, abbreviation: "Пн"),
-        .init(name: "Вторник", isActive: false, abbreviation: "Вт"),
-        .init(name: "Среда", isActive: false, abbreviation: "Ср"),
-        .init(name: "Четверг", isActive: false, abbreviation: "Чт"),
-        .init(name: "Пятница", isActive: false, abbreviation: "Пт"),
-        .init(name: "Суббота", isActive: false, abbreviation: "Сб"),
-        .init(name: "Воскресенье", isActive: false, abbreviation: "Вс")
+        .init(name: DayLocalizeModel.monday.fullDayName,
+              isActive: false,
+              abbreviation: DayLocalizeModel.monday.shortDayName),
+        .init(name: DayLocalizeModel.tuesday.fullDayName,
+              isActive: false,
+              abbreviation: DayLocalizeModel.tuesday.shortDayName),
+        .init(name: DayLocalizeModel.wednesday.fullDayName,
+              isActive: false,
+              abbreviation: DayLocalizeModel.wednesday.shortDayName),
+        .init(name: DayLocalizeModel.thursday.fullDayName,
+              isActive: false,
+              abbreviation: DayLocalizeModel.thursday.shortDayName),
+        .init(name: DayLocalizeModel.friday.fullDayName,
+              isActive: false,
+              abbreviation: DayLocalizeModel.friday.shortDayName),
+        .init(name: DayLocalizeModel.saturday.fullDayName,
+              isActive: false,
+              abbreviation: DayLocalizeModel.saturday.shortDayName),
+        .init(name: DayLocalizeModel.sunday.fullDayName,
+              isActive: false,
+              abbreviation: DayLocalizeModel.sunday.shortDayName)
     ]
     
     private lazy var titleLabel: UILabel = {
@@ -32,7 +48,7 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = "Расписание"
+        label.text = NSLocalizedString("sheduleViewController.titleLabel.text", comment: "Page title")
         return label
     }()
     
@@ -49,7 +65,8 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
     
     private lazy var okButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Готово", for: .normal)
+        let title = NSLocalizedString("sheduleViewController.okButton.title", comment: "Button title")
+        button.setTitle(title, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypBlack
@@ -154,14 +171,14 @@ extension SheduleViewController: SheduleTableViewCellDelegate {
         
         if daysArray.count == 7 {
             daysArray = []
-            daysArray.append("Каждый день")
+            daysArray.append(allDays)
         }
         
         return daysArray.joined(separator: ", ")
     }
     
     func updateDays(from string: String) {
-        if string == "Каждый день" {
+        if string == allDays {
             for i in 0..<days.count {
                 days[i].isActive = true
             }

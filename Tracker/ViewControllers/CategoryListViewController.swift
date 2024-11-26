@@ -36,7 +36,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = "Категория"
+        label.text = NSLocalizedString("categoryListViewController.titleLabel.text", comment: "Page title")
         return label
     }()
     
@@ -52,7 +52,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 14, weight: .medium)
         label.numberOfLines = 2
-        label.text = "Привычки и события можно\n объединить по смыслу"
+        label.text = NSLocalizedString("categoryListViewController.imageViewLabel.text", comment: "Empty category list imageViewLabel text")
         return label
     }()
     
@@ -69,7 +69,8 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Добавить категорию", for: .normal)
+        let title = NSLocalizedString("categoryListViewController.addCategoryButton.title", comment: "Button title")
+        button.setTitle(title, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypBlack

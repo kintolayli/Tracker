@@ -57,7 +57,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.locale = Locale.current
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter
     }()
@@ -70,7 +70,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
-        searchBar.placeholder = "Поиск"
+        searchBar.placeholder = NSLocalizedString("trackersViewController.searchBar.placeholder", comment:"Search bar placeholder")
         searchBar.searchBarStyle = .minimal
         return searchBar
     }()
@@ -86,7 +86,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString("trackersViewController.imageViewLabel.text", comment:"Start screen label with empty trackers")
         return label
     }()
     
@@ -113,8 +113,9 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.locale = Locale.current
         datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
         let addTrackerButton = UIButton(type: .custom)
@@ -127,7 +128,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         let addButton = UIBarButtonItem(customView: buttonView)
         navigationItem.leftBarButtonItem = addButton
         
-        navigationItem.title = "Трекеры"
+        navigationItem.title = NSLocalizedString("trackersViewController.navigationItem.title", comment:"Page title")
         navigationController?.navigationBar.prefersLargeTitles = true
         
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
@@ -383,7 +384,12 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
                 cell.updateButtonState(count: recordsFromCurrentCell.count + 1, state: true, schedule: tracker.schedule)
             }
         } else {
-            let alertModel = AlertModel(title: "Уведомление от системы", message: "Нельзя отметить карточку для будущей даты", buttonTitle: "ОК", buttonAction: nil)
+            let alertModel = AlertModel(
+                title: NSLocalizedString("trackersViewController.trackersViewControllerCellTap.alertModel.title", comment: "Alert title"),
+                message: NSLocalizedString("trackersViewController.trackersViewControllerCellTap.alertModel.message", comment: "Alert message"),
+                buttonTitle: NSLocalizedString("trackersViewController.trackersViewControllerCellTap.alertModel.buttonTitle", comment: "Alert button title"),
+                buttonAction: nil
+            )
             AlertPresenter.show(model: alertModel, viewController: self)
         }
     }
