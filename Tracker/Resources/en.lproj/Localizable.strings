@@ -22,6 +22,13 @@
 "trackersViewController.trackersViewControllerCellTap.alertModel.message" = "You cannot mark a card for a future date";
 "trackersViewController.trackersViewControllerCellTap.alertModel.buttonTitle" = "OK";
 
+"trackersViewController.collectionView.pinTitle" = "Pin";
+"trackersViewController.collectionView.unpinTitle" = "Unpin";
+"trackersViewController.collectionView.editTitle" = "Edit";
+"trackersViewController.collectionView.deleteTitle" = "Delete";
+
+"trackersViewController.pinTracker.pinnedCategoryTitle" = "Pinned";
+
 "chooseTypeTrackerViewController.titleLabel.text" = "Create Tracker";
 "chooseTypeTrackerViewController.regularEventButton.title" = "Habit";
 "chooseTypeTrackerViewController.irregularEventButton.title" = "Irregular Event";

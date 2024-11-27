@@ -22,6 +22,13 @@
 "trackersViewController.trackersViewControllerCellTap.alertModel.message" = "Sie können keine Karte für ein zukünftiges Datum markieren";
 "trackersViewController.trackersViewControllerCellTap.alertModel.buttonTitle" = "OK";
 
+"trackersViewController.collectionView.pinTitle" = "Anheften";
+"trackersViewController.collectionView.unpinTitle" = "Lösen";
+"trackersViewController.collectionView.editTitle" = "Bearbeiten";
+"trackersViewController.collectionView.deleteTitle" = "Löschen";
+
+"trackersViewController.pinTracker.pinnedCategoryTitle" = "Angeheftet";
+
 "chooseTypeTrackerViewController.titleLabel.text" = "Tracker erstellen";
 "chooseTypeTrackerViewController.regularEventButton.title" = "Gewohnheit";
 "chooseTypeTrackerViewController.irregularEventButton.title" = "Unregelmäßiges Ereignis";

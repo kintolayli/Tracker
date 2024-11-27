@@ -22,6 +22,13 @@
 "trackersViewController.trackersViewControllerCellTap.alertModel.message" = "Нельзя отметить карточку для будущей даты";
 "trackersViewController.trackersViewControllerCellTap.alertModel.buttonTitle" = "OK";
 
+"trackersViewController.collectionView.pinTitle" = "Закрепить";
+"trackersViewController.collectionView.unpinTitle" = "Открепить";
+"trackersViewController.collectionView.editTitle" = "Редактировать";
+"trackersViewController.collectionView.deleteTitle" = "Удалить";
+
+"trackersViewController.pinTracker.pinnedCategoryTitle" = "Закрепленные";
+
 "chooseTypeTrackerViewController.titleLabel.text" = "Создание трекера";
 "chooseTypeTrackerViewController.regularEventButton.title" = "Привычка";
 "chooseTypeTrackerViewController.irregularEventButton.title" = "Нерегулярное событие";
