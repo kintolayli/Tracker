@@ -9,7 +9,6 @@ import UIKit
 
 protocol TrackersViewControllerProtocol: AnyObject {
     var chooseTypeTrackerDelegate: ChooseTypeTrackerViewControllerProtocol? { get set }
-    var visibleCategories: [TrackerCategory] { get set }
     var trackerCategoryStore: TrackerCategoryStore { get }
     func add(trackerCategory: TrackerCategory)
     func updateCollectionView()
@@ -25,7 +24,6 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     }()
     
     private var currentDate: Date = Date()
-    private var sectionCount: Int = 0
     
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     
@@ -50,8 +48,8 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     }()
     
     private var categories: [TrackerCategory] = []
+    private var visibleCategories: [TrackerCategory] = []
     private var filteredCategories: [TrackerCategory] = []
-    var visibleCategories: [TrackerCategory] = []
     
     private var trackerRecords = Set<TrackerRecord>()
     
@@ -68,10 +66,9 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         return collectionView
     }()
     
-    private lazy var searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
+    private lazy var searchBar: UISearchTextField = {
+        let searchBar = UISearchTextField()
         searchBar.placeholder = NSLocalizedString("trackersViewController.searchBar.placeholder", comment:"Search bar placeholder")
-        searchBar.searchBarStyle = .minimal
         return searchBar
     }()
     
@@ -101,8 +98,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         setupUI()
         trackerCategoryStore.delegate = self
-        
-        visibleCategories = trackerCategoryStore.categories
+        categories = trackerCategoryStore.categories
         trackerRecords = trackerRecordStore.records
     }
     
@@ -145,11 +141,12 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
             imageViewLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
             imageViewLabel.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             
-            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -10),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchBar.heightAnchor.constraint(equalToConstant: 36),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 10),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -160,10 +157,26 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         collectionView.register(TrackersCollectionViewCell.self, forCellWithReuseIdentifier: TrackersCollectionViewCell.reuseIdentifier)
         collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        
+        searchBar.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+    }
+    
+    @objc private func textDidChange(_ searchField: UISearchTextField) {
+        if let searchText = searchField.text, !searchText.isEmpty {
+            filteredCategories = visibleCategories.compactMap { category in
+                let filteredTrackers = category.trackerList.filter { tracker in
+                    tracker.name.lowercased().contains(searchText.lowercased())
+                }
+                return filteredTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackerList: filteredTrackers)
+            }
+        } else {
+            filteredCategories = visibleCategories
+        }
+        collectionView.reloadData()
     }
     
     private func hideImageViewIfTrackerIsNotEmpty() {
-        let trackerCategoryWithNonEmptyTrackerList = filteredCategories.filter { !$0.trackerList.isEmpty }
+        let trackerCategoryWithNonEmptyTrackerList = visibleCategories.filter { !$0.trackerList.isEmpty }
         
         if trackerCategoryWithNonEmptyTrackerList.isEmpty {
             imageView.isHidden = false
@@ -206,7 +219,7 @@ extension TrackersViewController: UICollectionViewDataSource {
     private func filterCategories(for dayOfWeek: String) -> [TrackerCategory] {
         var filteredCategories: [TrackerCategory] = []
         
-        for category in visibleCategories {
+        for category in categories {
             var filteredTrackers: [Tracker] = []
             
             for tracker in category.trackerList {
@@ -275,9 +288,9 @@ extension TrackersViewController: UICollectionViewDataSource {
             id = ""
         }
         
-        if visibleCategories.count > 0 {
+        if filteredCategories.count > 0 {
             guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SupplementaryView else { return UICollectionReusableView() }
-            view.updateLabel(text: visibleCategories[indexPath.section].title)
+            view.updateLabel(text: filteredCategories[indexPath.section].title)
             return view
         } else {
             return UICollectionReusableView()
@@ -287,7 +300,8 @@ extension TrackersViewController: UICollectionViewDataSource {
     
     func updateCollectionView() {
         let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
-        filteredCategories = filterCategories(for: dayOfWeekString)
+        visibleCategories = filterCategories(for: dayOfWeekString)
+        filteredCategories = visibleCategories
         collectionView.reloadData()
         hideImageViewIfTrackerIsNotEmpty()
     }
@@ -328,7 +342,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 extension TrackersViewController: TrackersCollectionViewCellDelegate {
     
     func getRecordsCountAndButtonLabelState(indexPath: IndexPath) -> (Int, Bool) {
-        let newCell = filteredCategories[indexPath.section].trackerList[indexPath.row]
+        let newCell = visibleCategories[indexPath.section].trackerList[indexPath.row]
         
         var cellCount = 0
         var cellState = false
@@ -372,7 +386,7 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
     func trackersViewControllerCellTap(_ cell: TrackersCollectionViewCell) {
         if currentDate <= Date() {
             guard let indexPath = collectionView.indexPath(for: cell)  else { return }
-            let tracker = filteredCategories[indexPath.section].trackerList[indexPath.row]
+            let tracker = visibleCategories[indexPath.section].trackerList[indexPath.row]
             guard let recordsFromCurrentCell = try? trackerRecordStore.getTrackerRecordsWithCurrentTrackerId(with: tracker.id) else { return }
             
             if let existRecord = checkExistsRecord(in: recordsFromCurrentCell, with: currentDate) {
@@ -398,19 +412,19 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
 extension TrackersViewController: TrackerCategoryStoreDelegate {
     
     private func addNewSectionIfNeeded() {
-        if collectionView.numberOfSections != filteredCategories.count {
+        if collectionView.numberOfSections != visibleCategories.count {
             
-            let newSectionIndex = filteredCategories.count - 1
+            let newSectionIndex = visibleCategories.count - 1
             collectionView.insertSections(IndexSet(integer: newSectionIndex))
         }
     }
     
     func categoryStore(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
-        visibleCategories = trackerCategoryStore.categories
+        categories = trackerCategoryStore.categories
         let dayOfWeekString = getDayOfWeekFromDate(date: currentDate)
-        let oldFilteredTrackerListCount = filteredCategories.first?.trackerList.count ?? 0
-        filteredCategories = filterCategories(for: dayOfWeekString)
-        guard let filteredTrackerListCount = filteredCategories.first?.trackerList.count else { return }
+        let oldFilteredTrackerListCount = visibleCategories.first?.trackerList.count ?? 0
+        visibleCategories = filterCategories(for: dayOfWeekString)
+        guard let filteredTrackerListCount = visibleCategories.first?.trackerList.count else { return }
         
         if filteredTrackerListCount > oldFilteredTrackerListCount {
             collectionView.reloadData()
