@@ -61,6 +61,22 @@ final class TrackerCategoryStore: NSObject {
         return categoriesCoreData
     }
     
+    var pinnedCategories: [TrackerCategory] {
+        
+        guard let pinnedTrackers = try? trackerStore.fetchPinnedTrackers() else { return [] }
+        
+        let pinnedCategoryTitle = NSLocalizedString("trackersViewController.pinTracker.pinnedCategoryTitle", comment: "Title pinned category")
+        let pinnedCategory = TrackerCategory(title: pinnedCategoryTitle, trackerList: pinnedTrackers)
+        
+        let unpinnedCategories = categories.map { category in
+            TrackerCategory(title: category.title, trackerList: category.trackerList.filter { !$0.isPinned })
+        }.filter { category in
+            !(category.trackerList.count == 1 && category.trackerList.first?.isPinned == true)
+        }
+        
+        return [pinnedCategory] + unpinnedCategories
+    }
+    
     func fetchCategories() throws -> [TrackerCategory] {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.returnsObjectsAsFaults = false
@@ -87,6 +103,7 @@ final class TrackerCategoryStore: NSObject {
             try trackerStore.addTracker(with: categoryCoreData, with: tracker)
         }
     }
+
     
     func updateTrackerCategory(_ category: TrackerCategory) throws {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -95,11 +112,9 @@ final class TrackerCategoryStore: NSObject {
         let categories = try context.fetch(fetchRequest)
         
         if let categoryToUpdate = categories.first {
-            
             for tracker in category.trackerList {
                 try trackerStore.addTracker(with: categoryToUpdate, with: tracker)
             }
-            
         } else {
             try addCategory(category)
         }

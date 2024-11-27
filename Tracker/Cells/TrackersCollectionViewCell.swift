@@ -131,14 +131,13 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     func updateCell(cell: Tracker,
                     count: Int,
-                    addButtonState: Bool,
-                    isPin: Bool = false
+                    addButtonState: Bool
     ){
         colorView.backgroundColor = cell.color
         emojiiLabel.text = cell.emojii
         titleLabel.text = cell.name
         addButton.backgroundColor = cell.color
-        pinImageView.isHidden = isPin ? false : true
+        pinImageView.isHidden = cell.isPinned ? false : true
         
         updateButtonState(count: count, state: addButtonState, schedule: cell.schedule)
     }

@@ -27,6 +27,16 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     
+    private lazy var trackerStore: TrackerStore = {
+        guard let context = context else {
+            assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
+            
+            let fallbackContext = DefaultContext(concurrencyType: .mainQueueConcurrencyType)
+            return TrackerStore(context: fallbackContext)
+        }
+        return TrackerStore(context: context)
+    }()
+    
     lazy var trackerCategoryStore: TrackerCategoryStore = {
         guard let context = context else {
             assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
@@ -50,7 +60,6 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
     private var filteredCategories: [TrackerCategory] = []
-    
     private var trackerRecords = Set<TrackerRecord>()
     
     private lazy var dateFormatter: DateFormatter = {
@@ -93,12 +102,17 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         updateCollectionView()
     }
     
+    private func updateCategoriesFromCategoryStore() {
+//        categories = trackerCategoryStore.categories
+        categories = trackerCategoryStore.pinnedCategories
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
         trackerCategoryStore.delegate = self
-        categories = trackerCategoryStore.categories
+        updateCategoriesFromCategoryStore()
         trackerRecords = trackerRecordStore.records
     }
     
@@ -159,6 +173,8 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
         
         searchBar.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        
+        enableKeyboardDismissOnTap()
     }
     
     @objc private func textDidChange(_ searchField: UISearchTextField) {
@@ -175,16 +191,13 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         collectionView.reloadData()
     }
     
-    private func hideImageViewIfTrackerIsNotEmpty() {
-        let trackerCategoryWithNonEmptyTrackerList = visibleCategories.filter { !$0.trackerList.isEmpty }
+    private func updateEmptyStateViewVisibility() {
+        let nonEmptyCategories = visibleCategories.filter { !$0.trackerList.isEmpty }
         
-        if trackerCategoryWithNonEmptyTrackerList.isEmpty {
-            imageView.isHidden = false
-            imageViewLabel.isHidden = false
-        } else {
-            imageView.isHidden = true
-            imageViewLabel.isHidden = true
-        }
+        let isTrackerListEmpty = nonEmptyCategories.isEmpty
+        
+        imageView.isHidden = !isTrackerListEmpty
+        imageViewLabel.isHidden = !isTrackerListEmpty
     }
     
     @objc private func didTapTrackerButton() {
@@ -205,7 +218,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     func add(trackerCategory: TrackerCategory) {
         
         try? trackerCategoryStore.updateTrackerCategory(trackerCategory)
-        hideImageViewIfTrackerIsNotEmpty()
+        updateEmptyStateViewVisibility()
     }
     
     private func getDayOfWeekFromDate(date: Date) -> String {
@@ -269,10 +282,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         let newCell = filteredCategories[indexPath.section].trackerList[indexPath.row]
         let (count, addButtonState) = getRecordsCountAndButtonLabelState(indexPath: indexPath)
         
-        cell.updateCell(cell: newCell,
-                        count: count,
-                        addButtonState: addButtonState,
-                        isPin: false)
+        cell.updateCell(cell: newCell, count: count, addButtonState: addButtonState)
         
         return cell
     }
@@ -303,12 +313,80 @@ extension TrackersViewController: UICollectionViewDataSource {
         visibleCategories = filterCategories(for: dayOfWeekString)
         filteredCategories = visibleCategories
         collectionView.reloadData()
-        hideImageViewIfTrackerIsNotEmpty()
+        updateEmptyStateViewVisibility()
     }
 }
 
 extension TrackersViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let indexPath = indexPaths[0]
+        let tracker = visibleCategories[indexPath.section].trackerList[indexPath.row]
+        
+        return UIContextMenuConfiguration(actionProvider: { actions in
+            
+            let pinTitle = NSLocalizedString("trackersViewController.collectionView.pinTitle", comment: "Item in the dropdown menu")
+            let unpinTitle = NSLocalizedString("trackersViewController.collectionView.unpinTitle", comment: "Item in the dropdown menu")
+            let editTitle = NSLocalizedString("trackersViewController.collectionView.editTitle", comment: "Item in the dropdown menu")
+            let deleteTitle = NSLocalizedString("trackersViewController.collectionView.deleteTitle", comment: "Item in the dropdown menu")
+            
+            var menuActions: [UIMenuElement] = []
+            
+            if tracker.isPinned {
+                menuActions.append(
+                    UIAction(title: unpinTitle) { [weak self] _ in
+                        self?.togglePinTracker(indexPath: indexPath)
+                    })
+            } else {
+                menuActions.append(
+                    UIAction(title: pinTitle) { [weak self] _ in
+                        self?.togglePinTracker(indexPath: indexPath)
+                    }
+                )
+            }
+            menuActions.append(
+                UIAction(title: editTitle) { [weak self] _ in
+                    self?.editTracker(indexPath: indexPath)
+                })
+            menuActions.append(
+                UIAction(title: deleteTitle, attributes: .destructive) { [weak self] _ in
+                    self?.deleteTracker(indexPath: indexPath)
+                })
+            
+            return UIMenu(children: menuActions)
+        })
+    }
+    
+    private func togglePinTracker(indexPath: IndexPath) {
+        let tracker = visibleCategories[indexPath.section].trackerList[indexPath.row]
+        
+        try? self.trackerStore.togglePinTracker(withId: tracker.id)
+        updateCategoriesFromCategoryStore()
+        updateCollectionView()
+    }
+    
+    private func editTracker(indexPath: IndexPath) {
+        
+    }
+    
+    private func deleteTracker(indexPath: IndexPath) {
+        
+        let tracker = visibleCategories[indexPath.section].trackerList[indexPath.row]
+        let model = AlertModel(
+            title: "Уверены что хотите удалить трекер?",
+            message: nil,
+            actions: [
+                AlertActionModel(title: "Отменить", style: .cancel, handler: nil),
+                AlertActionModel(title: "Удалить", style: .destructive, handler: { [weak self] _ in
+                    try? self?.trackerStore.removeTracker(withId: tracker.id)
+                    self?.updateCollectionView()
+                }),
+            ]
+        )
+        AlertPresenter.show(model: model, viewController: self, preferredStyle: .actionSheet)
     }
 }
 

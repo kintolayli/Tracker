@@ -17,9 +17,11 @@ final class TrackerStore {
         self.context = context
     }
     
-    func fetchTrackers() throws -> [Tracker] {
+    func fetchPinnedTrackers() throws -> [Tracker] {
         let fetchRequest = TrackerCoreData.fetchRequest()
         fetchRequest.returnsObjectsAsFaults = false
+        fetchRequest.predicate = NSPredicate(format: "isPinned == true")
+        
         let trackersCoreData = try context.fetch(fetchRequest)
         return try trackersCoreData.map { try convertToTracker(from: $0) }
     }
@@ -66,9 +68,9 @@ final class TrackerStore {
         }
     }
     
-    func removeTracker(_ tracker: Tracker) throws {
+    func removeTracker(withId trackerId: UUID) throws {
         let fetchRequest = TrackerCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        fetchRequest.predicate = NSPredicate(format: "id == %@", trackerId as CVarArg)
         
         if let trackerCoreData = try context.fetch(fetchRequest).first {
             context.delete(trackerCoreData)
@@ -78,11 +80,24 @@ final class TrackerStore {
         }
     }
     
+    func togglePinTracker(withId trackerId: UUID) throws {
+        let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", trackerId as CVarArg)
+        
+        if let trackerCoreData = try context.fetch(fetchRequest).first {
+            trackerCoreData.isPinned = !trackerCoreData.isPinned
+            saveContext()
+        } else {
+            throw TrackerStoreError.pinTrackerError
+        }
+    }
+    
     func convertToTracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
         guard let id = trackerCoreData.id else { throw TrackerStoreError.decodingErrorInvalidId }
         guard let name = trackerCoreData.name else { throw TrackerStoreError.decodingErrorInvalidName }
         guard let emojii = trackerCoreData.emojii else { throw TrackerStoreError.decodingErrorInvalidEmojii }
         guard let colorHex = trackerCoreData.color else { throw TrackerStoreError.decodingErrorInvalidColor }
+        let isPinned = trackerCoreData.isPinned
         let schedule = trackerCoreData.schedule
         
         return Tracker(
@@ -90,7 +105,8 @@ final class TrackerStore {
             name: name,
             color: UIColorMarshalling.color(from: colorHex),
             emojii: emojii,
-            schedule: schedule
+            schedule: schedule,
+            isPinned: isPinned
         )
     }
     

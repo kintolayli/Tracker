@@ -23,6 +23,8 @@
 		8A4D6FFE2CEBBB6400E48CCA /* CategoryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4D6FFD2CEBBB6400E48CCA /* CategoryListViewModel.swift */; };
 		8A5E2D602CF5F97B0036A6BC /* DayLocalizeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5E2D5F2CF5F97B0036A6BC /* DayLocalizeModel.swift */; };
 		8A5E2D652CF6111D0036A6BC /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 8A5E2D632CF6111D0036A6BC /* Localizable.stringsdict */; };
+		8AAEB1992CF74D1E00C6E49B /* AlertActionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEB1982CF74D1E00C6E49B /* AlertActionModel.swift */; };
+		8AAEB19B2CF7845300C6E49B /* ExtensionUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEB19A2CF7845300C6E49B /* ExtensionUIViewController.swift */; };
 		8ABA45BE2CA828A7005C8395 /* TrackerStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABA45BD2CA828A7005C8395 /* TrackerStoreError.swift */; };
 		8ABA45C02CA828CD005C8395 /* TrackerCategoryStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABA45BF2CA828CD005C8395 /* TrackerCategoryStoreError.swift */; };
 		8ABA45C22CA828E7005C8395 /* TrackerCategoryStoreUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABA45C12CA828E7005C8395 /* TrackerCategoryStoreUpdate.swift */; };
@@ -80,6 +82,8 @@
 		8A5E2D642CF6111D0036A6BC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		8A5E2D662CF613DE0036A6BC /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		8A5E2D672CF615270036A6BC /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		8AAEB1982CF74D1E00C6E49B /* AlertActionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertActionModel.swift; sourceTree = "<group>"; };
+		8AAEB19A2CF7845300C6E49B /* ExtensionUIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionUIViewController.swift; sourceTree = "<group>"; };
 		8ABA45BD2CA828A7005C8395 /* TrackerStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStoreError.swift; sourceTree = "<group>"; };
 		8ABA45BF2CA828CD005C8395 /* TrackerCategoryStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStoreError.swift; sourceTree = "<group>"; };
 		8ABA45C12CA828E7005C8395 /* TrackerCategoryStoreUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStoreUpdate.swift; sourceTree = "<group>"; };
@@ -214,6 +218,7 @@
 				8ADF935D2C5F5EA3001A4690 /* ExtensionUIView.swift */,
 				8AD8147B2C64E1C5008DAA5D /* ExtensionUITextField+MaxLength.swift */,
 				8AD814AF2C67F4CE008DAA5D /* ExtensionNotificationName.swift */,
+				8AAEB19A2CF7845300C6E49B /* ExtensionUIViewController.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -253,6 +258,7 @@
 			children = (
 				8AD814B22C695567008DAA5D /* AlertPresenter.swift */,
 				8AD814B42C69558D008DAA5D /* AlertModel.swift */,
+				8AAEB1982CF74D1E00C6E49B /* AlertActionModel.swift */,
 			);
 			path = AlertPresenter;
 			sourceTree = "<group>";
@@ -395,8 +401,10 @@
 				8AD814DC2C6E1829008DAA5D /* EmojiesColorCollectionViewCell.swift in Sources */,
 				8A2C629B2CEE6CAA00DF8ADF /* TrackersViewControllerError.swift in Sources */,
 				8A19F9572C98F6F7008BC2BD /* Day.swift in Sources */,
+				8AAEB19B2CF7845300C6E49B /* ExtensionUIViewController.swift in Sources */,
 				8AD814802C66313D008DAA5D /* SupplementaryView.swift in Sources */,
 				8ABA45C42CA82918005C8395 /* TrackerRecordStoreError.swift in Sources */,
+				8AAEB1992CF74D1E00C6E49B /* AlertActionModel.swift in Sources */,
 				8A4D6FFC2CEBA5F500E48CCA /* AddCategoryViewController.swift in Sources */,
 				8ABA45C22CA828E7005C8395 /* TrackerCategoryStoreUpdate.swift in Sources */,
 				8AD814742C63A105008DAA5D /* TrackersCollectionViewCell.swift in Sources */,
@@ -482,7 +490,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -546,7 +554,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
