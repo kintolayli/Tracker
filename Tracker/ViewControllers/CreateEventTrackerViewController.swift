@@ -269,9 +269,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         NotificationCenter.default.addObserver(self, selector: #selector(emojiiDidChange), name: .emojiiDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(colorDidChange), name: .colorDidChange, object: nil)
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
+        enableKeyboardDismissOnTap()
     }
     
     func loadLastSelectedCategory() {
@@ -368,10 +366,6 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         createButton.backgroundColor = createButton.isEnabled ? .ypBlack : .ypGray
     }
     
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
     @objc private func textFieldDidChange(_ textField: UITextField) {
         if let text = textField.text, !text.isEmpty {
             textField.rightViewMode = .always
@@ -413,7 +407,6 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     @objc
     private func createButtonDidTap() {
-        let id = UUID()
         guard let name = textField.text else { return }
         guard let category = selectedCategory else { return }
         if isCreateRegularEventTracker {
@@ -422,7 +415,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         guard let emojii = selectedEmojii else { return }
         guard let color = selectedColor else { return }
         
-        let newTracker = Tracker(id: id, name: name, color: color, emojii: emojii, schedule: schedule)
+        let newTracker = Tracker(id: UUID(), name: name, color: color, emojii: emojii, schedule: schedule, isPinned: false)
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
         
         self.chooseTypeTrackerViewController?.trackersViewController?.add(trackerCategory: newTrackerCategory)
