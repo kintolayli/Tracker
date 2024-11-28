@@ -28,6 +28,7 @@
 "trackersViewController.collectionView.deleteTitle" = "Löschen";
 
 "trackersViewController.pinTracker.pinnedCategoryTitle" = "Angeheftet";
+"trackersViewController.editTracker.label" = "Gewohnheiten bearbeiten";
 
 "chooseTypeTrackerViewController.titleLabel.text" = "Tracker erstellen";
 "chooseTypeTrackerViewController.regularEventButton.title" = "Gewohnheit";
@@ -42,6 +43,7 @@
 "createEventTrackerViewController.suplementaryViewHeaderList.item2" = "Farbe";
 "createEventTrackerViewController.cancelButton.title" = "Abbrechen";
 "createEventTrackerViewController.createButton.title" = "Erstellen";
+"createEventTrackerViewController.createButton.titleWhenEdit" = "Speichern";
 
 "categoryListViewController.titleLabel.text" = "Kategorie";
 "categoryListViewController.imageViewLabel.text" = "Gewohnheiten und Ereignisse\nkönnen sinnvoll gruppiert werden";

@@ -28,6 +28,7 @@
 "trackersViewController.collectionView.deleteTitle" = "Удалить";
 
 "trackersViewController.pinTracker.pinnedCategoryTitle" = "Закрепленные";
+"trackersViewController.editTracker.label" = "Редактирование привычки";
 
 "chooseTypeTrackerViewController.titleLabel.text" = "Создание трекера";
 "chooseTypeTrackerViewController.regularEventButton.title" = "Привычка";
@@ -42,6 +43,7 @@
 "createEventTrackerViewController.suplementaryViewHeaderList.item2" = "Цвет";
 "createEventTrackerViewController.cancelButton.title" = "Отменить";
 "createEventTrackerViewController.createButton.title" = "Создать";
+"createEventTrackerViewController.createButton.titleWhenEdit" = "Сохранить";
 
 "categoryListViewController.titleLabel.text" = "Категория";
 "categoryListViewController.imageViewLabel.text" = "Привычки и события можно\n объединить по смыслу";
