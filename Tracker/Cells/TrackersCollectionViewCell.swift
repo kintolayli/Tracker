@@ -160,6 +160,11 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    func getCounterText() -> String {
+        guard let text = counterLabel.text else { return "error" }
+        return text
+    }
+    
     @objc private func addButtonDidTap() {
         delegate?.trackersViewControllerCellTap(self)
     }

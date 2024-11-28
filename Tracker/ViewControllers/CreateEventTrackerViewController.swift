@@ -107,6 +107,17 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         return label
     }()
     
+    private lazy var dayCounterLabel: UILabel = {
+       let label = UILabel()
+        
+        label.textColor = .ypBlack
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.isHidden = true
+        
+        return label
+    }()
+    
     private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.placeholder = NSLocalizedString(
@@ -219,12 +230,19 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         
         contentView.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,
+            dayCounterLabel,
             textField,
             tableView,
             collectionView,
             cancelButton,
             createButton
         ])
+        
+        if dayCounterLabel.isHidden {
+            textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38).isActive = true
+        } else {
+            textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38 * 3).isActive = true
+        }
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -242,7 +260,9 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 27),
             titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             
-            textField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 87),
+            dayCounterLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
+            dayCounterLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             textField.heightAnchor.constraint(equalToConstant: 75),
@@ -349,8 +369,11 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         categoryTitle: String,
         schedule: [Day]?,
         emojii: String,
-        color: UIColor
+        color: UIColor,
+        trackerText: String
     ) {
+        dayCounterLabel.isHidden = false
+        dayCounterLabel.text = trackerText
         selectedEmojii = emojii
         selectedColor = color
         titleLabel.text = label
@@ -567,8 +590,9 @@ extension CreateEventTrackerViewController: UITableViewDelegate, UITableViewData
         
         if indexPath.row == 0 {
             let viewController = CategoryListViewController()
-            guard let category = selectedCategory else { return }
-            viewController.viewModel.saveLastSelectedCategory(selectedCategoryTitle: category)
+            if let category = selectedCategory {
+                viewController.viewModel.saveLastSelectedCategory(selectedCategoryTitle: category)
+            }
             viewController.createEventTrackerViewController = self
             viewController.modalPresentationStyle = .formSheet
             viewController.modalTransitionStyle = .coverVertical

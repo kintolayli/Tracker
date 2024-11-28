@@ -327,7 +327,7 @@ extension TrackersViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
         
-        let indexPath = indexPaths[0]
+        guard let indexPath = indexPaths.first else { return nil }
         let tracker = visibleCategories[indexPath.section].trackerList[indexPath.row]
         
         return UIContextMenuConfiguration(actionProvider: { actions in
@@ -377,6 +377,8 @@ extension TrackersViewController: UICollectionViewDelegate {
         guard let categoryTitle = try? trackerStore.getTrackerById(with: tracker.id).trackerCategory?.title else { return }
         let label = NSLocalizedString("trackersViewController.editTracker.label", comment: "Edit tracker label")
         
+        guard let cell = collectionView.cellForItem(at: indexPath) as? TrackersCollectionViewCell else { return }
+        
         if let _ = tracker.schedule {
             let viewController = CreateEventTrackerViewController(delegate: self, id: tracker.id)
             viewController.didSelectCreateRegularEvent()
@@ -386,7 +388,8 @@ extension TrackersViewController: UICollectionViewDelegate {
                 categoryTitle: categoryTitle,
                 schedule: tracker.schedule,
                 emojii: tracker.emojii,
-                color: tracker.color
+                color: tracker.color,
+                trackerText: cell.getCounterText()
             )
             viewController.modalPresentationStyle = .formSheet
             viewController.modalTransitionStyle = .coverVertical
@@ -399,7 +402,8 @@ extension TrackersViewController: UICollectionViewDelegate {
                 categoryTitle: categoryTitle,
                 schedule: nil,
                 emojii: tracker.emojii,
-                color: tracker.color
+                color: tracker.color,
+                trackerText: cell.getCounterText()
             )
             viewController.modalPresentationStyle = .formSheet
             viewController.modalTransitionStyle = .coverVertical
