@@ -26,6 +26,8 @@
 		8AAEB1992CF74D1E00C6E49B /* AlertActionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEB1982CF74D1E00C6E49B /* AlertActionModel.swift */; };
 		8AAEB19B2CF7845300C6E49B /* ExtensionUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEB19A2CF7845300C6E49B /* ExtensionUIViewController.swift */; };
 		8AAEB19F2CF884E200C6E49B /* ExtensionUIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEB19E2CF884E200C6E49B /* ExtensionUIColor.swift */; };
+		8AAEB1A12CF8F83700C6E49B /* TrackersFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEB1A02CF8F83700C6E49B /* TrackersFilterViewController.swift */; };
+		8AAEB1A32CF8F9A400C6E49B /* TrackerFilterItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEB1A22CF8F9A400C6E49B /* TrackerFilterItems.swift */; };
 		8ABA45BE2CA828A7005C8395 /* TrackerStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABA45BD2CA828A7005C8395 /* TrackerStoreError.swift */; };
 		8ABA45C02CA828CD005C8395 /* TrackerCategoryStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABA45BF2CA828CD005C8395 /* TrackerCategoryStoreError.swift */; };
 		8ABA45C22CA828E7005C8395 /* TrackerCategoryStoreUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABA45C12CA828E7005C8395 /* TrackerCategoryStoreUpdate.swift */; };
@@ -86,6 +88,8 @@
 		8AAEB1982CF74D1E00C6E49B /* AlertActionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertActionModel.swift; sourceTree = "<group>"; };
 		8AAEB19A2CF7845300C6E49B /* ExtensionUIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionUIViewController.swift; sourceTree = "<group>"; };
 		8AAEB19E2CF884E200C6E49B /* ExtensionUIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionUIColor.swift; sourceTree = "<group>"; };
+		8AAEB1A02CF8F83700C6E49B /* TrackersFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersFilterViewController.swift; sourceTree = "<group>"; };
+		8AAEB1A22CF8F9A400C6E49B /* TrackerFilterItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerFilterItems.swift; sourceTree = "<group>"; };
 		8ABA45BD2CA828A7005C8395 /* TrackerStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStoreError.swift; sourceTree = "<group>"; };
 		8ABA45BF2CA828CD005C8395 /* TrackerCategoryStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStoreError.swift; sourceTree = "<group>"; };
 		8ABA45C12CA828E7005C8395 /* TrackerCategoryStoreUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStoreUpdate.swift; sourceTree = "<group>"; };
@@ -245,6 +249,7 @@
 				8A4042772CE6743100D603BC /* OnboardingPageViewController.swift */,
 				8A4042732CE6666900D603BC /* OnboardingViewController.swift */,
 				8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */,
+				8AAEB1A02CF8F83700C6E49B /* TrackersFilterViewController.swift */,
 				8A2C629A2CEE6CAA00DF8ADF /* TrackersViewControllerError.swift */,
 				8AD814772C640F5F008DAA5D /* ChooseTypeTrackerViewController.swift */,
 				8AD814792C64BBE2008DAA5D /* CreateEventTrackerViewController.swift */,
@@ -252,6 +257,7 @@
 				8A4D6FFB2CEBA5F500E48CCA /* AddCategoryViewController.swift */,
 				8AD814AB2C67A382008DAA5D /* SheduleViewController.swift */,
 				8ADF93642C5F8EF0001A4690 /* StatisticsViewController.swift */,
+				8AAEB1A22CF8F9A400C6E49B /* TrackerFilterItems.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -396,6 +402,7 @@
 				8A19F95B2C9B72BA008BC2BD /* TrackerCoreData+CoreDataProperties.swift in Sources */,
 				8AD814AC2C67A382008DAA5D /* SheduleViewController.swift in Sources */,
 				8ACDBC272C5CD87B00687ACF /* SceneDelegate.swift in Sources */,
+				8AAEB1A32CF8F9A400C6E49B /* TrackerFilterItems.swift in Sources */,
 				8AD814722C62B7D3008DAA5D /* TrackerRecord.swift in Sources */,
 				8AD8147A2C64BBE2008DAA5D /* CreateEventTrackerViewController.swift in Sources */,
 				8ADF93632C5F8EB3001A4690 /* TrackersViewController.swift in Sources */,
@@ -409,6 +416,7 @@
 				8AD814802C66313D008DAA5D /* SupplementaryView.swift in Sources */,
 				8ABA45C42CA82918005C8395 /* TrackerRecordStoreError.swift in Sources */,
 				8AAEB1992CF74D1E00C6E49B /* AlertActionModel.swift in Sources */,
+				8AAEB1A12CF8F83700C6E49B /* TrackersFilterViewController.swift in Sources */,
 				8A4D6FFC2CEBA5F500E48CCA /* AddCategoryViewController.swift in Sources */,
 				8ABA45C22CA828E7005C8395 /* TrackerCategoryStoreUpdate.swift in Sources */,
 				8AD814742C63A105008DAA5D /* TrackersCollectionViewCell.swift in Sources */,

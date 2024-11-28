@@ -10,9 +10,11 @@ import UIKit
 protocol TrackersViewControllerProtocol: AnyObject {
     var chooseTypeTrackerDelegate: ChooseTypeTrackerViewControllerProtocol? { get set }
     var trackerCategoryStore: TrackerCategoryStore { get }
+    var selectedFilter: String { get set }
     func add(trackerCategory: TrackerCategory)
     func update(tracker: Tracker, trackerCategory: TrackerCategory)
     func updateCollectionView()
+    func  didSelectFilter(filter: String)
 }
 
 final class TrackersViewController: UIViewController & TrackersViewControllerProtocol {
@@ -62,6 +64,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     private var visibleCategories: [TrackerCategory] = []
     private var filteredCategories: [TrackerCategory] = []
     private var trackerRecords = Set<TrackerRecord>()
+    var selectedFilter: String = "Все трекеры"
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -95,6 +98,24 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.text = NSLocalizedString("trackersViewController.imageViewLabel.text", comment:"Start screen label with empty trackers")
         return label
+    }()
+    
+    private lazy var filterButton: UIButton = {
+        let button = UIButton()
+        let title = NSLocalizedString("trackersViewController.filterButton.title", comment:"Filter button title")
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(.ypWhite, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        button.backgroundColor = .ypBlue
+        button.layer.cornerRadius = 16
+        
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.25
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 4
+        button.layer.masksToBounds = false
+        
+        return button
     }()
     
     override func viewWillAppear(_ animated: Bool) {
@@ -145,8 +166,11 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
             searchBar,
             collectionView,
             imageView,
-            imageViewLabel
+            imageViewLabel,
+            filterButton
         ])
+        
+        view.bringSubviewToFront(filterButton)
         
         NSLayoutConstraint.activate([
             imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -164,6 +188,11 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            filterButton.widthAnchor.constraint(equalToConstant: 114),
+            filterButton.heightAnchor.constraint(equalToConstant: 50)
         ])
         
         collectionView.delegate = self
@@ -171,10 +200,24 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         collectionView.register(TrackersCollectionViewCell.self, forCellWithReuseIdentifier: TrackersCollectionViewCell.reuseIdentifier)
         collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 75, right: 0)
+        collectionView.scrollIndicatorInsets = collectionView.contentInset
         
         searchBar.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        filterButton.addTarget(self, action: #selector(filterButtonDidTap), for: .touchUpInside)
         
         enableKeyboardDismissOnTap()
+    }
+    
+    @objc private func filterButtonDidTap() {
+        let viewController = TrackersFilterViewController(trackersViewController: self)
+        viewController.modalPresentationStyle = .formSheet
+        viewController.modalTransitionStyle = .coverVertical
+        present(viewController, animated: true, completion: nil)
+    }
+    
+    func didSelectFilter(filter: String) {
+        print("Выбран \(filter) фильтр")
     }
     
     @objc private func textDidChange(_ searchField: UISearchTextField) {
@@ -414,12 +457,17 @@ extension TrackersViewController: UICollectionViewDelegate {
     private func deleteTracker(indexPath: IndexPath) {
         
         let tracker = visibleCategories[indexPath.section].trackerList[indexPath.row]
+        
+        let title = NSLocalizedString("trackersViewController.deleteTracker.title", comment: "Question before deleting")
+        let cancel = NSLocalizedString("trackersViewController.deleteTracker.cancel", comment: "Title cancel button")
+        let delete = NSLocalizedString("trackersViewController.deleteTracker.delete", comment: "Title delete button")
+        
         let model = AlertModel(
-            title: "Уверены что хотите удалить трекер?",
+            title: title,
             message: nil,
             actions: [
-                AlertActionModel(title: "Отменить", style: .cancel, handler: nil),
-                AlertActionModel(title: "Удалить", style: .destructive, handler: { [weak self] _ in
+                AlertActionModel(title: cancel, style: .cancel, handler: nil),
+                AlertActionModel(title: delete, style: .destructive, handler: { [weak self] _ in
                     try? self?.trackerStore.removeTracker(withId: tracker.id)
                     self?.updateCollectionView()
                 }),
