@@ -30,6 +30,17 @@
 "trackersViewController.pinTracker.pinnedCategoryTitle" = "Angeheftet";
 "trackersViewController.editTracker.label" = "Gewohnheiten bearbeiten";
 
+"trackersViewController.deleteTracker.title" = "Sind Sie sicher, dass Sie den Tracker löschen möchten?";
+"trackersViewController.deleteTracker.cancel" = "Abbrechen";
+"trackersViewController.deleteTracker.delete" = "Löschen";
+
+"trackersViewController.filterButton.title" = "Filter";
+
+"trackerFilterItems.filterName.alltrackers" = "Alle Tracker";
+"trackerFilterItems.filterName.todayTrackers" = "Tracker für heute";
+"trackerFilterItems.filterName.completed" = "Abgeschlossen";
+"trackerFilterItems.filterName.notCompleted" = "Nicht abgeschlossen";
+
 "chooseTypeTrackerViewController.titleLabel.text" = "Tracker erstellen";
 "chooseTypeTrackerViewController.regularEventButton.title" = "Gewohnheit";
 "chooseTypeTrackerViewController.irregularEventButton.title" = "Unregelmäßiges Ereignis";
