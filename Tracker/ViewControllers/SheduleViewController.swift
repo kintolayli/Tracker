@@ -10,6 +10,7 @@ import UIKit
 
 protocol SheduleViewControllerProtocol: AnyObject {
     var createEventTrackerViewController: CreateEventTrackerViewController? { get set }
+    func shortStringFromSelectedDays(days: [Day]) -> String
     func getShedule() -> [Day]
 }
 
@@ -154,13 +155,13 @@ extension SheduleViewController: SheduleTableViewCellDelegate {
             days[indexPath.row].isActive = isOn
         }
         
-        let selectedDaysString = shortStringFromSelectedDays()
+        let selectedDaysString = shortStringFromSelectedDays(days: days)
         createEventTrackerViewController?.didSelectDays(selectedDaysString)
         createEventTrackerViewController?.updateTableViewSecondCell()
         createEventTrackerViewController?.scheduleDidChange()
     }
     
-    private func shortStringFromSelectedDays() -> String {
+    func shortStringFromSelectedDays(days: [Day]) -> String {
         var daysArray: [String] = []
         
         for day in days {

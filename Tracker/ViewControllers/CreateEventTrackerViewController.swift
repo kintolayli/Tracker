@@ -22,13 +22,15 @@ protocol CreateEventTrackerViewControllerProtocol: AnyObject {
 
 
 final class CreateEventTrackerViewController: UIViewController, CreateEventTrackerViewControllerProtocol {
+    
+    var trackerViewControllerEditDelegate: TrackersViewControllerProtocol?
+    
     weak var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol?
     var sheduleDelegate: SheduleViewControllerProtocol?
     
     var selectedCategory: String?
     private var schedule: [Day]?
     private let emojies = [ "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪",]
-    private var selectedEmojii: String?
     private let colors: [UIColor] = [
         .ypColorSelection1,
         .ypColorSelection2,
@@ -49,7 +51,24 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         .ypColorSelection17,
         .ypColorSelection18,
     ]
+    private var selectedEmojii: String?
     private var selectedColor: UIColor?
+    private var trackerId: UUID
+    
+    init(delegate: TrackersViewControllerProtocol, id: UUID) {
+        self.trackerViewControllerEditDelegate = delegate
+        self.trackerId = id
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    init() {
+        self.trackerId = UUID()
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private let suplementaryViewHeaderList = [
         NSLocalizedString(
@@ -181,13 +200,12 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        loadLastSelectedCategory()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        loadLastSelectedCategory()
     }
     
     private func setupUI() {
@@ -278,6 +296,70 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
             menuSecondaryItems[0][0] = lastSelectedCategory
             updateTableViewFirstCell()
         }
+    }
+    
+    private func loadCategoryWhenEditing(category: String) {
+        selectedCategory = category
+        menuSecondaryItems[0][0] = category
+        updateTableViewFirstCell()
+        
+        let viewController = CategoryListViewController()
+        guard let category = selectedCategory else { return }
+        viewController.viewModel.saveLastSelectedCategory(selectedCategoryTitle: category)
+    }
+    
+    private func loadSchedule(schedule: [Day]) {
+        let sheduleViewController = SheduleViewController()
+        sheduleDelegate = sheduleViewController
+        guard let textSchedule = sheduleDelegate?.shortStringFromSelectedDays(days: schedule) else { return }
+        didSelectDays(textSchedule)
+        sheduleViewController.createEventTrackerViewController = self
+        sheduleViewController.updateDays(from: menuSecondaryItems[1][0])
+    }
+    
+    private func selectEmojii() {
+        guard let emojii = selectedEmojii else { return }
+        guard let index = emojies.firstIndex(of: emojii) else { return }
+        
+        let indexPath = IndexPath(item: index, section: 0)
+        collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+        collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
+    }
+    
+    private func selectColor() {
+        guard let color = selectedColor else { return }
+        guard let index = colors.firstIndex(of: color) else { return }
+        
+        let indexPath = IndexPath(item: index, section: 1)
+        collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+        collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
+    }
+    
+    private func createButtonTitleChange() {
+        let title =  NSLocalizedString(
+            "createEventTrackerViewController.createButton.titleWhenEdit",
+            comment:"Create button title"
+        )
+        createButton.setTitle(title, for: .normal)
+    }
+
+    func setupViewControllerForEditing(
+        label: String,
+        textFieldText: String,
+        categoryTitle: String,
+        schedule: [Day]?,
+        emojii: String,
+        color: UIColor
+    ) {
+        selectedEmojii = emojii
+        selectedColor = color
+        titleLabel.text = label
+        textField.text = textFieldText
+        loadCategoryWhenEditing(category: categoryTitle)
+        if let newSchedule = schedule {
+            loadSchedule(schedule: newSchedule as [Day])
+        }
+        createButtonTitleChange()
     }
     
     func didSelectCreateRegularEvent() {
@@ -407,6 +489,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     @objc
     private func createButtonDidTap() {
+        
         guard let name = textField.text else { return }
         guard let category = selectedCategory else { return }
         if isCreateRegularEventTracker {
@@ -415,15 +498,19 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         guard let emojii = selectedEmojii else { return }
         guard let color = selectedColor else { return }
         
-        let newTracker = Tracker(id: UUID(), name: name, color: color, emojii: emojii, schedule: schedule, isPinned: false)
+        let newTracker = Tracker(id: trackerId, name: name, color: color, emojii: emojii, schedule: schedule, isPinned: false)
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
         
-        self.chooseTypeTrackerViewController?.trackersViewController?.add(trackerCategory: newTrackerCategory)
-        
-        chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
-        
-        self.dismiss(animated: true)
-        self.chooseTypeTrackerViewController?.dismiss(animated: true)
+        if let editDelegate = trackerViewControllerEditDelegate {
+            editDelegate.update(tracker: newTracker, trackerCategory: newTrackerCategory)
+            editDelegate.updateCollectionView()
+            self.dismiss(animated: true)
+        } else {
+            chooseTypeTrackerViewController?.trackersViewController?.add(trackerCategory: newTrackerCategory)
+            chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
+            self.dismiss(animated: true)
+            self.chooseTypeTrackerViewController?.dismiss(animated: true)
+        }
     }
     
     deinit {
@@ -480,6 +567,8 @@ extension CreateEventTrackerViewController: UITableViewDelegate, UITableViewData
         
         if indexPath.row == 0 {
             let viewController = CategoryListViewController()
+            guard let category = selectedCategory else { return }
+            viewController.viewModel.saveLastSelectedCategory(selectedCategoryTitle: category)
             viewController.createEventTrackerViewController = self
             viewController.modalPresentationStyle = .formSheet
             viewController.modalTransitionStyle = .coverVertical
@@ -510,14 +599,32 @@ extension CreateEventTrackerViewController: UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiesColorCollectionViewCell", for: indexPath) as? EmojiesColorCollectionViewCell else { return UICollectionViewCell() }
-        cell.prepareForReuse()
+         cell.prepareForReuse()
         
         if indexPath.section == 0 {
             let emojii = emojies[indexPath.row]
             cell.updateCell(backgroundColor: .clear, emojiiLabelText: emojii)
+            
+            if let _ = trackerViewControllerEditDelegate {
+                let selectEmojii = selectedEmojii ?? "🙂"
+                let index = emojies.firstIndex(of: selectEmojii) ?? 0
+                let indexPath = IndexPath(item: index, section: 0)
+                
+                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+                collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
+            }
         } else {
             let color = colors[indexPath.row]
             cell.updateCell(backgroundColor: color)
+            
+            if let _ = trackerViewControllerEditDelegate {
+                let selectColor = selectedColor ?? colors[0]
+                let index = colors.firstIndex(where: { $0.isEqualToColor(selectColor) }) ?? 0
+                let indexPath = IndexPath(item: index, section: 1)
+                
+                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+                collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
+            }
         }
         
         return cell

@@ -39,11 +39,11 @@ final class TrackerStore {
     }
     
     
-    func updateTracker(with categoryCoreData: TrackerCategoryCoreData, with tracker: Tracker) throws {
+    func updateTracker(with categoryCoreData: TrackerCategoryCoreData, with tracker: Tracker) {
         let fetchRequest = TrackerCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
         
-        if let existingTracker = try context.fetch(fetchRequest).first {
+        if let existingTracker = try? context.fetch(fetchRequest).first {
             existingTracker.name = tracker.name
             existingTracker.color = UIColorMarshalling.hexString(from: tracker.color)
             existingTracker.emojii = tracker.emojii
@@ -53,7 +53,8 @@ final class TrackerStore {
             
             saveContext()
         } else {
-            throw TrackerStoreError.updateTrackerError
+            try? addTracker(with: categoryCoreData, with: tracker)
+            saveContext()
         }
     }
     

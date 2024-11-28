@@ -11,6 +11,7 @@ protocol TrackersViewControllerProtocol: AnyObject {
     var chooseTypeTrackerDelegate: ChooseTypeTrackerViewControllerProtocol? { get set }
     var trackerCategoryStore: TrackerCategoryStore { get }
     func add(trackerCategory: TrackerCategory)
+    func update(tracker: Tracker, trackerCategory: TrackerCategory)
     func updateCollectionView()
 }
 
@@ -103,7 +104,6 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     }
     
     private func updateCategoriesFromCategoryStore() {
-//        categories = trackerCategoryStore.categories
         categories = trackerCategoryStore.pinnedCategories
     }
     
@@ -215,8 +215,12 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         updateCollectionView()
     }
     
+    func update(tracker: Tracker, trackerCategory: TrackerCategory) {
+        try? trackerStore.removeTracker(withId: tracker.id)
+        add(trackerCategory: trackerCategory)
+    }
+    
     func add(trackerCategory: TrackerCategory) {
-        
         try? trackerCategoryStore.updateTrackerCategory(trackerCategory)
         updateEmptyStateViewVisibility()
     }
@@ -369,7 +373,38 @@ extension TrackersViewController: UICollectionViewDelegate {
     }
     
     private func editTracker(indexPath: IndexPath) {
+        let tracker = visibleCategories[indexPath.section].trackerList[indexPath.row]
+        guard let categoryTitle = try? trackerStore.getTrackerById(with: tracker.id).trackerCategory?.title else { return }
+        let label = NSLocalizedString("trackersViewController.editTracker.label", comment: "Edit tracker label")
         
+        if let _ = tracker.schedule {
+            let viewController = CreateEventTrackerViewController(delegate: self, id: tracker.id)
+            viewController.didSelectCreateRegularEvent()
+            viewController.setupViewControllerForEditing(
+                label: label,
+                textFieldText: tracker.name,
+                categoryTitle: categoryTitle,
+                schedule: tracker.schedule,
+                emojii: tracker.emojii,
+                color: tracker.color
+            )
+            viewController.modalPresentationStyle = .formSheet
+            viewController.modalTransitionStyle = .coverVertical
+            present(viewController, animated: true, completion: nil)
+        } else {
+            let viewController = CreateEventTrackerViewController(delegate: self, id: tracker.id)
+            viewController.setupViewControllerForEditing(
+                label: label,
+                textFieldText: tracker.name,
+                categoryTitle: categoryTitle,
+                schedule: nil,
+                emojii: tracker.emojii,
+                color: tracker.color
+            )
+            viewController.modalPresentationStyle = .formSheet
+            viewController.modalTransitionStyle = .coverVertical
+            present(viewController, animated: true, completion: nil)
+        }
     }
     
     private func deleteTracker(indexPath: IndexPath) {

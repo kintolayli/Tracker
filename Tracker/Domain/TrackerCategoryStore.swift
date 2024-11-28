@@ -104,7 +104,6 @@ final class TrackerCategoryStore: NSObject {
         }
     }
 
-    
     func updateTrackerCategory(_ category: TrackerCategory) throws {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "title == %@", category.title)
