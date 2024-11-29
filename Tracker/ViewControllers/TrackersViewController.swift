@@ -12,7 +12,6 @@ protocol TrackersViewControllerProtocol: AnyObject {
     var trackerCategoryStore: TrackerCategoryStore { get }
     var selectedFilter: TrackerFilterItems { get set }
     func add(trackerCategory: TrackerCategory)
-    func update(tracker: Tracker, trackerCategory: TrackerCategory)
     func updateCollectionView()
     func  didSelectFilter(filter: TrackerFilterItems)
 }
@@ -96,10 +95,10 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.text = NSLocalizedString("trackersViewController.imageViewLabel.text", comment:"Start screen label with empty trackers")
+        label.text = NSLocalizedString("trackersViewController.imageViewLabel.text1", comment:"Start screen label with empty trackers")
         return label
     }()
-    
+
     private lazy var filterButton: UIButton = {
         let button = UIButton()
         let title = NSLocalizedString("trackersViewController.filterButton.title", comment:"Filter button title")
@@ -246,17 +245,17 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
             pinnedCategoriesFromCategoryStore()
             datePicker.date = Date()
             filterButton.titleLabel?.textColor = .ypColorSelection1
-            updateEmptyStateViewVisibilityAfterSearch(isShow: categories.isEmpty)
+            updateEmptyStateViewVisibilityAfterSearch()
         case .completed:
             print(".completed")
             completedCategoriesFromCategoryStore()
             filterButton.titleLabel?.textColor = .ypColorSelection1
-            updateEmptyStateViewVisibilityAfterSearch(isShow: categories.isEmpty)
+            updateEmptyStateViewVisibilityAfterSearch()
         case .notCompleted:
             print(".notCompleted")
             notCompletedCategoriesFromCategoryStore()
             filterButton.titleLabel?.textColor = .ypColorSelection1
-            updateEmptyStateViewVisibilityAfterSearch(isShow: categories.isEmpty)
+            updateEmptyStateViewVisibilityAfterSearch()
         }
     }
     
@@ -275,34 +274,35 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
             filteredCategories = visibleCategories
         }
         collectionView.reloadData()
-        updateEmptyStateViewVisibilityAfterSearch(isShow: filteredCategories.isEmpty)
+        updateEmptyStateViewVisibilityAfterSearch()
     }
     
 
     
-    private func updateEmptyStateViewVisibility(
-        imageViewImageName: String = "dizzy", text: String = "trackersViewController.imageViewLabel.text1") {
+    private func updateEmptyStateViewVisibility() {
         let nonEmptyCategories = visibleCategories.filter { !$0.trackerList.isEmpty }
-        
         let isTrackerListEmpty = nonEmptyCategories.isEmpty
         
-        imageView.image = UIImage(named: imageViewImageName)
-        let textString = NSLocalizedString(text, comment:"Start screen label with empty trackers")
-        imageViewLabel.text = textString
+        let image = UIImage(named: "dizzy")
+        let text = NSLocalizedString("trackersViewController.imageViewLabel.text1", comment:"Start screen label with empty trackers")
         
         imageView.isHidden = !isTrackerListEmpty
+        imageView.image = image
         imageViewLabel.isHidden = !isTrackerListEmpty
+        imageViewLabel.text = text
     }
     
-    private func updateEmptyStateViewVisibilityAfterSearch(
-        imageViewImageName: String = "2", text: String = "trackersViewController.imageViewLabel.text2", isShow: Bool) {
+    private func updateEmptyStateViewVisibilityAfterSearch() {
+        let nonEmptyCategories = filteredCategories.filter { !$0.trackerList.isEmpty }
+        let isTrackerListEmpty = nonEmptyCategories.isEmpty
         
-        imageView.image = UIImage(named: imageViewImageName)
-        let textString = NSLocalizedString(text, comment:"Start screen label with empty trackers")
-        imageViewLabel.text = textString
+        let image = UIImage(named: "2")
+        let text = NSLocalizedString("trackersViewController.imageViewLabel.text2", comment:"Label if search is empty")
         
-        imageView.isHidden = !isShow
-        imageViewLabel.isHidden = !isShow
+        imageView.isHidden = !isTrackerListEmpty
+        imageView.image = image
+        imageViewLabel.isHidden = !isTrackerListEmpty
+        imageViewLabel.text = text
     }
     
     @objc private func didTapTrackerButton() {
