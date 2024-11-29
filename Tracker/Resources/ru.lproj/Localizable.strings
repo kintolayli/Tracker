@@ -17,7 +17,8 @@
 
 "trackersViewController.navigationItem.title" = "Трекеры";
 "trackersViewController.searchBar.placeholder" = "Поиcк";
-"trackersViewController.imageViewLabel.text" = "Что будем отслеживать?";
+"trackersViewController.imageViewLabel.text1" = "Что будем отслеживать?";
+"trackersViewController.imageViewLabel.text2" = "Ничего не найдено";
 "trackersViewController.trackersViewControllerCellTap.alertModel.title" = "Уведомление от системы";
 "trackersViewController.trackersViewControllerCellTap.alertModel.message" = "Нельзя отметить карточку для будущей даты";
 "trackersViewController.trackersViewControllerCellTap.alertModel.buttonTitle" = "OK";

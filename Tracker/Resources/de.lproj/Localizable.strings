@@ -18,6 +18,7 @@
 "trackersViewController.navigationItem.title" = "Tracker";
 "trackersViewController.searchBar.placeholder" = "Suche";
 "trackersViewController.imageViewLabel.text" = "Was werden wir verfolgen?";
+"trackersViewController.imageViewLabel.text2" = "Nichts gefunden";
 "trackersViewController.trackersViewControllerCellTap.alertModel.title" = "Systembenachrichtigung";
 "trackersViewController.trackersViewControllerCellTap.alertModel.message" = "Sie können keine Karte für ein zukünftiges Datum markieren";
 "trackersViewController.trackersViewControllerCellTap.alertModel.buttonTitle" = "OK";
