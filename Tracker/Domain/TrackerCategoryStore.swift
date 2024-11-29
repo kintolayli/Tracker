@@ -19,6 +19,7 @@ final class TrackerCategoryStore: NSObject {
     
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>?
+    var currentDate: Date?
     
     weak var delegate: TrackerCategoryStoreDelegate?
     private var insertedIndexes: IndexSet?
@@ -27,10 +28,12 @@ final class TrackerCategoryStore: NSObject {
     private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>?
     
     private var trackerStore: TrackerStore
+    private var trackerRecordStore: TrackerRecordStore
     
     init(context: NSManagedObjectContext) {
         self.context = context
         self.trackerStore = TrackerStore(context: context)
+        self.trackerRecordStore = TrackerRecordStore(context: context)
         super.init()
         
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -77,6 +80,44 @@ final class TrackerCategoryStore: NSObject {
         return [pinnedCategory] + unpinnedCategories
     }
     
+    var completedCategories: [TrackerCategory] {
+        let allCategories = categories
+        
+        let completedCategoriesList = allCategories.map { category in
+            TrackerCategory(
+                title: category.title,
+                trackerList: category.trackerList.filter { tracker in
+                    (tracker.schedule == nil) && isTrackerCompleted(tracker)
+                }
+            )
+        }
+        
+        return completedCategoriesList.filter { !$0.trackerList.isEmpty }
+    }
+    
+    var notCompletedCategories: [TrackerCategory] {
+
+        let allCategories = categories
+
+        let notCompletedCategoriesList = allCategories.map { category in
+            TrackerCategory(
+                title: category.title,
+                trackerList: category.trackerList.filter { tracker in
+                    (tracker.schedule == nil) && !isTrackerCompleted(tracker)
+                }
+            )
+        }
+        return notCompletedCategoriesList.filter { !$0.trackerList.isEmpty }
+    }
+    
+    func isTrackerCompleted(_ tracker: Tracker) -> Bool {
+        guard let date = currentDate else {
+            assertionFailure( "Current date is nil when checking tracker completion")
+            return false
+        }
+        return trackerRecordStore.isExistTrackerRecord(with: tracker.id, currentDate: date)
+    }
+    
     func fetchCategories() throws -> [TrackerCategory] {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.returnsObjectsAsFaults = false
@@ -112,7 +153,7 @@ final class TrackerCategoryStore: NSObject {
         
         if let categoryToUpdate = categories.first {
             for tracker in category.trackerList {
-                try trackerStore.addTracker(with: categoryToUpdate, with: tracker)
+                trackerStore.updateTracker(with: categoryToUpdate, with: tracker)
             }
         } else {
             try addCategory(category)
@@ -143,7 +184,6 @@ final class TrackerCategoryStore: NSObject {
             try context.save()
         }
     }
-    
     
     // MARK: - Core Data Saving support
     

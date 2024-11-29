@@ -79,9 +79,9 @@ extension TrackersFilterViewController: UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryListCell", for: indexPath)
-        let categoryTitle = filterItems[indexPath.row].filterName
+        let categoryTitle = filterItems[indexPath.row]
         
-        cell.textLabel?.text = categoryTitle
+        cell.textLabel?.text = categoryTitle.filterName
         cell.accessoryType = (categoryTitle == trackersViewController?.selectedFilter) ? .checkmark : .none
         cell.backgroundColor = .ypBackground
         
@@ -94,7 +94,7 @@ extension TrackersFilterViewController: UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let selectedFilter = filterItems[indexPath.row].filterName
+        let selectedFilter = filterItems[indexPath.row]
         trackersViewController?.selectedFilter = selectedFilter
         
         tableView.deselectRow(at: indexPath, animated: true)

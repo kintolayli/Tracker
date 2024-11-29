@@ -10,11 +10,11 @@ import UIKit
 protocol TrackersViewControllerProtocol: AnyObject {
     var chooseTypeTrackerDelegate: ChooseTypeTrackerViewControllerProtocol? { get set }
     var trackerCategoryStore: TrackerCategoryStore { get }
-    var selectedFilter: String { get set }
+    var selectedFilter: TrackerFilterItems { get set }
     func add(trackerCategory: TrackerCategory)
     func update(tracker: Tracker, trackerCategory: TrackerCategory)
     func updateCollectionView()
-    func  didSelectFilter(filter: String)
+    func  didSelectFilter(filter: TrackerFilterItems)
 }
 
 final class TrackersViewController: UIViewController & TrackersViewControllerProtocol {
@@ -64,7 +64,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     private var visibleCategories: [TrackerCategory] = []
     private var filteredCategories: [TrackerCategory] = []
     private var trackerRecords = Set<TrackerRecord>()
-    var selectedFilter: String = "Все трекеры"
+    var selectedFilter: TrackerFilterItems = TrackerFilterItems.allTrackers
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -118,14 +118,38 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         return button
     }()
     
+    private var datePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        
+        datePicker.preferredDatePickerStyle = .compact
+        datePicker.datePickerMode = .date
+        datePicker.locale = Locale.current
+        
+        return datePicker
+    }()
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         updateCollectionView()
     }
     
-    private func updateCategoriesFromCategoryStore() {
+    private func pinnedCategoriesFromCategoryStore() {
+        trackerCategoryStore.currentDate = currentDate
         categories = trackerCategoryStore.pinnedCategories
+        updateCollectionView()
+    }
+    
+    private func completedCategoriesFromCategoryStore() {
+        trackerCategoryStore.currentDate = currentDate
+        categories = trackerCategoryStore.completedCategories
+        updateCollectionView()
+    }
+    
+    private func notCompletedCategoriesFromCategoryStore() {
+        trackerCategoryStore.currentDate = currentDate
+        categories = trackerCategoryStore.notCompletedCategories
+        updateCollectionView()
     }
     
     override func viewDidLoad() {
@@ -133,20 +157,13 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         setupUI()
         trackerCategoryStore.delegate = self
-        updateCategoriesFromCategoryStore()
+        pinnedCategoriesFromCategoryStore()
         trackerRecords = trackerRecordStore.records
     }
     
     private func setupUI() {
         view.backgroundColor = .ypWhite
-        
-        let datePicker = UIDatePicker()
-        
-        datePicker.preferredDatePickerStyle = .compact
-        datePicker.datePickerMode = .date
-        datePicker.locale = Locale.current
-        datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
-        
+
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
         let addTrackerButton = UIButton(type: .custom)
@@ -205,6 +222,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         searchBar.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         filterButton.addTarget(self, action: #selector(filterButtonDidTap), for: .touchUpInside)
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         
         enableKeyboardDismissOnTap()
     }
@@ -216,8 +234,30 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         present(viewController, animated: true, completion: nil)
     }
     
-    func didSelectFilter(filter: String) {
-        print("Выбран \(filter) фильтр")
+    func didSelectFilter(filter: TrackerFilterItems) {
+        switch filter {
+        case .allTrackers:
+            print(".allTrackers")
+            selectedFilter = TrackerFilterItems.allTrackers
+            pinnedCategoriesFromCategoryStore()
+            filterButton.titleLabel?.textColor = .ypWhite
+        case .todayTrackers:
+            print(".todayTrackers")
+            pinnedCategoriesFromCategoryStore()
+            datePicker.date = Date()
+            filterButton.titleLabel?.textColor = .ypColorSelection1
+            updateEmptyStateViewVisibilityAfterSearch(isShow: categories.isEmpty)
+        case .completed:
+            print(".completed")
+            completedCategoriesFromCategoryStore()
+            filterButton.titleLabel?.textColor = .ypColorSelection1
+            updateEmptyStateViewVisibilityAfterSearch(isShow: categories.isEmpty)
+        case .notCompleted:
+            print(".notCompleted")
+            notCompletedCategoriesFromCategoryStore()
+            filterButton.titleLabel?.textColor = .ypColorSelection1
+            updateEmptyStateViewVisibilityAfterSearch(isShow: categories.isEmpty)
+        }
     }
     
     @objc private func textDidChange(_ searchField: UISearchTextField) {
@@ -226,21 +266,43 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
                 let filteredTrackers = category.trackerList.filter { tracker in
                     tracker.name.lowercased().contains(searchText.lowercased())
                 }
+                
+                
                 return filteredTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackerList: filteredTrackers)
+                
             }
         } else {
             filteredCategories = visibleCategories
         }
         collectionView.reloadData()
+        updateEmptyStateViewVisibilityAfterSearch(isShow: filteredCategories.isEmpty)
     }
     
-    private func updateEmptyStateViewVisibility() {
+
+    
+    private func updateEmptyStateViewVisibility(
+        imageViewImageName: String = "dizzy", text: String = "trackersViewController.imageViewLabel.text1") {
         let nonEmptyCategories = visibleCategories.filter { !$0.trackerList.isEmpty }
         
         let isTrackerListEmpty = nonEmptyCategories.isEmpty
         
+        imageView.image = UIImage(named: imageViewImageName)
+        let textString = NSLocalizedString(text, comment:"Start screen label with empty trackers")
+        imageViewLabel.text = textString
+        
         imageView.isHidden = !isTrackerListEmpty
         imageViewLabel.isHidden = !isTrackerListEmpty
+    }
+    
+    private func updateEmptyStateViewVisibilityAfterSearch(
+        imageViewImageName: String = "2", text: String = "trackersViewController.imageViewLabel.text2", isShow: Bool) {
+        
+        imageView.image = UIImage(named: imageViewImageName)
+        let textString = NSLocalizedString(text, comment:"Start screen label with empty trackers")
+        imageViewLabel.text = textString
+        
+        imageView.isHidden = !isShow
+        imageViewLabel.isHidden = !isShow
     }
     
     @objc private func didTapTrackerButton() {
@@ -255,17 +317,17 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         currentDate = selectedDate
-        updateCollectionView()
-    }
-    
-    func update(tracker: Tracker, trackerCategory: TrackerCategory) {
-        try? trackerStore.removeTracker(withId: tracker.id)
-        add(trackerCategory: trackerCategory)
+        if selectedFilter != .todayTrackers {
+            updateCollectionView()
+        } else {
+            didSelectFilter(filter: .allTrackers)
+        }
     }
     
     func add(trackerCategory: TrackerCategory) {
         try? trackerCategoryStore.updateTrackerCategory(trackerCategory)
-        updateEmptyStateViewVisibility()
+        pinnedCategoriesFromCategoryStore()
+        didSelectFilter(filter: selectedFilter)
     }
     
     private func getDayOfWeekFromDate(date: Date) -> String {
@@ -291,7 +353,7 @@ extension TrackersViewController: UICollectionViewDataSource {
                         }
                     }
                 } else {
-                    guard let recordsFromCurrentCell = try? trackerRecordStore.getTrackerRecordsWithCurrentTrackerId(with: tracker.id) else { return [] }
+                    guard let recordsFromCurrentCell = try? trackerRecordStore.getTrackerRecords(with: tracker.id) else { return [] }
                     
                     if recordsFromCurrentCell.count > 0 {
                         if (checkExistsRecord(in: recordsFromCurrentCell, with: currentDate) != nil) {
@@ -411,7 +473,7 @@ extension TrackersViewController: UICollectionViewDelegate {
         let tracker = visibleCategories[indexPath.section].trackerList[indexPath.row]
         
         try? self.trackerStore.togglePinTracker(withId: tracker.id)
-        updateCategoriesFromCategoryStore()
+        pinnedCategoriesFromCategoryStore()
         updateCollectionView()
     }
     
@@ -468,12 +530,14 @@ extension TrackersViewController: UICollectionViewDelegate {
             actions: [
                 AlertActionModel(title: cancel, style: .cancel, handler: nil),
                 AlertActionModel(title: delete, style: .destructive, handler: { [weak self] _ in
+                    self?.trackerRecordStore.removeAllTrackerRecord(with: tracker.id)
                     try? self?.trackerStore.removeTracker(withId: tracker.id)
-                    self?.updateCollectionView()
+                    self?.didSelectFilter(filter: self?.selectedFilter ?? .allTrackers)
                 }),
             ]
         )
         AlertPresenter.show(model: model, viewController: self, preferredStyle: .actionSheet)
+        
     }
 }
 
@@ -512,7 +576,7 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
         var cellCount = 0
         var cellState = false
         
-        if let recordsFromCurrentCell = try? trackerRecordStore.getTrackerRecordsWithCurrentTrackerId(with: newCell.id) {
+        if let recordsFromCurrentCell = try? trackerRecordStore.getTrackerRecords(with: newCell.id) {
             cellCount = recordsFromCurrentCell.count
             
             if (checkExistsRecord(in: recordsFromCurrentCell, with: currentDate) != nil) {
@@ -523,25 +587,11 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
         return (cellCount, cellState)
     }
     
-    private func areSameDay(date1: Date, date2: Date) -> Bool {
-        let calendar = Calendar.current
-        
-        let day1 = calendar.component(.day, from: date1)
-        let month1 = calendar.component(.month, from: date1)
-        let year1 = calendar.component(.year, from: date1)
-        
-        let day2 = calendar.component(.day, from: date2)
-        let month2 = calendar.component(.month, from: date2)
-        let year2 = calendar.component(.year, from: date2)
-        
-        return day1 == day2 && month1 == month2 && year1 == year2
-    }
-    
     private func checkExistsRecord(in records: [TrackerRecord], with date: Date) -> TrackerRecord? {
         var resultRecord: TrackerRecord?
         
         for record in records {
-            if areSameDay(date1: record.date, date2: date) {
+            if isSameDay(date1: record.date, date2: date) {
                 resultRecord = record
             }
         }
@@ -552,7 +602,7 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
         if currentDate <= Date() {
             guard let indexPath = collectionView.indexPath(for: cell)  else { return }
             let tracker = visibleCategories[indexPath.section].trackerList[indexPath.row]
-            guard let recordsFromCurrentCell = try? trackerRecordStore.getTrackerRecordsWithCurrentTrackerId(with: tracker.id) else { return }
+            guard let recordsFromCurrentCell = try? trackerRecordStore.getTrackerRecords(with: tracker.id) else { return }
             
             if let existRecord = checkExistsRecord(in: recordsFromCurrentCell, with: currentDate) {
                 try? trackerRecordStore.removeTrackerRecord(existRecord)

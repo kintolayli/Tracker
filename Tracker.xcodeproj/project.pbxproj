@@ -59,6 +59,7 @@
 		8ADF93602C5F8E0D001A4690 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF935F2C5F8E0D001A4690 /* TabBarController.swift */; };
 		8ADF93632C5F8EB3001A4690 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */; };
 		8ADF93652C5F8EF0001A4690 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADF93642C5F8EF0001A4690 /* StatisticsViewController.swift */; };
+		8AE305972CF9301300AF7434 /* IsSameDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE305962CF9301200AF7434 /* IsSameDay.swift */; };
 		8AED942A2C7539CD00EEC2A0 /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AED94292C7539CD00EEC2A0 /* TrackerStore.swift */; };
 		8AED942C2C7539E300EEC2A0 /* TrackerCategoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AED942B2C7539E300EEC2A0 /* TrackerCategoryStore.swift */; };
 		8AED942E2C7539FB00EEC2A0 /* TrackerRecordStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AED942D2C7539FB00EEC2A0 /* TrackerRecordStore.swift */; };
@@ -125,6 +126,7 @@
 		8ADF935F2C5F8E0D001A4690 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
 		8ADF93642C5F8EF0001A4690 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
+		8AE305962CF9301200AF7434 /* IsSameDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsSameDay.swift; sourceTree = "<group>"; };
 		8AED94292C7539CD00EEC2A0 /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
 		8AED942B2C7539E300EEC2A0 /* TrackerCategoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStore.swift; sourceTree = "<group>"; };
 		8AED942D2C7539FB00EEC2A0 /* TrackerRecordStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordStore.swift; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 				8A19F92D2C94BAEF008BC2BD /* UIColorMarshalling.swift */,
 				8A0F5EE52C8FA32100A90337 /* DaysValueTransformer.swift */,
 				8AD814752C63B85A008DAA5D /* GeometricParams.swift */,
+				8AE305962CF9301200AF7434 /* IsSameDay.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -250,6 +253,7 @@
 				8A4042732CE6666900D603BC /* OnboardingViewController.swift */,
 				8ADF93622C5F8EB3001A4690 /* TrackersViewController.swift */,
 				8AAEB1A02CF8F83700C6E49B /* TrackersFilterViewController.swift */,
+				8AAEB1A22CF8F9A400C6E49B /* TrackerFilterItems.swift */,
 				8A2C629A2CEE6CAA00DF8ADF /* TrackersViewControllerError.swift */,
 				8AD814772C640F5F008DAA5D /* ChooseTypeTrackerViewController.swift */,
 				8AD814792C64BBE2008DAA5D /* CreateEventTrackerViewController.swift */,
@@ -257,7 +261,6 @@
 				8A4D6FFB2CEBA5F500E48CCA /* AddCategoryViewController.swift */,
 				8AD814AB2C67A382008DAA5D /* SheduleViewController.swift */,
 				8ADF93642C5F8EF0001A4690 /* StatisticsViewController.swift */,
-				8AAEB1A22CF8F9A400C6E49B /* TrackerFilterItems.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -408,6 +411,7 @@
 				8ADF93632C5F8EB3001A4690 /* TrackersViewController.swift in Sources */,
 				8ADF935E2C5F5EA3001A4690 /* ExtensionUIView.swift in Sources */,
 				8AED942C2C7539E300EEC2A0 /* TrackerCategoryStore.swift in Sources */,
+				8AE305972CF9301300AF7434 /* IsSameDay.swift in Sources */,
 				8AAEB19F2CF884E200C6E49B /* ExtensionUIColor.swift in Sources */,
 				8AD814DC2C6E1829008DAA5D /* EmojiesColorCollectionViewCell.swift in Sources */,
 				8A2C629B2CEE6CAA00DF8ADF /* TrackersViewControllerError.swift in Sources */,

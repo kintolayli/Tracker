@@ -12,6 +12,7 @@ final class TrackerStore {
     
     private let context: NSManagedObjectContext
     private let daysValueTransformer = DaysValueTransformer()
+    private lazy var recordStore = TrackerRecordStore(context: context)
     
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -48,7 +49,6 @@ final class TrackerStore {
             existingTracker.color = UIColorMarshalling.hexString(from: tracker.color)
             existingTracker.emojii = tracker.emojii
             existingTracker.schedule = tracker.schedule
-            
             existingTracker.trackerCategory = categoryCoreData
             
             saveContext()

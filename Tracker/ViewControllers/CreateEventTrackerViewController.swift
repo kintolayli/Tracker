@@ -525,7 +525,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
         
         if let editDelegate = trackerViewControllerEditDelegate {
-            editDelegate.update(tracker: newTracker, trackerCategory: newTrackerCategory)
+            editDelegate.add(trackerCategory: newTrackerCategory)
             editDelegate.updateCollectionView()
             self.dismiss(animated: true)
         } else {
