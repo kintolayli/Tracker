@@ -85,3 +85,6 @@
 "dayLocalizeModel.shortDayName.sunday" = "So";
 
 "sheduleViewController.allDays" = "Jeden Tag";
+
+"statisticsViewController.imageViewLabel.text" = "Es gibt noch nichts zu analysieren";
+"statisticsViewController.navigationItem.title" = "Statistik";
