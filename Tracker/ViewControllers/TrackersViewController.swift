@@ -26,6 +26,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     }()
     
     private var currentDate: Date = Date()
+    private let analyticsService = AnalyticsService()
     
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     
@@ -132,6 +133,14 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         super.viewWillAppear(animated)
         
         updateCollectionView()
+        
+        analyticsService.openScreen()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        analyticsService.closeScreen()
     }
     
     private func pinnedCategoriesFromCategoryStore() {
@@ -167,7 +176,6 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
         let addTrackerButton = UIButton(type: .custom)
-//        addTrackerButton.setBackgroundImage(UIImage(named: "addTracker"), for: .normal)
         let configuration = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
         let plusImage = UIImage(systemName: "plus", withConfiguration: configuration)
         addTrackerButton.setImage(plusImage, for: .normal)
@@ -236,6 +244,8 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         viewController.modalPresentationStyle = .formSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
+        
+        analyticsService.clickFilter()
     }
     
     func didSelectFilter(filter: TrackerFilterItems) {
@@ -317,6 +327,8 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         viewController.modalPresentationStyle = .formSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
+        
+        analyticsService.didTapAddTrackerButton()
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -519,6 +531,8 @@ extension TrackersViewController: UICollectionViewDelegate {
             viewController.modalTransitionStyle = .coverVertical
             present(viewController, animated: true, completion: nil)
         }
+        
+        analyticsService.selectContextMenuEdit()
     }
     
     private func deleteTracker(indexPath: IndexPath) {
@@ -543,6 +557,7 @@ extension TrackersViewController: UICollectionViewDelegate {
         )
         AlertPresenter.show(model: model, viewController: self, preferredStyle: .actionSheet)
         
+        analyticsService.selectContextMenuDelete()
     }
 }
 
@@ -626,6 +641,8 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
             )
             AlertPresenter.show(model: alertModel, viewController: self)
         }
+        
+        analyticsService.clickTracker()
     }
 }
 
