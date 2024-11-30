@@ -36,6 +36,7 @@
 		8ABA45C42CA82918005C8395 /* TrackerRecordStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABA45C32CA82918005C8395 /* TrackerRecordStoreError.swift */; };
 		8AC0BF962CFA99930075EBAE /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0BF952CFA99930075EBAE /* AnalyticsService.swift */; };
 		8AC0BF9F2CFAA1380075EBAE /* AnalyticsServiceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0BF9E2CFAA1380075EBAE /* AnalyticsServiceModel.swift */; };
+		8AC0BFA12CFB56520075EBAE /* StatisticsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0BFA02CFB56520075EBAE /* StatisticsTableViewCell.swift */; };
 		8AC3DDB62CA88FF80029C053 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8AC3DDB42CA88FF80029C053 /* Model.xcdatamodeld */; };
 		8ACDBC252C5CD87B00687ACF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACDBC242C5CD87B00687ACF /* AppDelegate.swift */; };
 		8ACDBC272C5CD87B00687ACF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACDBC262C5CD87B00687ACF /* SceneDelegate.swift */; };
@@ -119,6 +120,7 @@
 		8ABA45C32CA82918005C8395 /* TrackerRecordStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordStoreError.swift; sourceTree = "<group>"; };
 		8AC0BF952CFA99930075EBAE /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		8AC0BF9E2CFAA1380075EBAE /* AnalyticsServiceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsServiceModel.swift; sourceTree = "<group>"; };
+		8AC0BFA02CFB56520075EBAE /* StatisticsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsTableViewCell.swift; sourceTree = "<group>"; };
 		8AC3DDB52CA88FF80029C053 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		8ACDBC212C5CD87B00687ACF /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8ACDBC242C5CD87B00687ACF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -333,6 +335,7 @@
 				8A4D6FFB2CEBA5F500E48CCA /* AddCategoryViewController.swift */,
 				8AD814AB2C67A382008DAA5D /* SheduleViewController.swift */,
 				8ADF93642C5F8EF0001A4690 /* StatisticsViewController.swift */,
+				8AC0BFA02CFB56520075EBAE /* StatisticsTableViewCell.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -576,6 +579,7 @@
 				8AD814702C62B789008DAA5D /* TrackerCategory.swift in Sources */,
 				8A4042782CE6743100D603BC /* OnboardingPageViewController.swift in Sources */,
 				8A4042742CE6666900D603BC /* OnboardingViewController.swift in Sources */,
+				8AC0BFA12CFB56520075EBAE /* StatisticsTableViewCell.swift in Sources */,
 				8ABA45C02CA828CD005C8395 /* TrackerCategoryStoreError.swift in Sources */,
 				8ABA45BE2CA828A7005C8395 /* TrackerStoreError.swift in Sources */,
 				8AD814DE2C6E2151008DAA5D /* EmojiiColorSuplementaryView.swift in Sources */,

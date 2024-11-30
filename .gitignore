@@ -1,2 +1,6 @@
 # CocoaPods
 Pods/
+
+# Xcode user-specific files
+*.xcuserdatad/
+*.xcuserdata/
