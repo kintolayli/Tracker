@@ -30,7 +30,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
         let button = UIButton()
         let title = NSLocalizedString("chooseTypeTrackerViewController.regularEventButton.title", comment:"Regular event button title")
         button.setTitle(title, for: .normal)
-        button.setTitleColor(.ypWhite, for: .normal)
+        button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
@@ -42,7 +42,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
         let button = UIButton()
         let title =  NSLocalizedString("chooseTypeTrackerViewController.irregularEventButton.title", comment:"Irregular event button title")
         button.setTitle(title, for: .normal)
-        button.setTitleColor(.ypWhite, for: .normal)
+        button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
@@ -57,7 +57,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
         
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,

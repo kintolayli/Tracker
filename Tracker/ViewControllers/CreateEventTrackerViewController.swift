@@ -156,6 +156,8 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         tableView.isScrollEnabled = false
         tableView.allowsSelection = true
         tableView.register(BaseTableViewCell.self, forCellReuseIdentifier: "RegularEventTrackerCell")
+        tableView.separatorColor = .ypGray
+        tableView.backgroundColor = .ypBackground
         
         return tableView
     }()
@@ -220,7 +222,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     }
     
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
         
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             scrollView
@@ -468,6 +470,15 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         } else {
             createButton.isEnabled = !isTextFieldEmpty && !isCategoryEmpty && isEmojiiNotNil && isColorNotNil
         }
+        
+        if traitCollection.userInterfaceStyle == .dark {
+            if createButton.isEnabled {
+                createButton.setTitleColor(.ypAlwaysBlack, for: .normal)
+            } else {
+                createButton.setTitleColor(.ypWhite, for: .normal)
+            }
+        }
+        
         createButton.backgroundColor = createButton.isEnabled ? .ypBlack : .ypGray
     }
     

@@ -39,7 +39,7 @@ final class TabBarController: UITabBarController {
     
     private func setupTabBar() {
         let dataSource: [TabBarItem] = [.tracker, .statistics]
-        tabBar.backgroundColor = .ypWhite
+        tabBar.backgroundColor = .ypMainBackground
         
         tabBar.layer.shadowColor = CGColor(red: 0, green: 0, blue: 0, alpha: 1)
         tabBar.layer.shadowOpacity = 0.3

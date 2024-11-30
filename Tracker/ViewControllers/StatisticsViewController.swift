@@ -16,6 +16,6 @@ final class StatisticsViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
     }
 }

@@ -75,6 +75,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .ypMainBackground
         return collectionView
     }()
     
@@ -161,12 +162,16 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     }
     
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
         let addTrackerButton = UIButton(type: .custom)
-        addTrackerButton.setBackgroundImage(UIImage(named: "addTracker"), for: .normal)
+//        addTrackerButton.setBackgroundImage(UIImage(named: "addTracker"), for: .normal)
+        let configuration = UIImage.SymbolConfiguration(pointSize: 24, weight: .medium)
+        let plusImage = UIImage(systemName: "plus", withConfiguration: configuration)
+        addTrackerButton.setImage(plusImage, for: .normal)
+        addTrackerButton.tintColor = .ypBlack
         addTrackerButton.addTarget(self, action: #selector(didTapTrackerButton), for: .touchUpInside)
         addTrackerButton.frame = CGRect(x: 0, y: 0, width: 42, height: 42)
         let buttonView = UIView(frame: CGRect(x: 0, y: 0, width: 42, height: 42))

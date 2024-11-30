@@ -63,6 +63,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         
         tableView.allowsSelection = true
         tableView.register(BaseTableViewCell.self, forCellReuseIdentifier: "CategoryListCell")
+        tableView.separatorColor = .ypGray
         
         return tableView
     }()
@@ -71,7 +72,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         let button = UIButton()
         let title = NSLocalizedString("categoryListViewController.addCategoryButton.title", comment: "Button title")
         button.setTitle(title, for: .normal)
-        button.setTitleColor(.ypWhite, for: .normal)
+        button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
@@ -109,7 +110,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     }
     
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,
             tableView,

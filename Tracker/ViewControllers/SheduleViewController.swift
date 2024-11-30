@@ -60,6 +60,8 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
         tableView.allowsSelection = false
         tableView.isScrollEnabled = false
         tableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.reuseIdentifier)
+        tableView.separatorColor = .ypGray
+        tableView.backgroundColor = .ypBackground
         
         return tableView
     }()
@@ -68,7 +70,7 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
         let button = UIButton()
         let title = NSLocalizedString("sheduleViewController.okButton.title", comment: "Button title")
         button.setTitle(title, for: .normal)
-        button.setTitleColor(.ypWhite, for: .normal)
+        button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
@@ -82,7 +84,7 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
     }
     
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,
             tableView,

@@ -40,6 +40,8 @@ class TrackersFilterViewController: UIViewController {
         tableView.allowsSelection = true
         tableView.register(BaseTableViewCell.self, forCellReuseIdentifier: "CategoryListCell")
         
+        tableView.separatorColor = .ypGray
+        
         return tableView
     }()
     
@@ -50,7 +52,7 @@ class TrackersFilterViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,
             tableView,

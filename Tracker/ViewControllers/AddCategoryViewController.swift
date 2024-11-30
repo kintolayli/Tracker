@@ -80,8 +80,12 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         setupUI()
     }
     
+    private func okButtonIsEnable() {
+        okButton.setTitleColor(.ypMainBackground, for: .normal)
+    }
+    
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,
             textField,
@@ -132,5 +136,13 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         
         okButton.isEnabled = !(textField.text?.isEmpty ?? true)
         okButton.backgroundColor = okButton.isEnabled ? .ypBlack : .ypGray
+        
+        if traitCollection.userInterfaceStyle == .dark {
+            if okButton.isEnabled {
+                okButton.setTitleColor(.ypAlwaysBlack, for: .normal)
+            } else {
+                okButton.setTitleColor(.ypWhite, for: .normal)
+            }
+        }
     }
 }
