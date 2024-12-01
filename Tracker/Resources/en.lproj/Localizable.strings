@@ -17,7 +17,7 @@
 
 "trackersViewController.navigationItem.title" = "Trackers";
 "trackersViewController.searchBar.placeholder" = "Search";
-"trackersViewController.imageViewLabel.text" = "What will we track?";
+"trackersViewController.imageViewLabel.text1" = "What will we track?";
 "trackersViewController.imageViewLabel.text2" = "Nothing found";
 "trackersViewController.trackersViewControllerCellTap.alertModel.title" = "System Notification";
 "trackersViewController.trackersViewControllerCellTap.alertModel.message" = "You cannot mark a card for a future date";
@@ -88,3 +88,8 @@
 
 "statisticsViewController.imageViewLabel.text" = "There is nothing to analyze yet";
 "statisticsViewController.navigationItem.title" = "Statistics";
+
+"statisticsViewModel.fetchStatisticsData.bestPeriodString" = "Best Period";
+"statisticsViewModel.fetchStatisticsData.perfectDaysString" = "Perfect Days";
+"statisticsViewModel.fetchStatisticsData.trackersCompleted" = "Trackers Completed";
+"statisticsViewModel.fetchStatisticsData.averageHabitsString" = "Average Value";

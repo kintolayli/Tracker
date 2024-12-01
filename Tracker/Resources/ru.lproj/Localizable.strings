@@ -87,3 +87,8 @@
 
 "statisticsViewController.imageViewLabel.text" = "Анализировать пока нечего";
 "statisticsViewController.navigationItem.title" = "Статистика";
+
+"statisticsViewModel.fetchStatisticsData.bestPeriodString" = "Лучший период";
+"statisticsViewModel.fetchStatisticsData.perfectDaysString" = "Идеальные дни";
+"statisticsViewModel.fetchStatisticsData.trackersCompleted" = "Трекеров завершено";
+"statisticsViewModel.fetchStatisticsData.averageHabitsString" = "Среднее значение";
