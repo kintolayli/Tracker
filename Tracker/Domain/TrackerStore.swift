@@ -26,6 +26,15 @@ final class TrackerStore {
         return try trackersCoreData.map { try convertToTracker(from: $0) }
     }
     
+    func fetchAllTrackersWithCategory(categoryTitle: String) throws -> [Tracker] {
+        let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.returnsObjectsAsFaults = false
+        fetchRequest.predicate = NSPredicate(format: "trackerCategory.title == %@", categoryTitle)
+        
+        let trackersCoreData = try context.fetch(fetchRequest)
+        return try trackersCoreData.map { try convertToTracker(from: $0) }
+    }
+    
     func fetchPinnedTrackers() throws -> [Tracker] {
         let fetchRequest = TrackerCoreData.fetchRequest()
         fetchRequest.returnsObjectsAsFaults = false

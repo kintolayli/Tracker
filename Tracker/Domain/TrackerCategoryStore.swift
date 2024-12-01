@@ -144,6 +144,18 @@ final class TrackerCategoryStore: NSObject {
             try trackerStore.addTracker(with: categoryCoreData, with: tracker)
         }
     }
+    
+    func updateTrackerCategoryTitle(newName: String, oldName: String) throws {
+        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "title == %@", oldName)
+        
+        let categories = try context.fetch(fetchRequest)
+        
+        if let categoryToUpdate = categories.first {
+            categoryToUpdate.title = newName
+        }
+        saveContext()
+    }
 
     func updateTrackerCategory(_ category: TrackerCategory) throws {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -159,18 +171,6 @@ final class TrackerCategoryStore: NSObject {
             try addCategory(category)
         }
         saveContext()
-    }
-    
-    func removeTrackerCategory(with title: String) throws {
-        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "title == %@", title)
-        
-        let categories = try context.fetch(fetchRequest)
-        
-        if let categoryToRemove = categories.first {
-            context.delete(categoryToRemove)
-            try context.save()
-        }
     }
     
     func deleteCategory(with title: String) throws {
@@ -231,24 +231,25 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         for type: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
-        
         switch type {
-        case .insert, .delete, .update:
-            guard let indexPath = newIndexPath else {
-                assertionFailure("Invalid state: `newIndexPath` is nil for type \(type)")
-                return
+        case .insert:
+            if let newIndexPath = newIndexPath {
+                insertedIndexes?.insert(newIndexPath.item)
             }
-            updatedIndexes?.insert(indexPath.item)
-            
+        case .delete:
+            if let indexPath = indexPath {
+                deletedIndexes?.insert(indexPath.item)
+            }
+        case .update:
+            if let indexPath = indexPath {
+                updatedIndexes?.insert(indexPath.item)
+            }
         case .move:
-            guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else {
-                assertionFailure("Invalid state: `indexPath` or `newIndexPath` is nil for type .move")
-                return
+            if let oldIndexPath = indexPath, let newIndexPath = newIndexPath {
+                movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
             }
-            movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
         @unknown default:
             assertionFailure("Unhandled case in switch: \(type)")
-            return
         }
     }
 }

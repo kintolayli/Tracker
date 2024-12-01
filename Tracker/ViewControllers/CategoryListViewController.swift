@@ -17,6 +17,26 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     weak var createEventTrackerViewController: CreateEventTrackerViewControllerProtocol?
     
     lazy var viewModel: CategoryListViewModel = {
+        lazy var trackerRecordStore: TrackerRecordStore = {
+            guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
+                assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
+                
+                let fallbackContext = DefaultContext(concurrencyType: .mainQueueConcurrencyType)
+                return TrackerRecordStore(context: fallbackContext)
+            }
+            return TrackerRecordStore(context: context)
+        }()
+        
+        lazy var trackerStore: TrackerStore = {
+            guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
+                assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
+                
+                let fallbackContext = DefaultContext(concurrencyType: .mainQueueConcurrencyType)
+                return TrackerStore(context: fallbackContext)
+            }
+            return TrackerStore(context: context)
+        }()
+        
         lazy var trackerCategoryStore: TrackerCategoryStore = {
             guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
                 assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
@@ -27,7 +47,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
             return TrackerCategoryStore(context: context)
         }()
         
-        let viewModel = CategoryListViewModel(trackerCategoryStore: trackerCategoryStore)
+        let viewModel = CategoryListViewModel(trackerCategoryStore: trackerCategoryStore, trackerStore: trackerStore, trackerRecordStore: trackerRecordStore)
         return viewModel
     }()
     
@@ -98,6 +118,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         viewModel.didFetchCategories = { [weak self] categories in
             self?.viewModel.categories = categories
             self?.tableView.reloadData()
+            self?.createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
             self?.hideImageViewIfCategoryIsNotEmpty()
         }
         
@@ -160,6 +181,47 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         imageView.isHidden = !isEmpty
         imageViewLabel.isHidden = !isEmpty
     }
+    
+    private func editCategory(indexPath: IndexPath) {
+        let categoryTitle = viewModel.categories[indexPath.row].title
+        
+        let viewController = AddCategoryViewController()
+        viewController.setupViewControllerForEditing(text: categoryTitle)
+        viewController.categoryListViewController = self
+        viewController.modalPresentationStyle = .formSheet
+        viewController.modalTransitionStyle = .coverVertical
+        present(viewController, animated: true, completion: nil)
+    }
+    
+    private func deleteCategory(indexPath: IndexPath) {
+        
+        let categoryTitle = viewModel.categories[indexPath.row].title
+        
+        let title = NSLocalizedString("categoryListViewController.deleteCategory.title", comment: "Question before deleting")
+        let cancel = NSLocalizedString("categoryListViewController.deleteCategory.cancel", comment: "Title cancel button")
+        let delete = NSLocalizedString("categoryListViewController.deleteCategory.delete", comment: "Title delete button")
+        
+        let model = AlertModel(
+            title: title,
+            message: nil,
+            actions: [
+                AlertActionModel(title: cancel, style: .cancel, handler: nil),
+                AlertActionModel(title: delete, style: .destructive, handler: { [weak self] _ in
+                    guard let trackers = try? self?.viewModel.trackerStore.fetchAllTrackersWithCategory(categoryTitle: categoryTitle) else { return }
+                    
+                    for tracker in trackers {
+                        self?.viewModel.trackerRecordStore.removeAllTrackerRecord(with: tracker.id)
+                        try? self?.viewModel.trackerStore.removeTracker(withId: tracker.id)
+                    }
+                    try? self?.viewModel.trackerCategoryStore.deleteCategory(with: categoryTitle)
+                    self?.viewModel.deleteLastSelectedCategory(selectedCategoryTitle: categoryTitle)
+                    self?.viewModel.fetchCategories()
+                    self?.createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
+                }),
+            ]
+        )
+        AlertPresenter.show(model: model, viewController: self, preferredStyle: .actionSheet)
+    }
 }
 
 extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource {
@@ -202,5 +264,27 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         guard let cell = cell as? BaseTableViewCell else { return }
         cell.roundedCornersAndOffLastSeparatorVisibility(indexPath: indexPath, tableView: tableView)
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        return UIContextMenuConfiguration(actionProvider: { actions in
+            
+            let editTitle = NSLocalizedString("trackersViewController.collectionView.editTitle", comment: "Item in the dropdown menu")
+            let deleteTitle = NSLocalizedString("trackersViewController.collectionView.deleteTitle", comment: "Item in the dropdown menu")
+            
+            var menuActions: [UIMenuElement] = []
+            
+            menuActions.append(
+                UIAction(title: editTitle) { [weak self] _ in
+                    self?.editCategory(indexPath: indexPath)
+                })
+            menuActions.append(
+                UIAction(title: deleteTitle, attributes: .destructive) { [weak self] _ in
+                    self?.deleteCategory(indexPath: indexPath)
+                })
+            
+            return UIMenu(children: menuActions)
+        })
     }
 }

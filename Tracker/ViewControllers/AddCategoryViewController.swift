@@ -25,6 +25,8 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
     
     weak var categoryListViewController: CategoryListViewControllerProtocol?
     
+    private var oldCategoryName: String?
+    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
@@ -116,9 +118,14 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         enableKeyboardDismissOnTap()
     }
     
+    func setupViewControllerForEditing(text: String) {
+        oldCategoryName = text
+        textField.text = text
+    }
+    
     @objc private func okButtonDidTap() {
         guard let text = textField.text else { return }
-        categoryListViewController?.viewModel.saveCategory(text: text)
+        categoryListViewController?.viewModel.saveCategory(text: text, oldCategoryName: oldCategoryName)
         self.dismiss(animated: true)
     }
     

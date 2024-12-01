@@ -404,6 +404,8 @@ extension TrackersViewController: UICollectionViewDataSource {
         cell.prepareForReuse()
         cell.delegate = self
         
+        cell.layer.cornerRadius = 16
+        
         let newCell = filteredCategories[indexPath.section].trackerList[indexPath.row]
         let (count, addButtonState) = getRecordsCountAndButtonLabelState(indexPath: indexPath)
         
