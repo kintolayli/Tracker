@@ -52,7 +52,11 @@ final class TabBarController: UITabBarController {
                 let trackerViewController = TrackersViewController()
                 return UINavigationController(rootViewController: trackerViewController)
             case .statistics:
-                let statisticsViewController = StatisticsViewController()
+                
+                let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+                let viewModel = StatisticsViewModel(context: context ?? DefaultContext(concurrencyType: .mainQueueConcurrencyType))
+                let statisticsViewController = StatisticsViewController(viewModel: viewModel)
+                
                 return UINavigationController(rootViewController: statisticsViewController)
             }
         }

@@ -16,6 +16,7 @@ protocol TrackersViewControllerProtocol: AnyObject {
     func  didSelectFilter(filter: TrackerFilterItems)
 }
 
+
 final class TrackersViewController: UIViewController & TrackersViewControllerProtocol {
     
     weak var chooseTypeTrackerDelegate: ChooseTypeTrackerViewControllerProtocol?
@@ -100,7 +101,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         label.text = NSLocalizedString("trackersViewController.imageViewLabel.text1", comment:"Start screen label with empty trackers")
         return label
     }()
-
+    
     private lazy var filterButton: UIButton = {
         let button = UIButton()
         let title = NSLocalizedString("trackersViewController.filterButton.title", comment:"Filter button title")
@@ -139,7 +140,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-
+        
         analyticsService.closeScreen()
     }
     
@@ -172,7 +173,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     
     private func setupUI() {
         view.backgroundColor = .ypMainBackground
-
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
         let addTrackerButton = UIButton(type: .custom)
@@ -291,8 +292,6 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         collectionView.reloadData()
         updateEmptyStateViewVisibilityAfterSearch()
     }
-    
-
     
     private func updateEmptyStateViewVisibility() {
         let nonEmptyCategories = visibleCategories.filter { !$0.trackerList.isEmpty }

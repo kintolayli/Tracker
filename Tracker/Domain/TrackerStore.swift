@@ -18,6 +18,14 @@ final class TrackerStore {
         self.context = context
     }
     
+    func fetchAllTrackers() throws -> [Tracker] {
+        let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.returnsObjectsAsFaults = false
+        
+        let trackersCoreData = try context.fetch(fetchRequest)
+        return try trackersCoreData.map { try convertToTracker(from: $0) }
+    }
+    
     func fetchPinnedTrackers() throws -> [Tracker] {
         let fetchRequest = TrackerCoreData.fetchRequest()
         fetchRequest.returnsObjectsAsFaults = false

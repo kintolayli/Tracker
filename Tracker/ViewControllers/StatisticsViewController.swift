@@ -9,12 +9,16 @@ import UIKit
 
 final class StatisticsViewController: UIViewController, StatisticsViewControllerDelegate {
     
-    private let data: [(String, Int)] = [
-        ("Лучший период", 6),
-        ("Идеальные дни", 2),
-        ("Трекеров завершено", 5),
-        ("Среднее значение", 4),
-    ]
+    init(viewModel: StatisticsViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private let viewModel: StatisticsViewModel
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -56,6 +60,13 @@ final class StatisticsViewController: UIViewController, StatisticsViewController
         super.viewDidLoad()
         
         setupUI()
+        bindViewModel()
+    }
+    
+    private func bindViewModel() {
+        viewModel.onDataUpdated = { [weak self] in
+            self?.updateTableView()
+        }
     }
     
     private func setupUI() {
@@ -87,10 +98,12 @@ final class StatisticsViewController: UIViewController, StatisticsViewController
     }
     
     private func updateEmptyStateViewVisibility() {
-        let isTrackerListEmpty = data.isEmpty
+        let isStatisticsNotEmpty = viewModel.isEmptyStatistics()
         
-        imageViewEmptyState.isHidden = !isTrackerListEmpty
-        imageViewLabelEmptyState.isHidden = !isTrackerListEmpty
+        imageViewEmptyState.isHidden = !isStatisticsNotEmpty
+        imageViewLabelEmptyState.isHidden = !isStatisticsNotEmpty
+        
+        tableView.isHidden = isStatisticsNotEmpty
     }
     
     private func updateTableView() {
@@ -102,7 +115,7 @@ final class StatisticsViewController: UIViewController, StatisticsViewController
 
 extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
+        return viewModel.data.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -110,10 +123,10 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate{
         
         cell.delegate = self
         
-        let text = data[indexPath.row].0
-        let count = data[indexPath.row].1
+        if let item = viewModel.getItem(at: indexPath.row) {
+            cell.configure(with: item)
+        }
         
-        cell.configure(with: (text, count))
         return cell
     }
     

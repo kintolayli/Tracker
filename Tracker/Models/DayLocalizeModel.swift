@@ -68,3 +68,18 @@ enum DayLocalizeModel {
         }
     }
 }
+
+extension DayLocalizeModel {
+    static func dayName(for weekday: Int) -> String {
+        switch weekday {
+        case 1: return sunday.fullDayName
+        case 2: return monday.fullDayName
+        case 3: return tuesday.fullDayName
+        case 4: return wednesday.fullDayName
+        case 5: return thursday.fullDayName
+        case 6: return friday.fullDayName
+        case 7: return saturday.fullDayName
+        default: return ""
+        }
+    }
+}

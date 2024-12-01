@@ -8,11 +8,12 @@
 import CoreData
 
 
-final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
+final class TrackerRecordStore: NSObject {
     
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     private var trackerStore: TrackerStore
+    var onRecordsChanged: (() -> Void)?
     
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -144,4 +145,10 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
+}
+
+extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        onRecordsChanged?()
+    }
 }
