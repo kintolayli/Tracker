@@ -60,6 +60,10 @@
 "categoryListViewController.imageViewLabel.text" = "Привычки и события можно\n объединить по смыслу";
 "categoryListViewController.addCategoryButton.title" = "Добавить категорию";
 
+"categoryListViewController.deleteCategory.title" = "Эта категория точно не нужна?";
+"categoryListViewController.deleteCategory.cancel" = "Отменить";
+"categoryListViewController.deleteCategory.delete" = "Удалить";
+
 "addCategoryViewController.titleLabel.text" = "Новая категория";
 "addCategoryViewController.textField.placeholder" = "Введите название категории";
 "addCategoryViewController.okButton.title" = "Готово";

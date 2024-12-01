@@ -61,6 +61,10 @@
 "categoryListViewController.imageViewLabel.text" = "Gewohnheiten und Ereignisse\nkönnen sinnvoll gruppiert werden";
 "categoryListViewController.addCategoryButton.title" = "Kategorie hinzufügen";
 
+"categoryListViewController.deleteCategory.title" = "Möchten Sie diese Kategorie wirklich löschen?";
+"categoryListViewController.deleteCategory.cancel" = "Abbrechen";
+"categoryListViewController.deleteCategory.delete" = "Löschen";
+
 "addCategoryViewController.titleLabel.text" = "Neue Kategorie";
 "addCategoryViewController.textField.placeholder" = "Kategorienamen eingeben";
 "addCategoryViewController.okButton.title" = "Fertig";

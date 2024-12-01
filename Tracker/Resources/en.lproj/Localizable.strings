@@ -61,6 +61,10 @@
 "categoryListViewController.imageViewLabel.text" = "Habits and events\ncan be grouped meaningfully";
 "categoryListViewController.addCategoryButton.title" = "Add Category";
 
+"categoryListViewController.deleteCategory.title" = "Are you sure you want to delete this category?";
+"categoryListViewController.deleteCategory.cancel" = "Cancel";
+"categoryListViewController.deleteCategory.delete" = "Delete";
+
 "addCategoryViewController.titleLabel.text" = "New Category";
 "addCategoryViewController.textField.placeholder" = "Enter category name";
 "addCategoryViewController.okButton.title" = "Done";
