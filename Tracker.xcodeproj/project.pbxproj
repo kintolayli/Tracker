@@ -560,6 +560,7 @@
 		};
 		8AC0BFA62CFD28210075EBAE /* Run Swiftgen */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -573,8 +574,8 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${SRCROOT}/Tracker/Generated/Assets.swift\n${SRCROOT}/Tracker/Generated/Strings.swift",
 				"${SRCROOT}/Tracker/Generated/Strings.swift",
+				"${SRCROOT}/Tracker/Generated/Assets.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
