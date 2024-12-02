@@ -22,7 +22,7 @@ final class OnboardingPageViewController: UIViewController {
     
     private lazy var label: UILabel = {
         let label = UILabel()
-        label.textColor = .ypBlack
+        label.textColor = .ypAlwaysBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.numberOfLines = 2
@@ -33,7 +33,7 @@ final class OnboardingPageViewController: UIViewController {
         let button = UIButton()
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.backgroundColor = .ypBlack
+        button.backgroundColor = .ypAlwaysBlack
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         return button
