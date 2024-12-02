@@ -87,7 +87,7 @@ final class TrackerCategoryStore: NSObject {
             TrackerCategory(
                 title: category.title,
                 trackerList: category.trackerList.filter { tracker in
-                    (tracker.schedule == nil) && isTrackerCompleted(tracker)
+                    isTrackerCompleted(tracker)
                 }
             )
         }
@@ -103,7 +103,7 @@ final class TrackerCategoryStore: NSObject {
             TrackerCategory(
                 title: category.title,
                 trackerList: category.trackerList.filter { tracker in
-                    (tracker.schedule == nil) && !isTrackerCompleted(tracker)
+                    !isTrackerCompleted(tracker)
                 }
             )
         }

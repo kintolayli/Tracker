@@ -216,7 +216,18 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
                     try? self?.viewModel.trackerCategoryStore.deleteCategory(with: categoryTitle)
                     self?.viewModel.deleteLastSelectedCategory(selectedCategoryTitle: categoryTitle)
                     self?.viewModel.fetchCategories()
-                    self?.createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
+                    
+                    // Обновляем collectionView - в зависимости от того как мы зашли в удаление категорий - через создание нового трекера или через редактирование, ссылка на trackersViewController будет разной
+                    if let editDelegate = self?.createEventTrackerViewController?.trackerViewControllerEditDelegate {
+                        editDelegate.updateCollectionView()
+                    } else {
+                        self?.createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
+                    }
+                    
+                    self?.createEventTrackerViewController?.selectedCategory = ""
+                    self?.createEventTrackerViewController?.loadLastSelectedCategory()
+                    self?.createEventTrackerViewController?.updateTableViewFirstCell()
+                    self?.createEventTrackerViewController?.categoryDidChange()
                 }),
             ]
         )

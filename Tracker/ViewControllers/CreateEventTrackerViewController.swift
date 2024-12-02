@@ -10,6 +10,7 @@ import UIKit
 
 protocol CreateEventTrackerViewControllerProtocol: AnyObject {
     var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol? { get set }
+    var trackerViewControllerEditDelegate: TrackersViewControllerProtocol? { get set }
     var sheduleDelegate: SheduleViewControllerProtocol? { get set }
     var selectedCategory: String? { get set }
     func categoryDidChange()
@@ -96,7 +97,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     }()
     
     private lazy var dayCounterLabel: UILabel = {
-       let label = UILabel()
+        let label = UILabel()
         
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -340,7 +341,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         let title = L10n.CreateEventTrackerViewController.CreateButton.titleWhenEdit
         createButton.setTitle(title, for: .normal)
     }
-
+    
     func setupViewControllerForEditing(
         label: String,
         textFieldText: String,
@@ -602,7 +603,7 @@ extension CreateEventTrackerViewController: UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiesColorCollectionViewCell", for: indexPath) as? EmojiesColorCollectionViewCell else { return UICollectionViewCell() }
-         cell.prepareForReuse()
+        cell.prepareForReuse()
         
         if indexPath.section == 0 {
             let emojii = emojies[indexPath.row]

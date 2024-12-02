@@ -280,10 +280,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
                 let filteredTrackers = category.trackerList.filter { tracker in
                     tracker.name.lowercased().contains(searchText.lowercased())
                 }
-                
-                
                 return filteredTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackerList: filteredTrackers)
-                
             }
         } else {
             filteredCategories = visibleCategories
