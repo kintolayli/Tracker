@@ -15,6 +15,8 @@ enum TrackerStoreError: Error {
     case decodingErrorInvalidEmojii
     case decodingErrorInvalidShedule
     case deleteTrackerError
+    case pinTrackerError
+    case unpinTrackerError
     case updateTrackerError
     case getTrackerCoreDataError
     case loadContextError

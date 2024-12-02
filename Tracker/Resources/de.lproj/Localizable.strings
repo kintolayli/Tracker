@@ -1,0 +1,99 @@
+/*
+ Localizable.strings
+ Tracker
+ 
+ Created by Ilya Lotnik on 26.11.2024.
+ 
+ */
+"tabBarController.title.tracker" = "Tracker";
+"tabBarController.title.statistics" = "Statistik";
+
+"pageModel.labelName.firstPage" = "Verfolgen Sie nur, was Sie möchten";
+"pageModel.labelName.secondPage" = "Auch wenn es nicht Wasser und Yoga ist";
+"pageModel.buttonName" = "Das ist Technologie!";
+
+"trackersCollectionViewCell.updateButtonState.completed" = "Erledigt";
+"trackersCollectionViewCell.updateButtonState.notCompleted" = "Nicht erledigt";
+
+"trackersViewController.navigationItem.title" = "Tracker";
+"trackersViewController.searchBar.placeholder" = "Suche";
+"trackersViewController.imageViewLabel.text1" = "Was werden wir verfolgen?";
+"trackersViewController.imageViewLabel.text2" = "Nichts gefunden";
+"trackersViewController.trackersViewControllerCellTap.alertModel.title" = "Systembenachrichtigung";
+"trackersViewController.trackersViewControllerCellTap.alertModel.message" = "Sie können keine Karte für ein zukünftiges Datum markieren";
+"trackersViewController.trackersViewControllerCellTap.alertModel.buttonTitle" = "OK";
+
+"trackersViewController.collectionView.pinTitle" = "Anheften";
+"trackersViewController.collectionView.unpinTitle" = "Lösen";
+"trackersViewController.collectionView.editTitle" = "Bearbeiten";
+"trackersViewController.collectionView.deleteTitle" = "Löschen";
+
+"trackersViewController.pinTracker.pinnedCategoryTitle" = "Angeheftet";
+"trackersViewController.editTracker.label" = "Gewohnheiten bearbeiten";
+
+"trackersViewController.deleteTracker.title" = "Sind Sie sicher, dass Sie den Tracker löschen möchten?";
+"trackersViewController.deleteTracker.cancel" = "Abbrechen";
+"trackersViewController.deleteTracker.delete" = "Löschen";
+
+"trackersViewController.filterButton.title" = "Filter";
+
+"trackerFilterItems.filterName.alltrackers" = "Alle Tracker";
+"trackerFilterItems.filterName.todayTrackers" = "Tracker für heute";
+"trackerFilterItems.filterName.completed" = "Abgeschlossen";
+"trackerFilterItems.filterName.notCompleted" = "Nicht abgeschlossen";
+
+"chooseTypeTrackerViewController.titleLabel.text" = "Tracker erstellen";
+"chooseTypeTrackerViewController.regularEventButton.title" = "Gewohnheit";
+"chooseTypeTrackerViewController.irregularEventButton.title" = "Unregelmäßiges Ereignis";
+
+"createEventTrackerViewController.regularEventTracker.titleLabel.text" = "Neue Gewohnheit";
+"createEventTrackerViewController.irregularEventTracker.titleLabel.text" = "Neues unregelmäßiges Ereignis";
+"createEventTrackerViewController.textField.placeholder" = "Tracker-Namen eingeben";
+"createEventTrackerViewController.menuItems.item1" = "Kategorie";
+"createEventTrackerViewController.menuItems.item2" = "Zeitplan";
+"createEventTrackerViewController.suplementaryViewHeaderList.item1" = "Emoji";
+"createEventTrackerViewController.suplementaryViewHeaderList.item2" = "Farbe";
+"createEventTrackerViewController.cancelButton.title" = "Abbrechen";
+"createEventTrackerViewController.createButton.title" = "Erstellen";
+"createEventTrackerViewController.createButton.titleWhenEdit" = "Speichern";
+
+"categoryListViewController.titleLabel.text" = "Kategorie";
+"categoryListViewController.imageViewLabel.text" = "Gewohnheiten und Ereignisse\nkönnen sinnvoll gruppiert werden";
+"categoryListViewController.addCategoryButton.title" = "Kategorie hinzufügen";
+
+"categoryListViewController.deleteCategory.title" = "Möchten Sie diese Kategorie wirklich löschen?";
+"categoryListViewController.deleteCategory.cancel" = "Abbrechen";
+"categoryListViewController.deleteCategory.delete" = "Löschen";
+
+"addCategoryViewController.titleLabel.text" = "Neue Kategorie";
+"addCategoryViewController.textField.placeholder" = "Kategorienamen eingeben";
+"addCategoryViewController.okButton.title" = "Fertig";
+
+"sheduleViewController.titleLabel.text" = "Zeitplan";
+"sheduleViewController.okButton.title" = "Fertig";
+
+"dayLocalizeModel.fullDayName.monday" = "Montag";
+"dayLocalizeModel.fullDayName.tuesday" = "Dienstag";
+"dayLocalizeModel.fullDayName.wednesday" = "Mittwoch";
+"dayLocalizeModel.fullDayName.thursday" = "Donnerstag";
+"dayLocalizeModel.fullDayName.friday" = "Freitag";
+"dayLocalizeModel.fullDayName.saturday" = "Samstag";
+"dayLocalizeModel.fullDayName.sunday" = "Sonntag";
+
+"dayLocalizeModel.shortDayName.monday" = "Mo";
+"dayLocalizeModel.shortDayName.tuesday" = "Di";
+"dayLocalizeModel.shortDayName.wednesday" = "Mi";
+"dayLocalizeModel.shortDayName.thursday" = "Do";
+"dayLocalizeModel.shortDayName.friday" = "Fr";
+"dayLocalizeModel.shortDayName.saturday" = "Sa";
+"dayLocalizeModel.shortDayName.sunday" = "So";
+
+"sheduleViewController.allDays" = "Jeden Tag";
+
+"statisticsViewController.imageViewLabel.text" = "Es gibt noch nichts zu analysieren";
+"statisticsViewController.navigationItem.title" = "Statistik";
+
+"statisticsViewModel.fetchStatisticsData.bestPeriodString" = "Beste Periode";
+"statisticsViewModel.fetchStatisticsData.perfectDaysString" = "Perfekte Tage";
+"statisticsViewModel.fetchStatisticsData.trackersCompleted" = "Tracker abgeschlossen";
+"statisticsViewModel.fetchStatisticsData.averageHabitsString" = "Durchschnittswert";

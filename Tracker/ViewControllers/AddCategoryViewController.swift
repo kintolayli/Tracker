@@ -25,18 +25,20 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
     
     weak var categoryListViewController: CategoryListViewControllerProtocol?
     
+    private var oldCategoryName: String?
+    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = "Новая категория"
+        label.text = L10n.AddCategoryViewController.TitleLabel.text
         return label
     }()
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название категории"
+        textField.placeholder = L10n.AddCategoryViewController.TextField.placeholder
         textField.backgroundColor = .ypBackground
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
@@ -64,7 +66,8 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
     
     private lazy var okButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Готово", for: .normal)
+        let title = L10n.AddCategoryViewController.OkButton.title
+        button.setTitle(title, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypGray
@@ -79,8 +82,12 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         setupUI()
     }
     
+    private func okButtonIsEnable() {
+        okButton.setTitleColor(.ypMainBackground, for: .normal)
+    }
+    
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,
             textField,
@@ -108,14 +115,17 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         
         textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
+        enableKeyboardDismissOnTap()
+    }
+    
+    func setupViewControllerForEditing(text: String) {
+        oldCategoryName = text
+        textField.text = text
     }
     
     @objc private func okButtonDidTap() {
         guard let text = textField.text else { return }
-        categoryListViewController?.viewModel.saveCategory(text: text)
+        categoryListViewController?.viewModel.saveCategory(text: text, oldCategoryName: oldCategoryName)
         self.dismiss(animated: true)
     }
     
@@ -133,9 +143,13 @@ final class AddCategoryViewController: UIViewController, AddCategoryViewControll
         
         okButton.isEnabled = !(textField.text?.isEmpty ?? true)
         okButton.backgroundColor = okButton.isEnabled ? .ypBlack : .ypGray
-    }
-    
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
+        
+        if traitCollection.userInterfaceStyle == .dark {
+            if okButton.isEnabled {
+                okButton.setTitleColor(.ypAlwaysBlack, for: .normal)
+            } else {
+                okButton.setTitleColor(.ypWhite, for: .normal)
+            }
+        }
     }
 }

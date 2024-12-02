@@ -39,7 +39,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     private lazy var pinImageView: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "pinImage")
+        view.image = ImageAsset.Image.pin
         view.tintColor = .ypWhite
         return view
     }()
@@ -57,7 +57,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .left
-        label.text = "0 дней"
+        label.text = L10n.daysCountLabel(0)
         label.font = .systemFont(ofSize: 12, weight: .medium)
         return label
     }()
@@ -129,27 +129,15 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     func updateCell(cell: Tracker,
                     count: Int,
-                    addButtonState: Bool,
-                    isPin: Bool = false
+                    addButtonState: Bool
     ){
         colorView.backgroundColor = cell.color
         emojiiLabel.text = cell.emojii
         titleLabel.text = cell.name
         addButton.backgroundColor = cell.color
-        pinImageView.isHidden = isPin ? false : true
+        pinImageView.isHidden = cell.isPinned ? false : true
         
         updateButtonState(count: count, state: addButtonState, schedule: cell.schedule)
-    }
-    
-    private func determineEndOfWord(number: Int) -> String {
-        let remainder = number % 10
-        if remainder == 1 && number % 100 != 11 {
-            return "день"
-        } else if (2...4).contains(remainder) && !(12...14).contains(number % 100) {
-            return "дня"
-        } else {
-            return "дней"
-        }
     }
     
     func updateButtonState(count: Int, state: Bool, schedule: [Day]?) {
@@ -158,11 +146,18 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         addButton.setImage(UIImage(systemName: imageName), for: .normal)
         
         if let _ = schedule {
-            let dayWord = determineEndOfWord(number: count)
-            counterLabel.text = "\(count) \(dayWord)"
+            let localizedString = L10n.daysCountLabel(count)
+            counterLabel.text = localizedString
         } else {
-            counterLabel.text = state ? "Выполнено" : "Не выполнено"
+            let completed = L10n.TrackersCollectionViewCell.UpdateButtonState.completed
+            let notCompleted = L10n.TrackersCollectionViewCell.UpdateButtonState.notCompleted
+            counterLabel.text = state ? completed : notCompleted
         }
+    }
+    
+    func getCounterText() -> String {
+        guard let text = counterLabel.text else { return "error" }
+        return text
     }
     
     @objc private func addButtonDidTap() {

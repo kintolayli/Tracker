@@ -22,6 +22,7 @@ public class TrackerCoreData: NSManagedObject, Identifiable {
     @NSManaged public var id: UUID?
     @NSManaged public var name: String?
     @NSManaged public var scheduleData: Data?
+    @NSManaged public var isPinned: Bool
     @NSManaged public var trackerCategory: TrackerCategoryCoreData?
     @NSManaged public var trackerRecords: NSSet?
     
