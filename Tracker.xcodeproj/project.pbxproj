@@ -566,15 +566,19 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Tracker/Resources/ru.lproj",
+				"${SRCROOT}/Tracker/Resources/Assets.xcassets",
 			);
 			name = "Run Swiftgen";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${SRCROOT}/Tracker/Generated/Assets.swift\n${SRCROOT}/Tracker/Generated/Strings.swift",
+				"${SRCROOT}/Tracker/Generated/Strings.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftgen > /dev/null; then\n  swiftgen\nelse\n  echo \"warning: SwiftGen not installed. Please install it to use this feature.\"\nfi\n";
+			shellScript = "GENERATED_DIR=\"${SRCROOT}/Tracker/Generated\"\n\nif [ ! -d \"$GENERATED_DIR\" ]; then\n  echo \"Generated directory not found. Creating...\"\n  mkdir -p \"$GENERATED_DIR\"\nfi\n\nif [[ -f \"${PODS_ROOT}/SwiftGen/bin/swiftgen\" ]]; then\n  \"${PODS_ROOT}/SwiftGen/bin/swiftgen\" config run --config \"${SRCROOT}/swiftgen.yml\"\nelse\n  echo \"warning: SwiftGen is not installed. Run 'pod install --repo-update' to install it.\"\nfi\n";
 		};
 		FF1AA33A1EDBF1489072E76F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
