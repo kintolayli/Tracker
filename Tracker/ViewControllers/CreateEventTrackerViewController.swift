@@ -71,21 +71,12 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     }
     
     private let suplementaryViewHeaderList = [
-        NSLocalizedString(
-            "createEventTrackerViewController.suplementaryViewHeaderList.item1",
-            comment:"Suplementary view header title"
-        ),
-        NSLocalizedString(
-            "createEventTrackerViewController.suplementaryViewHeaderList.item2",
-            comment:"Suplementary view header title"
-        )
+        L10n.CreateEventTrackerViewController.SuplementaryViewHeaderList.item1,
+        L10n.CreateEventTrackerViewController.SuplementaryViewHeaderList.item2
     ]
     
     private var menuItems: [String] = [
-        NSLocalizedString(
-            "createEventTrackerViewController.menuItems.item1",
-            comment:"Menu item title"
-        )
+        L10n.CreateEventTrackerViewController.MenuItems.item1
     ]
     private var menuSecondaryItems: [[String]] = [[""], [""]]
     
@@ -100,10 +91,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = NSLocalizedString(
-            "createEventTrackerViewController.irregularEventTracker.titleLabel.text",
-            comment:"Page title"
-        )
+        label.text = L10n.CreateEventTrackerViewController.IrregularEventTracker.TitleLabel.text
         return label
     }()
     
@@ -120,10 +108,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = NSLocalizedString(
-            "createEventTrackerViewController.textField.placeholder",
-            comment:"Text field placeholder"
-        )
+        textField.placeholder = L10n.CreateEventTrackerViewController.TextField.placeholder
         textField.backgroundColor = .ypBackground
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
@@ -171,10 +156,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
-        let title =  NSLocalizedString(
-            "createEventTrackerViewController.cancelButton.title",
-            comment:"Cancel button title"
-        )
+        let title =  L10n.CreateEventTrackerViewController.CancelButton.title
         button.setTitle(title, for: .normal)
         button.setTitleColor(.ypRed, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -188,10 +170,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     private lazy var createButton: UIButton = {
         let button = UIButton()
-        let title =  NSLocalizedString(
-            "createEventTrackerViewController.createButton.title",
-            comment:"Create button title"
-        )
+        let title = L10n.CreateEventTrackerViewController.CreateButton.title
         button.setTitle(title, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -358,10 +337,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     }
     
     private func createButtonTitleChange() {
-        let title =  NSLocalizedString(
-            "createEventTrackerViewController.createButton.titleWhenEdit",
-            comment:"Create button title"
-        )
+        let title = L10n.CreateEventTrackerViewController.CreateButton.titleWhenEdit
         createButton.setTitle(title, for: .normal)
     }
 
@@ -388,16 +364,8 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     }
     
     func didSelectCreateRegularEvent() {
-        menuItems.append(
-            NSLocalizedString(
-                "createEventTrackerViewController.menuItems.item2",
-                comment:"Menu item title"
-            )
-        )
-        titleLabel.text = NSLocalizedString(
-            "createEventTrackerViewController.regularEventTracker.titleLabel.text",
-            comment:"Menu item title"
-        )
+        menuItems.append(L10n.CreateEventTrackerViewController.MenuItems.item2)
+        titleLabel.text = L10n.CreateEventTrackerViewController.RegularEventTracker.TitleLabel.text
         isCreateRegularEventTracker = true
     }
     

@@ -16,9 +16,9 @@ final class TabBarController: UITabBarController {
         var title: String {
             switch self {
             case .tracker:
-                return NSLocalizedString("tabBarController.title.tracker", comment:"Item name on TabBar")
+                return L10n.TabBarController.Title.tracker
             case .statistics:
-                return NSLocalizedString("tabBarController.title.statistics", comment: "Item name on TabBar")
+                return L10n.TabBarController.Title.statistics
             }
         }
         

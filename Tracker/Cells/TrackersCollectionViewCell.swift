@@ -39,7 +39,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     private lazy var pinImageView: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "pinImage")
+        view.image = ImageAsset.Image.pin
         view.tintColor = .ypWhite
         return view
     }()
@@ -57,9 +57,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .ypBlack
         label.textAlignment = .left
-        label.text = String.localizedStringWithFormat(
-            NSLocalizedString("numberOfDays", comment: "Number of marked days"), 0
-        )
+        label.text = L10n.daysCountLabel(0)
         label.font = .systemFont(ofSize: 12, weight: .medium)
         return label
     }()
@@ -148,14 +146,11 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         addButton.setImage(UIImage(systemName: imageName), for: .normal)
         
         if let _ = schedule {
-            let localizedString = String.localizedStringWithFormat(
-                NSLocalizedString("daysCountLabel", comment: "Number of marked days"),
-                count
-            )
+            let localizedString = L10n.daysCountLabel(count)
             counterLabel.text = localizedString
         } else {
-            let completed = NSLocalizedString("trackersCollectionViewCell.updateButtonState.completed", comment: "Completed tracker button title")
-            let notCompleted = NSLocalizedString("trackersCollectionViewCell.updateButtonState.notCompleted", comment: "Not completed tracker button title")
+            let completed = L10n.TrackersCollectionViewCell.UpdateButtonState.completed
+            let notCompleted = L10n.TrackersCollectionViewCell.UpdateButtonState.notCompleted
             counterLabel.text = state ? completed : notCompleted
         }
     }

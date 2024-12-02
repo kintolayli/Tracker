@@ -18,7 +18,7 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
     
     weak var createEventTrackerViewController: CreateEventTrackerViewController?
     
-    private lazy var allDays: String = NSLocalizedString("sheduleViewController.allDays", comment: "All days name")
+    private lazy var allDays: String = L10n.SheduleViewController.allDays
     
     private lazy var days: [Day] = [
         .init(name: DayLocalizeModel.monday.fullDayName,
@@ -49,7 +49,7 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = NSLocalizedString("sheduleViewController.titleLabel.text", comment: "Page title")
+        label.text = L10n.SheduleViewController.TitleLabel.text
         return label
     }()
     
@@ -68,7 +68,7 @@ final class SheduleViewController: UIViewController, SheduleViewControllerProtoc
     
     private lazy var okButton: UIButton = {
         let button = UIButton()
-        let title = NSLocalizedString("sheduleViewController.okButton.title", comment: "Button title")
+        let title = L10n.SheduleViewController.OkButton.title
         button.setTitle(title, for: .normal)
         button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)

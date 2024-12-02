@@ -22,13 +22,13 @@ final class ChooseTypeTrackerViewController: UIViewController {
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = NSLocalizedString("chooseTypeTrackerViewController.titleLabel.text", comment:"Page title")
+        label.text = L10n.ChooseTypeTrackerViewController.TitleLabel.text
         return label
     }()
     
     private lazy var regularEventButton: UIButton = {
         let button = UIButton()
-        let title = NSLocalizedString("chooseTypeTrackerViewController.regularEventButton.title", comment:"Regular event button title")
+        let title = L10n.ChooseTypeTrackerViewController.RegularEventButton.title
         button.setTitle(title, for: .normal)
         button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -40,7 +40,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
     
     private lazy var irregularEventButton: UIButton = {
         let button = UIButton()
-        let title =  NSLocalizedString("chooseTypeTrackerViewController.irregularEventButton.title", comment:"Irregular event button title")
+        let title =  L10n.ChooseTypeTrackerViewController.IrregularEventButton.title
         button.setTitle(title, for: .normal)
         button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)

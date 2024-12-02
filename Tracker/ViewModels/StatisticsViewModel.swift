@@ -7,7 +7,7 @@
 
 import CoreData
 
-final class StatisticsViewModel {
+final class StatisticsViewModel: StatisticsViewModelProtocol {
     
     private let context: NSManagedObjectContext
     private lazy var trackerRecordStore: TrackerRecordStore = {
@@ -56,11 +56,10 @@ final class StatisticsViewModel {
         let averageHabitsCount = calculateAverageHabitsPerDay()
         recordsCount = trackerRecordStore.records.count
         
-        
-        let bestPeriodString = NSLocalizedString("statisticsViewModel.fetchStatisticsData.bestPeriodString", comment: "Best period count")
-        let perfectDaysString = NSLocalizedString("statisticsViewModel.fetchStatisticsData.perfectDaysString", comment: "Perfect days count")
-        let trackersCompletedString = NSLocalizedString("statisticsViewModel.fetchStatisticsData.trackersCompleted", comment: "Trackers completed count")
-        let averageHabitsString = NSLocalizedString("statisticsViewModel.fetchStatisticsData.averageHabitsString", comment: "Average habits count")
+        let bestPeriodString = L10n.StatisticsViewModel.FetchStatisticsData.bestPeriodString
+        let perfectDaysString = L10n.StatisticsViewModel.FetchStatisticsData.perfectDaysString
+        let trackersCompletedString = L10n.StatisticsViewModel.FetchStatisticsData.trackersCompleted
+        let averageHabitsString = L10n.StatisticsViewModel.FetchStatisticsData.averageHabitsString
         
         data = [
             (bestPeriodString, bestPeriodCount),

@@ -28,7 +28,7 @@ class TrackersFilterViewController: UIViewController {
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = NSLocalizedString("trackersViewController.filterButton.title", comment: "Page title")
+        label.text = L10n.TrackersViewController.FilterButton.title
         return label
     }()
     

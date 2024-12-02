@@ -7,6 +7,13 @@
 
 import UIKit
 
+protocol StatisticsViewModelProtocol {
+    var data: [(String, Int)] { get set }
+    func isEmptyStatistics() -> Bool
+    var onDataUpdated: (() -> Void)? { get set }
+    func getItem(at index: Int) -> (String, Int)?
+}
+
 final class StatisticsViewController: UIViewController, StatisticsViewControllerDelegate {
     
     init(viewModel: StatisticsViewModel) {
@@ -18,7 +25,7 @@ final class StatisticsViewController: UIViewController, StatisticsViewController
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let viewModel: StatisticsViewModel
+    private var viewModel: StatisticsViewModelProtocol
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -37,7 +44,7 @@ final class StatisticsViewController: UIViewController, StatisticsViewController
     
     private lazy var imageViewEmptyState: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "3")
+        view.image = ImageAsset.Image._3
         return view
     }()
     
@@ -46,7 +53,7 @@ final class StatisticsViewController: UIViewController, StatisticsViewController
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.text = NSLocalizedString("statisticsViewController.imageViewLabel.text", comment:"Start screen label with empty statistics")
+        label.text = L10n.StatisticsViewController.ImageViewLabel.text
         return label
     }()
     
@@ -71,7 +78,7 @@ final class StatisticsViewController: UIViewController, StatisticsViewController
     
     private func setupUI() {
         view.backgroundColor = .ypMainBackground
-        navigationItem.title = NSLocalizedString("statisticsViewController.navigationItem.title", comment:"Page title")
+        navigationItem.title = L10n.StatisticsViewController.NavigationItem.title
         navigationController?.navigationBar.prefersLargeTitles = true
         
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([

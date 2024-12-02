@@ -19,52 +19,38 @@ enum DayLocalizeModel {
     var fullDayName: String {
         switch self {
         case .monday:
-            return NSLocalizedString("dayLocalizeModel.fullDayName.monday",
-                                     comment:"Full day name of the week - Monday")
+            return L10n.DayLocalizeModel.FullDayName.monday
         case .tuesday:
-            return NSLocalizedString("dayLocalizeModel.fullDayName.tuesday",
-                                     comment:"Full day name of the week - Tuesday")
+            return L10n.DayLocalizeModel.FullDayName.tuesday
         case .wednesday:
-            return NSLocalizedString("dayLocalizeModel.fullDayName.wednesday",
-                                     comment:"Full day name of the week - Wednesday")
+            return L10n.DayLocalizeModel.FullDayName.wednesday
         case .thursday:
-            return NSLocalizedString("dayLocalizeModel.fullDayName.thursday",
-                                     comment:"Full day name of the week - Thursday")
+            return L10n.DayLocalizeModel.FullDayName.thursday
         case .friday:
-            return NSLocalizedString("dayLocalizeModel.fullDayName.friday",
-                                     comment:"Full day name of the week - Friday")
+            return L10n.DayLocalizeModel.FullDayName.friday
         case .saturday:
-            return NSLocalizedString("dayLocalizeModel.fullDayName.saturday",
-                                     comment:"Full day name of the week - Saturday")
+            return L10n.DayLocalizeModel.FullDayName.saturday
         case .sunday:
-            return NSLocalizedString("dayLocalizeModel.fullDayName.sunday",
-                                     comment:"Full day name of the week - Sunday")
+            return L10n.DayLocalizeModel.FullDayName.sunday
         }
     }
     
     var shortDayName: String {
         switch self {
         case .monday:
-            return NSLocalizedString("dayLocalizeModel.shortDayName.monday",
-                                     comment:"Short day name of the week - Monday")
+            return L10n.DayLocalizeModel.ShortDayName.monday
         case .tuesday:
-            return NSLocalizedString("dayLocalizeModel.shortDayName.tuesday",
-                                     comment:"Short day name of the week - Tuesday")
+            return L10n.DayLocalizeModel.ShortDayName.tuesday
         case .wednesday:
-            return NSLocalizedString("dayLocalizeModel.shortDayName.wednesday",
-                                     comment:"Short day name of the week - Wednesday")
+            return L10n.DayLocalizeModel.ShortDayName.wednesday
         case .thursday:
-            return NSLocalizedString("dayLocalizeModel.shortDayName.thursday",
-                                     comment:"Short day name of the week - Thursday")
+            return L10n.DayLocalizeModel.ShortDayName.thursday
         case .friday:
-            return NSLocalizedString("dayLocalizeModel.shortDayName.friday",
-                                     comment:"Short day name of the week - Friday")
+            return L10n.DayLocalizeModel.ShortDayName.friday
         case .saturday:
-            return NSLocalizedString("dayLocalizeModel.shortDayName.saturday",
-                                     comment:"Short day name of the week - Saturday")
+            return L10n.DayLocalizeModel.ShortDayName.saturday
         case .sunday:
-            return NSLocalizedString("dayLocalizeModel.shortDayName.sunday",
-                                     comment:"Short day name of the week - Sunday")
+            return L10n.DayLocalizeModel.ShortDayName.sunday
         }
     }
 }

@@ -23,13 +23,13 @@ enum PageModel {
     var labelName: String {
         switch self {
         case .firstPage:
-            return NSLocalizedString("pageModel.labelName.firstPage", comment:"Onboarding page message")
+            return L10n.PageModel.LabelName.firstPage
         case .secondPage:
-            return NSLocalizedString("pageModel.labelName.secondPage", comment:"Onboarding page message")
+            return L10n.PageModel.LabelName.secondPage
         }
     }
     
     var buttonName: String {
-        return NSLocalizedString("pageModel.buttonName", comment:"Button title")
+        return L10n.PageModel.buttonName
     }
 }

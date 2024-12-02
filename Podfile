@@ -7,6 +7,7 @@ target 'Tracker' do
 
   # Pods for Tracker
   pod 'AppMetricaAnalytics', '~> 5.8.2'
+  pod 'SwiftGen', '~> 6.0'
 
   target 'TrackerTests' do
     inherit! :search_paths

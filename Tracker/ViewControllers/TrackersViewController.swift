@@ -27,7 +27,6 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     }()
     
     private var currentDate: Date = Date()
-    private let analyticsService = AnalyticsService()
     
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     
@@ -83,13 +82,13 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
     
     private lazy var searchBar: UISearchTextField = {
         let searchBar = UISearchTextField()
-        searchBar.placeholder = NSLocalizedString("trackersViewController.searchBar.placeholder", comment:"Search bar placeholder")
+        searchBar.placeholder = L10n.TrackersViewController.SearchBar.placeholder
         return searchBar
     }()
     
     private lazy var imageView: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "dizzy")
+        view.image = ImageAsset.Image.dizzy
         return view
     }()
     
@@ -98,13 +97,13 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.text = NSLocalizedString("trackersViewController.imageViewLabel.text1", comment:"Start screen label with empty trackers")
+        label.text = L10n.TrackersViewController.ImageViewLabel.text1
         return label
     }()
     
     private lazy var filterButton: UIButton = {
         let button = UIButton()
-        let title = NSLocalizedString("trackersViewController.filterButton.title", comment:"Filter button title")
+        let title = L10n.TrackersViewController.FilterButton.title
         button.setTitle(title, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
@@ -135,13 +134,13 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         
         updateCollectionView()
         
-        analyticsService.openScreen()
+        AnalyticsService.openScreen()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        analyticsService.closeScreen()
+        AnalyticsService.closeScreen()
     }
     
     private func pinnedCategoriesFromCategoryStore() {
@@ -189,7 +188,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         let addButton = UIBarButtonItem(customView: buttonView)
         navigationItem.leftBarButtonItem = addButton
         
-        navigationItem.title = NSLocalizedString("trackersViewController.navigationItem.title", comment:"Page title")
+        navigationItem.title = L10n.TrackersViewController.NavigationItem.title
         navigationController?.navigationBar.prefersLargeTitles = true
         
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
@@ -246,7 +245,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
         
-        analyticsService.clickFilter()
+        AnalyticsService.clickFilter()
     }
     
     func didSelectFilter(filter: TrackerFilterItems) {
@@ -297,8 +296,8 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         let nonEmptyCategories = visibleCategories.filter { !$0.trackerList.isEmpty }
         let isTrackerListEmpty = nonEmptyCategories.isEmpty
         
-        let image = UIImage(named: "dizzy")
-        let text = NSLocalizedString("trackersViewController.imageViewLabel.text1", comment:"Start screen label with empty trackers")
+        let image = ImageAsset.Image.dizzy
+        let text = L10n.TrackersViewController.ImageViewLabel.text1
         
         imageView.isHidden = !isTrackerListEmpty
         imageView.image = image
@@ -310,8 +309,8 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         let nonEmptyCategories = filteredCategories.filter { !$0.trackerList.isEmpty }
         let isTrackerListEmpty = nonEmptyCategories.isEmpty
         
-        let image = UIImage(named: "2")
-        let text = NSLocalizedString("trackersViewController.imageViewLabel.text2", comment:"Label if search is empty")
+        let image = ImageAsset.Image._2
+        let text = L10n.TrackersViewController.ImageViewLabel.text2
         
         imageView.isHidden = !isTrackerListEmpty
         imageView.image = image
@@ -327,7 +326,7 @@ final class TrackersViewController: UIViewController & TrackersViewControllerPro
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
         
-        analyticsService.didTapAddTrackerButton()
+        AnalyticsService.didTapAddTrackerButton()
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -455,10 +454,10 @@ extension TrackersViewController: UICollectionViewDelegate {
         
         return UIContextMenuConfiguration(actionProvider: { actions in
             
-            let pinTitle = NSLocalizedString("trackersViewController.collectionView.pinTitle", comment: "Item in the dropdown menu")
-            let unpinTitle = NSLocalizedString("trackersViewController.collectionView.unpinTitle", comment: "Item in the dropdown menu")
-            let editTitle = NSLocalizedString("trackersViewController.collectionView.editTitle", comment: "Item in the dropdown menu")
-            let deleteTitle = NSLocalizedString("trackersViewController.collectionView.deleteTitle", comment: "Item in the dropdown menu")
+            let pinTitle = L10n.TrackersViewController.CollectionView.pinTitle
+            let unpinTitle = L10n.TrackersViewController.CollectionView.unpinTitle
+            let editTitle = L10n.TrackersViewController.CollectionView.editTitle
+            let deleteTitle = L10n.TrackersViewController.CollectionView.deleteTitle
             
             var menuActions: [UIMenuElement] = []
             
@@ -498,7 +497,7 @@ extension TrackersViewController: UICollectionViewDelegate {
     private func editTracker(indexPath: IndexPath) {
         let tracker = visibleCategories[indexPath.section].trackerList[indexPath.row]
         guard let categoryTitle = try? trackerStore.getTrackerById(with: tracker.id).trackerCategory?.title else { return }
-        let label = NSLocalizedString("trackersViewController.editTracker.label", comment: "Edit tracker label")
+        let label = L10n.TrackersViewController.EditTracker.label
         
         guard let cell = collectionView.cellForItem(at: indexPath) as? TrackersCollectionViewCell else { return }
         
@@ -533,16 +532,16 @@ extension TrackersViewController: UICollectionViewDelegate {
             present(viewController, animated: true, completion: nil)
         }
         
-        analyticsService.selectContextMenuEdit()
+        AnalyticsService.selectContextMenuEdit()
     }
     
     private func deleteTracker(indexPath: IndexPath) {
         
         let tracker = visibleCategories[indexPath.section].trackerList[indexPath.row]
         
-        let title = NSLocalizedString("trackersViewController.deleteTracker.title", comment: "Question before deleting")
-        let cancel = NSLocalizedString("trackersViewController.deleteTracker.cancel", comment: "Title cancel button")
-        let delete = NSLocalizedString("trackersViewController.deleteTracker.delete", comment: "Title delete button")
+        let title = L10n.TrackersViewController.DeleteTracker.title
+        let cancel = L10n.TrackersViewController.DeleteTracker.cancel
+        let delete = L10n.TrackersViewController.DeleteTracker.delete
         
         let model = AlertModel(
             title: title,
@@ -558,7 +557,7 @@ extension TrackersViewController: UICollectionViewDelegate {
         )
         AlertPresenter.show(model: model, viewController: self, preferredStyle: .actionSheet)
         
-        analyticsService.selectContextMenuDelete()
+        AnalyticsService.selectContextMenuDelete()
     }
 }
 
@@ -635,15 +634,15 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
             }
         } else {
             let alertModel = AlertModel(
-                title: NSLocalizedString("trackersViewController.trackersViewControllerCellTap.alertModel.title", comment: "Alert title"),
-                message: NSLocalizedString("trackersViewController.trackersViewControllerCellTap.alertModel.message", comment: "Alert message"),
-                buttonTitle: NSLocalizedString("trackersViewController.trackersViewControllerCellTap.alertModel.buttonTitle", comment: "Alert button title"),
+                title: L10n.TrackersViewController.TrackersViewControllerCellTap.AlertModel.title,
+                message: L10n.TrackersViewController.TrackersViewControllerCellTap.AlertModel.message,
+                buttonTitle: L10n.TrackersViewController.TrackersViewControllerCellTap.AlertModel.buttonTitle,
                 buttonAction: nil
             )
             AlertPresenter.show(model: alertModel, viewController: self)
         }
         
-        analyticsService.clickTracker()
+        AnalyticsService.clickTracker()
     }
 }
 

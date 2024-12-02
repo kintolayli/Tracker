@@ -56,13 +56,13 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = NSLocalizedString("categoryListViewController.titleLabel.text", comment: "Page title")
+        label.text = L10n.CategoryListViewController.TitleLabel.text
         return label
     }()
     
     private lazy var imageView: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "dizzy")
+        view.image = ImageAsset.Image.dizzy
         return view
     }()
     
@@ -72,7 +72,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 14, weight: .medium)
         label.numberOfLines = 2
-        label.text = NSLocalizedString("categoryListViewController.imageViewLabel.text", comment: "Empty category list imageViewLabel text")
+        label.text = L10n.CategoryListViewController.ImageViewLabel.text
         return label
     }()
     
@@ -90,7 +90,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
-        let title = NSLocalizedString("categoryListViewController.addCategoryButton.title", comment: "Button title")
+        let title = L10n.CategoryListViewController.AddCategoryButton.title
         button.setTitle(title, for: .normal)
         button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -197,9 +197,9 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         
         let categoryTitle = viewModel.categories[indexPath.row].title
         
-        let title = NSLocalizedString("categoryListViewController.deleteCategory.title", comment: "Question before deleting")
-        let cancel = NSLocalizedString("categoryListViewController.deleteCategory.cancel", comment: "Title cancel button")
-        let delete = NSLocalizedString("categoryListViewController.deleteCategory.delete", comment: "Title delete button")
+        let title = L10n.CategoryListViewController.DeleteCategory.title
+        let cancel = L10n.CategoryListViewController.DeleteCategory.cancel
+        let delete = L10n.CategoryListViewController.DeleteCategory.delete
         
         let model = AlertModel(
             title: title,
@@ -270,8 +270,8 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
         
         return UIContextMenuConfiguration(actionProvider: { actions in
             
-            let editTitle = NSLocalizedString("trackersViewController.collectionView.editTitle", comment: "Item in the dropdown menu")
-            let deleteTitle = NSLocalizedString("trackersViewController.collectionView.deleteTitle", comment: "Item in the dropdown menu")
+            let editTitle = L10n.TrackersViewController.CollectionView.editTitle
+            let deleteTitle = L10n.TrackersViewController.CollectionView.deleteTitle
             
             var menuActions: [UIMenuElement] = []
             

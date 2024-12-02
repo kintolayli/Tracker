@@ -68,7 +68,7 @@ final class TrackerCategoryStore: NSObject {
         
         guard let pinnedTrackers = try? trackerStore.fetchPinnedTrackers() else { return [] }
         
-        let pinnedCategoryTitle = NSLocalizedString("trackersViewController.pinTracker.pinnedCategoryTitle", comment: "Title pinned category")
+        let pinnedCategoryTitle = L10n.TrackersViewController.PinTracker.pinnedCategoryTitle
         let pinnedCategory = TrackerCategory(title: pinnedCategoryTitle, trackerList: pinnedTrackers)
         
         let unpinnedCategories = categories.map { category in

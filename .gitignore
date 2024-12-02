@@ -1,6 +1,14 @@
 # CocoaPods
 Pods/
+Podfile.lock
+Tracker.xcworkspace/
 
 # Xcode user-specific files
 *.xcuserdatad/
 *.xcuserdata/
+
+# Screenshots tests
+TrackerTests/__Snapshots__/
+
+# SwiftGen Generated
+Tracker/Generated/

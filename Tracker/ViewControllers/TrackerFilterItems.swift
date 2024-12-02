@@ -17,17 +17,13 @@ enum TrackerFilterItems: CaseIterable {
     var filterName: String {
         switch self {
         case .allTrackers:
-            return NSLocalizedString("trackerFilterItems.filterName.alltrackers",
-                                                        comment:"Filter title")
+            return L10n.TrackerFilterItems.FilterName.alltrackers
         case .todayTrackers:
-            return NSLocalizedString("trackerFilterItems.filterName.todayTrackers",
-                                                        comment:"Filter title")
+            return L10n.TrackerFilterItems.FilterName.todayTrackers
         case .completed:
-            return NSLocalizedString("trackerFilterItems.filterName.completed",
-                                                        comment:"Filter title")
+            return L10n.TrackerFilterItems.FilterName.completed
         case .notCompleted:
-            return NSLocalizedString("trackerFilterItems.filterName.notCompleted",
-                                                        comment:"Filter title")
+            return L10n.TrackerFilterItems.FilterName.notCompleted
         }
     }
 }
