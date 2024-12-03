@@ -22,14 +22,15 @@ final class ChooseTypeTrackerViewController: UIViewController {
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = "Создание трекера"
+        label.text = L10n.ChooseTypeTrackerViewController.TitleLabel.text
         return label
     }()
     
     private lazy var regularEventButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Привычка", for: .normal)
-        button.setTitleColor(.ypWhite, for: .normal)
+        let title = L10n.ChooseTypeTrackerViewController.RegularEventButton.title
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
@@ -39,8 +40,9 @@ final class ChooseTypeTrackerViewController: UIViewController {
     
     private lazy var irregularEventButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Нерегулярное событие", for: .normal)
-        button.setTitleColor(.ypWhite, for: .normal)
+        let title =  L10n.ChooseTypeTrackerViewController.IrregularEventButton.title
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
@@ -55,7 +57,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
         
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,

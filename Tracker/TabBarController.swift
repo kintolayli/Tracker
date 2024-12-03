@@ -16,9 +16,9 @@ final class TabBarController: UITabBarController {
         var title: String {
             switch self {
             case .tracker:
-                return "Трекеры"
+                return L10n.TabBarController.Title.tracker
             case .statistics:
-                return "Статистика"
+                return L10n.TabBarController.Title.statistics
             }
         }
         
@@ -39,7 +39,7 @@ final class TabBarController: UITabBarController {
     
     private func setupTabBar() {
         let dataSource: [TabBarItem] = [.tracker, .statistics]
-        tabBar.backgroundColor = .ypWhite
+        tabBar.backgroundColor = .ypMainBackground
         
         tabBar.layer.shadowColor = CGColor(red: 0, green: 0, blue: 0, alpha: 1)
         tabBar.layer.shadowOpacity = 0.3
@@ -52,7 +52,11 @@ final class TabBarController: UITabBarController {
                 let trackerViewController = TrackersViewController()
                 return UINavigationController(rootViewController: trackerViewController)
             case .statistics:
-                let statisticsViewController = StatisticsViewController()
+                
+                let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+                let viewModel = StatisticsViewModel(context: context ?? DefaultContext(concurrencyType: .mainQueueConcurrencyType))
+                let statisticsViewController = StatisticsViewController(viewModel: viewModel)
+                
                 return UINavigationController(rootViewController: statisticsViewController)
             }
         }

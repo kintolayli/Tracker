@@ -8,11 +8,12 @@
 import CoreData
 
 
-final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
+final class TrackerRecordStore: NSObject {
     
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     private var trackerStore: TrackerStore
+    var onRecordsChanged: (() -> Void)?
     
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -55,7 +56,7 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         return TrackerRecord(id: id, date: date)
     }
     
-    func getTrackerRecordsWithCurrentTrackerId(with trackerId: UUID) throws -> [TrackerRecord] {
+    func getTrackerRecords(with trackerId: UUID) throws -> [TrackerRecord] {
         let fetchRequest = TrackerRecordCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "tracker.id == %@", trackerId as CVarArg)
         
@@ -65,6 +66,40 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         } else {
             throw TrackerRecordStoreError.getTrackerRecordsWithCurrentTrackerIdError
         }
+    }
+    
+    func getTrackerRecordsCoreData(with trackerId: UUID) throws -> [TrackerRecordCoreData] {
+        let fetchRequest = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "tracker.id == %@", trackerId as CVarArg)
+        
+        if let trackerRecords = try? context.fetch(fetchRequest) {
+            return trackerRecords
+        } else {
+            throw TrackerRecordStoreError.getTrackerRecordsWithCurrentTrackerIdError
+        }
+    }
+    
+    func isExistTrackerRecord(with trackerId: UUID, currentDate: Date) -> Bool {
+        var cellState = false
+        
+        if let recordsFromCurrentCell = try? getTrackerRecords(with: trackerId) {
+            
+            if (checkExistsRecord(in: recordsFromCurrentCell, with: currentDate) != nil) {
+                cellState = true
+            }
+        }
+        return cellState
+    }
+    
+    private func checkExistsRecord(in records: [TrackerRecord], with date: Date) -> TrackerRecord? {
+        var resultRecord: TrackerRecord?
+        
+        for record in records {
+            if isSameDay(date1: record.date, date2: date) {
+                resultRecord = record
+            }
+        }
+        return resultRecord
     }
     
     func addTrackerRecord(_ trackerRecord: TrackerRecord, trackerId: UUID) throws {
@@ -90,6 +125,13 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
+    func removeAllTrackerRecord(with trackerId: UUID) {
+        guard let trackersRecords = try? getTrackerRecords(with: trackerId) else { return }
+        for record in trackersRecords {
+            try? removeTrackerRecord(record)
+        }
+    }
+    
     // MARK: - Core Data Saving support
     
     func saveContext () {
@@ -103,4 +145,10 @@ final class TrackerRecordStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
+}
+
+extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        onRecordsChanged?()
+    }
 }

@@ -23,13 +23,13 @@ enum PageModel {
     var labelName: String {
         switch self {
         case .firstPage:
-            return "Отслеживайте только то, что хотите"
+            return L10n.PageModel.LabelName.firstPage
         case .secondPage:
-            return "Даже если это не литры воды и йога"
+            return L10n.PageModel.LabelName.secondPage
         }
     }
     
     var buttonName: String {
-        return "Вот это технологии!"
+        return L10n.PageModel.buttonName
     }
 }

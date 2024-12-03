@@ -20,7 +20,7 @@ final class EmojiesColorCollectionViewCell: UICollectionViewCell {
         let view = UIView()
         view.backgroundColor = .clear
         view.layer.borderWidth = 3
-        view.layer.borderColor = UIColor.ypColorSelection5.cgColor
+        view.layer.borderColor = ColorAsset.Color.ypColorSelection5.cgColor
         view.layer.opacity = 0.3
         view.layer.cornerRadius = 12
         view.layer.masksToBounds = true

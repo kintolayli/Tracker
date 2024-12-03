@@ -1,0 +1,98 @@
+/*
+ Localizable.strings
+ Tracker
+ 
+ Created by Ilya Lotnik on 26.11.2024.
+ 
+ */
+"tabBarController.title.tracker" = "Трекеры";
+"tabBarController.title.statistics" = "Статистика";
+
+"pageModel.labelName.firstPage" = "Отслеживайте только то, что хотите";
+"pageModel.labelName.secondPage" = "Даже если это не литры воды и йога";
+"pageModel.buttonName" = "Вот это технологии!";
+
+"trackersCollectionViewCell.updateButtonState.completed" = "Выполнено";
+"trackersCollectionViewCell.updateButtonState.notCompleted" = "Не выполнено";
+
+"trackersViewController.navigationItem.title" = "Трекеры";
+"trackersViewController.searchBar.placeholder" = "Поиcк";
+"trackersViewController.imageViewLabel.text1" = "Что будем отслеживать?";
+"trackersViewController.imageViewLabel.text2" = "Ничего не найдено";
+"trackersViewController.trackersViewControllerCellTap.alertModel.title" = "Уведомление от системы";
+"trackersViewController.trackersViewControllerCellTap.alertModel.message" = "Нельзя отметить карточку для будущей даты";
+"trackersViewController.trackersViewControllerCellTap.alertModel.buttonTitle" = "OK";
+
+"trackersViewController.collectionView.pinTitle" = "Закрепить";
+"trackersViewController.collectionView.unpinTitle" = "Открепить";
+"trackersViewController.collectionView.editTitle" = "Редактировать";
+"trackersViewController.collectionView.deleteTitle" = "Удалить";
+
+"trackersViewController.pinTracker.pinnedCategoryTitle" = "Закрепленные";
+"trackersViewController.editTracker.label" = "Редактирование привычки";
+
+"trackersViewController.deleteTracker.title" = "Уверены что хотите удалить трекер?";
+"trackersViewController.deleteTracker.cancel" = "Отменить";
+"trackersViewController.deleteTracker.delete" = "Удалить";
+
+"trackersViewController.filterButton.title" = "Фильтры";
+"trackerFilterItems.filterName.alltrackers" = "Все трекеры";
+"trackerFilterItems.filterName.todayTrackers" = "Трекеры на сегодня";
+"trackerFilterItems.filterName.completed" = "Завершенные";
+"trackerFilterItems.filterName.notCompleted" = "Не завершенные";
+
+"chooseTypeTrackerViewController.titleLabel.text" = "Создание трекера";
+"chooseTypeTrackerViewController.regularEventButton.title" = "Привычка";
+"chooseTypeTrackerViewController.irregularEventButton.title" = "Нерегулярное событие";
+
+"createEventTrackerViewController.regularEventTracker.titleLabel.text" = "Новая привычка";
+"createEventTrackerViewController.irregularEventTracker.titleLabel.text" = "Новое нерегулярное событие";
+"createEventTrackerViewController.textField.placeholder" = "Введите название трекера";
+"createEventTrackerViewController.menuItems.item1" = "Категория";
+"createEventTrackerViewController.menuItems.item2" = "Расписание";
+"createEventTrackerViewController.suplementaryViewHeaderList.item1" = "Emojii";
+"createEventTrackerViewController.suplementaryViewHeaderList.item2" = "Цвет";
+"createEventTrackerViewController.cancelButton.title" = "Отменить";
+"createEventTrackerViewController.createButton.title" = "Создать";
+"createEventTrackerViewController.createButton.titleWhenEdit" = "Сохранить";
+
+"categoryListViewController.titleLabel.text" = "Категория";
+"categoryListViewController.imageViewLabel.text" = "Привычки и события можно\n объединить по смыслу";
+"categoryListViewController.addCategoryButton.title" = "Добавить категорию";
+
+"categoryListViewController.deleteCategory.title" = "Эта категория точно не нужна?";
+"categoryListViewController.deleteCategory.cancel" = "Отменить";
+"categoryListViewController.deleteCategory.delete" = "Удалить";
+
+"addCategoryViewController.titleLabel.text" = "Новая категория";
+"addCategoryViewController.textField.placeholder" = "Введите название категории";
+"addCategoryViewController.okButton.title" = "Готово";
+
+"sheduleViewController.titleLabel.text" = "Расписание";
+"sheduleViewController.okButton.title" = "Готово";
+
+"dayLocalizeModel.fullDayName.monday" = "Понедельник";
+"dayLocalizeModel.fullDayName.tuesday" = "Вторник";
+"dayLocalizeModel.fullDayName.wednesday" = "Среда";
+"dayLocalizeModel.fullDayName.thursday" = "Четверг";
+"dayLocalizeModel.fullDayName.friday" = "Пятница";
+"dayLocalizeModel.fullDayName.saturday" = "Суббота";
+"dayLocalizeModel.fullDayName.sunday" = "Воскресенье";
+
+"dayLocalizeModel.shortDayName.monday" = "Пн";
+"dayLocalizeModel.shortDayName.tuesday" = "Вт";
+"dayLocalizeModel.shortDayName.wednesday" = "Ср";
+"dayLocalizeModel.shortDayName.thursday" = "Чт";
+"dayLocalizeModel.shortDayName.friday" = "Пт";
+"dayLocalizeModel.shortDayName.saturday" = "Сб";
+"dayLocalizeModel.shortDayName.sunday" = "Вс";
+
+"sheduleViewController.allDays" = "Каждый день";
+
+"statisticsViewController.imageViewLabel.text" = "Анализировать пока нечего";
+"statisticsViewController.navigationItem.title" = "Статистика";
+
+"statisticsViewModel.fetchStatisticsData.bestPeriodString" = "Лучший период";
+"statisticsViewModel.fetchStatisticsData.perfectDaysString" = "Идеальные дни";
+"statisticsViewModel.fetchStatisticsData.trackersCompleted" = "Трекеров завершено";
+"statisticsViewModel.fetchStatisticsData.averageHabitsString" = "Среднее значение";

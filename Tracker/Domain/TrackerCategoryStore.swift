@@ -19,6 +19,7 @@ final class TrackerCategoryStore: NSObject {
     
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>?
+    var currentDate: Date?
     
     weak var delegate: TrackerCategoryStoreDelegate?
     private var insertedIndexes: IndexSet?
@@ -27,10 +28,12 @@ final class TrackerCategoryStore: NSObject {
     private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>?
     
     private var trackerStore: TrackerStore
+    private var trackerRecordStore: TrackerRecordStore
     
     init(context: NSManagedObjectContext) {
         self.context = context
         self.trackerStore = TrackerStore(context: context)
+        self.trackerRecordStore = TrackerRecordStore(context: context)
         super.init()
         
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -61,6 +64,60 @@ final class TrackerCategoryStore: NSObject {
         return categoriesCoreData
     }
     
+    var pinnedCategories: [TrackerCategory] {
+        
+        guard let pinnedTrackers = try? trackerStore.fetchPinnedTrackers() else { return [] }
+        
+        let pinnedCategoryTitle = L10n.TrackersViewController.PinTracker.pinnedCategoryTitle
+        let pinnedCategory = TrackerCategory(title: pinnedCategoryTitle, trackerList: pinnedTrackers)
+        
+        let unpinnedCategories = categories.map { category in
+            TrackerCategory(title: category.title, trackerList: category.trackerList.filter { !$0.isPinned })
+        }.filter { category in
+            !(category.trackerList.count == 1 && category.trackerList.first?.isPinned == true)
+        }
+        
+        return [pinnedCategory] + unpinnedCategories
+    }
+    
+    var completedCategories: [TrackerCategory] {
+        let allCategories = categories
+        
+        let completedCategoriesList = allCategories.map { category in
+            TrackerCategory(
+                title: category.title,
+                trackerList: category.trackerList.filter { tracker in
+                    isTrackerCompleted(tracker)
+                }
+            )
+        }
+        
+        return completedCategoriesList.filter { !$0.trackerList.isEmpty }
+    }
+    
+    var notCompletedCategories: [TrackerCategory] {
+
+        let allCategories = categories
+
+        let notCompletedCategoriesList = allCategories.map { category in
+            TrackerCategory(
+                title: category.title,
+                trackerList: category.trackerList.filter { tracker in
+                    !isTrackerCompleted(tracker)
+                }
+            )
+        }
+        return notCompletedCategoriesList.filter { !$0.trackerList.isEmpty }
+    }
+    
+    func isTrackerCompleted(_ tracker: Tracker) -> Bool {
+        guard let date = currentDate else {
+            assertionFailure( "Current date is nil when checking tracker completion")
+            return false
+        }
+        return trackerRecordStore.isExistTrackerRecord(with: tracker.id, currentDate: date)
+    }
+    
     func fetchCategories() throws -> [TrackerCategory] {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.returnsObjectsAsFaults = false
@@ -88,6 +145,18 @@ final class TrackerCategoryStore: NSObject {
         }
     }
     
+    func updateTrackerCategoryTitle(newName: String, oldName: String) throws {
+        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "title == %@", oldName)
+        
+        let categories = try context.fetch(fetchRequest)
+        
+        if let categoryToUpdate = categories.first {
+            categoryToUpdate.title = newName
+        }
+        saveContext()
+    }
+
     func updateTrackerCategory(_ category: TrackerCategory) throws {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "title == %@", category.title)
@@ -95,27 +164,13 @@ final class TrackerCategoryStore: NSObject {
         let categories = try context.fetch(fetchRequest)
         
         if let categoryToUpdate = categories.first {
-            
             for tracker in category.trackerList {
-                try trackerStore.addTracker(with: categoryToUpdate, with: tracker)
+                trackerStore.updateTracker(with: categoryToUpdate, with: tracker)
             }
-            
         } else {
             try addCategory(category)
         }
         saveContext()
-    }
-    
-    func removeTrackerCategory(with title: String) throws {
-        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "title == %@", title)
-        
-        let categories = try context.fetch(fetchRequest)
-        
-        if let categoryToRemove = categories.first {
-            context.delete(categoryToRemove)
-            try context.save()
-        }
     }
     
     func deleteCategory(with title: String) throws {
@@ -129,7 +184,6 @@ final class TrackerCategoryStore: NSObject {
             try context.save()
         }
     }
-    
     
     // MARK: - Core Data Saving support
     
@@ -177,24 +231,25 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         for type: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
-        
         switch type {
-        case .insert, .delete, .update:
-            guard let indexPath = newIndexPath else {
-                assertionFailure("Invalid state: `newIndexPath` is nil for type \(type)")
-                return
+        case .insert:
+            if let newIndexPath = newIndexPath {
+                insertedIndexes?.insert(newIndexPath.item)
             }
-            updatedIndexes?.insert(indexPath.item)
-            
+        case .delete:
+            if let indexPath = indexPath {
+                deletedIndexes?.insert(indexPath.item)
+            }
+        case .update:
+            if let indexPath = indexPath {
+                updatedIndexes?.insert(indexPath.item)
+            }
         case .move:
-            guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else {
-                assertionFailure("Invalid state: `indexPath` or `newIndexPath` is nil for type .move")
-                return
+            if let oldIndexPath = indexPath, let newIndexPath = newIndexPath {
+                movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
             }
-            movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
         @unknown default:
             assertionFailure("Unhandled case in switch: \(type)")
-            return
         }
     }
 }

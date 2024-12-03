@@ -17,6 +17,26 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     weak var createEventTrackerViewController: CreateEventTrackerViewControllerProtocol?
     
     lazy var viewModel: CategoryListViewModel = {
+        lazy var trackerRecordStore: TrackerRecordStore = {
+            guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
+                assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
+                
+                let fallbackContext = DefaultContext(concurrencyType: .mainQueueConcurrencyType)
+                return TrackerRecordStore(context: fallbackContext)
+            }
+            return TrackerRecordStore(context: context)
+        }()
+        
+        lazy var trackerStore: TrackerStore = {
+            guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
+                assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
+                
+                let fallbackContext = DefaultContext(concurrencyType: .mainQueueConcurrencyType)
+                return TrackerStore(context: fallbackContext)
+            }
+            return TrackerStore(context: context)
+        }()
+        
         lazy var trackerCategoryStore: TrackerCategoryStore = {
             guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
                 assertionFailure(TrackersViewControllerError.loadContextError.localizedDescription)
@@ -27,7 +47,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
             return TrackerCategoryStore(context: context)
         }()
         
-        let viewModel = CategoryListViewModel(trackerCategoryStore: trackerCategoryStore)
+        let viewModel = CategoryListViewModel(trackerCategoryStore: trackerCategoryStore, trackerStore: trackerStore, trackerRecordStore: trackerRecordStore)
         return viewModel
     }()
     
@@ -36,13 +56,13 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = "Категория"
+        label.text = L10n.CategoryListViewController.TitleLabel.text
         return label
     }()
     
     private lazy var imageView: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "dizzy")
+        view.image = ImageAsset.Image.dizzy
         return view
     }()
     
@@ -52,7 +72,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 14, weight: .medium)
         label.numberOfLines = 2
-        label.text = "Привычки и события можно\n объединить по смыслу"
+        label.text = L10n.CategoryListViewController.ImageViewLabel.text
         return label
     }()
     
@@ -63,14 +83,16 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         
         tableView.allowsSelection = true
         tableView.register(BaseTableViewCell.self, forCellReuseIdentifier: "CategoryListCell")
+        tableView.separatorColor = .ypGray
         
         return tableView
     }()
     
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Добавить категорию", for: .normal)
-        button.setTitleColor(.ypWhite, for: .normal)
+        let title = L10n.CategoryListViewController.AddCategoryButton.title
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
@@ -96,6 +118,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         viewModel.didFetchCategories = { [weak self] categories in
             self?.viewModel.categories = categories
             self?.tableView.reloadData()
+            self?.createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
             self?.hideImageViewIfCategoryIsNotEmpty()
         }
         
@@ -108,7 +131,7 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
     }
     
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,
             tableView,
@@ -158,6 +181,58 @@ final class CategoryListViewController: UIViewController, CategoryListViewContro
         imageView.isHidden = !isEmpty
         imageViewLabel.isHidden = !isEmpty
     }
+    
+    private func editCategory(indexPath: IndexPath) {
+        let categoryTitle = viewModel.categories[indexPath.row].title
+        
+        let viewController = AddCategoryViewController()
+        viewController.setupViewControllerForEditing(text: categoryTitle)
+        viewController.categoryListViewController = self
+        viewController.modalPresentationStyle = .formSheet
+        viewController.modalTransitionStyle = .coverVertical
+        present(viewController, animated: true, completion: nil)
+    }
+    
+    private func deleteCategory(indexPath: IndexPath) {
+        
+        let categoryTitle = viewModel.categories[indexPath.row].title
+        
+        let title = L10n.CategoryListViewController.DeleteCategory.title
+        let cancel = L10n.CategoryListViewController.DeleteCategory.cancel
+        let delete = L10n.CategoryListViewController.DeleteCategory.delete
+        
+        let model = AlertModel(
+            title: title,
+            message: nil,
+            actions: [
+                AlertActionModel(title: cancel, style: .cancel, handler: nil),
+                AlertActionModel(title: delete, style: .destructive, handler: { [weak self] _ in
+                    guard let trackers = try? self?.viewModel.trackerStore.fetchAllTrackersWithCategory(categoryTitle: categoryTitle) else { return }
+                    
+                    for tracker in trackers {
+                        self?.viewModel.trackerRecordStore.removeAllTrackerRecord(with: tracker.id)
+                        try? self?.viewModel.trackerStore.removeTracker(withId: tracker.id)
+                    }
+                    try? self?.viewModel.trackerCategoryStore.deleteCategory(with: categoryTitle)
+                    self?.viewModel.deleteLastSelectedCategory(selectedCategoryTitle: categoryTitle)
+                    self?.viewModel.fetchCategories()
+                    
+                    // Обновляем collectionView - в зависимости от того как мы зашли в удаление категорий - через создание нового трекера или через редактирование, ссылка на trackersViewController будет разной
+                    if let editDelegate = self?.createEventTrackerViewController?.trackerViewControllerEditDelegate {
+                        editDelegate.updateCollectionView()
+                    } else {
+                        self?.createEventTrackerViewController?.chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
+                    }
+                    
+                    self?.createEventTrackerViewController?.selectedCategory = ""
+                    self?.createEventTrackerViewController?.loadLastSelectedCategory()
+                    self?.createEventTrackerViewController?.updateTableViewFirstCell()
+                    self?.createEventTrackerViewController?.categoryDidChange()
+                }),
+            ]
+        )
+        AlertPresenter.show(model: model, viewController: self, preferredStyle: .actionSheet)
+    }
 }
 
 extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource {
@@ -200,5 +275,27 @@ extension CategoryListViewController: UITableViewDelegate, UITableViewDataSource
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         guard let cell = cell as? BaseTableViewCell else { return }
         cell.roundedCornersAndOffLastSeparatorVisibility(indexPath: indexPath, tableView: tableView)
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        return UIContextMenuConfiguration(actionProvider: { actions in
+            
+            let editTitle = L10n.TrackersViewController.CollectionView.editTitle
+            let deleteTitle = L10n.TrackersViewController.CollectionView.deleteTitle
+            
+            var menuActions: [UIMenuElement] = []
+            
+            menuActions.append(
+                UIAction(title: editTitle) { [weak self] _ in
+                    self?.editCategory(indexPath: indexPath)
+                })
+            menuActions.append(
+                UIAction(title: deleteTitle, attributes: .destructive) { [weak self] _ in
+                    self?.deleteCategory(indexPath: indexPath)
+                })
+            
+            return UIMenu(children: menuActions)
+        })
     }
 }

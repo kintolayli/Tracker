@@ -10,6 +10,7 @@ import UIKit
 
 protocol CreateEventTrackerViewControllerProtocol: AnyObject {
     var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol? { get set }
+    var trackerViewControllerEditDelegate: TrackersViewControllerProtocol? { get set }
     var sheduleDelegate: SheduleViewControllerProtocol? { get set }
     var selectedCategory: String? { get set }
     func categoryDidChange()
@@ -22,13 +23,15 @@ protocol CreateEventTrackerViewControllerProtocol: AnyObject {
 
 
 final class CreateEventTrackerViewController: UIViewController, CreateEventTrackerViewControllerProtocol {
+    
+    var trackerViewControllerEditDelegate: TrackersViewControllerProtocol?
+    
     weak var chooseTypeTrackerViewController: ChooseTypeTrackerViewControllerProtocol?
     var sheduleDelegate: SheduleViewControllerProtocol?
     
     var selectedCategory: String?
     private var schedule: [Day]?
     private let emojies = [ "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪",]
-    private var selectedEmojii: String?
     private let colors: [UIColor] = [
         .ypColorSelection1,
         .ypColorSelection2,
@@ -49,11 +52,33 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         .ypColorSelection17,
         .ypColorSelection18,
     ]
+    private var selectedEmojii: String?
     private var selectedColor: UIColor?
+    private var trackerId: UUID
     
-    private let suplementaryViewHeaderList = ["Emojii", "Цвет"]
+    init(delegate: TrackersViewControllerProtocol, id: UUID) {
+        self.trackerViewControllerEditDelegate = delegate
+        self.trackerId = id
+        super.init(nibName: nil, bundle: nil)
+    }
     
-    private var menuItems: [String] = ["Категория"]
+    init() {
+        self.trackerId = UUID()
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private let suplementaryViewHeaderList = [
+        L10n.CreateEventTrackerViewController.SuplementaryViewHeaderList.item1,
+        L10n.CreateEventTrackerViewController.SuplementaryViewHeaderList.item2
+    ]
+    
+    private var menuItems: [String] = [
+        L10n.CreateEventTrackerViewController.MenuItems.item1
+    ]
     private var menuSecondaryItems: [[String]] = [[""], [""]]
     
     private var isCreateRegularEventTracker: Bool = false
@@ -67,13 +92,24 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.text = "Новое нерегулярное событие"
+        label.text = L10n.CreateEventTrackerViewController.IrregularEventTracker.TitleLabel.text
+        return label
+    }()
+    
+    private lazy var dayCounterLabel: UILabel = {
+        let label = UILabel()
+        
+        label.textColor = .ypBlack
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.isHidden = true
+        
         return label
     }()
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = L10n.CreateEventTrackerViewController.TextField.placeholder
         textField.backgroundColor = .ypBackground
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
@@ -106,6 +142,8 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         tableView.isScrollEnabled = false
         tableView.allowsSelection = true
         tableView.register(BaseTableViewCell.self, forCellReuseIdentifier: "RegularEventTrackerCell")
+        tableView.separatorColor = .ypGray
+        tableView.backgroundColor = .ypBackground
         
         return tableView
     }()
@@ -119,7 +157,8 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Отменить", for: .normal)
+        let title =  L10n.CreateEventTrackerViewController.CancelButton.title
+        button.setTitle(title, for: .normal)
         button.setTitleColor(.ypRed, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .clear
@@ -132,7 +171,8 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     private lazy var createButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Создать", for: .normal)
+        let title = L10n.CreateEventTrackerViewController.CreateButton.title
+        button.setTitle(title, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypGray
@@ -153,17 +193,16 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        loadLastSelectedCategory()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        loadLastSelectedCategory()
     }
     
     private func setupUI() {
-        view.backgroundColor = .ypWhite
+        view.backgroundColor = .ypMainBackground
         
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             scrollView
@@ -173,12 +212,19 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         
         contentView.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,
+            dayCounterLabel,
             textField,
             tableView,
             collectionView,
             cancelButton,
             createButton
         ])
+        
+        if dayCounterLabel.isHidden {
+            textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38).isActive = true
+        } else {
+            textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38 * 3).isActive = true
+        }
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -196,7 +242,9 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 27),
             titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             
-            textField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 87),
+            dayCounterLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
+            dayCounterLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             textField.heightAnchor.constraint(equalToConstant: 75),
@@ -241,9 +289,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         NotificationCenter.default.addObserver(self, selector: #selector(emojiiDidChange), name: .emojiiDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(colorDidChange), name: .colorDidChange, object: nil)
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
+        enableKeyboardDismissOnTap()
     }
     
     func loadLastSelectedCategory() {
@@ -254,9 +300,73 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         }
     }
     
+    private func loadCategoryWhenEditing(category: String) {
+        selectedCategory = category
+        menuSecondaryItems[0][0] = category
+        updateTableViewFirstCell()
+        
+        let viewController = CategoryListViewController()
+        guard let category = selectedCategory else { return }
+        viewController.viewModel.saveLastSelectedCategory(selectedCategoryTitle: category)
+    }
+    
+    private func loadSchedule(schedule: [Day]) {
+        let sheduleViewController = SheduleViewController()
+        sheduleDelegate = sheduleViewController
+        guard let textSchedule = sheduleDelegate?.shortStringFromSelectedDays(days: schedule) else { return }
+        didSelectDays(textSchedule)
+        sheduleViewController.createEventTrackerViewController = self
+        sheduleViewController.updateDays(from: menuSecondaryItems[1][0])
+    }
+    
+    private func selectEmojii() {
+        guard let emojii = selectedEmojii else { return }
+        guard let index = emojies.firstIndex(of: emojii) else { return }
+        
+        let indexPath = IndexPath(item: index, section: 0)
+        collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+        collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
+    }
+    
+    private func selectColor() {
+        guard let color = selectedColor else { return }
+        guard let index = colors.firstIndex(of: color) else { return }
+        
+        let indexPath = IndexPath(item: index, section: 1)
+        collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+        collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
+    }
+    
+    private func createButtonTitleChange() {
+        let title = L10n.CreateEventTrackerViewController.CreateButton.titleWhenEdit
+        createButton.setTitle(title, for: .normal)
+    }
+    
+    func setupViewControllerForEditing(
+        label: String,
+        textFieldText: String,
+        categoryTitle: String,
+        schedule: [Day]?,
+        emojii: String,
+        color: UIColor,
+        trackerText: String
+    ) {
+        dayCounterLabel.isHidden = false
+        dayCounterLabel.text = trackerText
+        selectedEmojii = emojii
+        selectedColor = color
+        titleLabel.text = label
+        textField.text = textFieldText
+        loadCategoryWhenEditing(category: categoryTitle)
+        if let newSchedule = schedule {
+            loadSchedule(schedule: newSchedule as [Day])
+        }
+        createButtonTitleChange()
+    }
+    
     func didSelectCreateRegularEvent() {
-        menuItems.append("Расписание")
-        titleLabel.text = "Новая привычка"
+        menuItems.append(L10n.CreateEventTrackerViewController.MenuItems.item2)
+        titleLabel.text = L10n.CreateEventTrackerViewController.RegularEventTracker.TitleLabel.text
         isCreateRegularEventTracker = true
     }
     
@@ -329,11 +439,16 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         } else {
             createButton.isEnabled = !isTextFieldEmpty && !isCategoryEmpty && isEmojiiNotNil && isColorNotNil
         }
+        
+        if traitCollection.userInterfaceStyle == .dark {
+            if createButton.isEnabled {
+                createButton.setTitleColor(.ypAlwaysBlack, for: .normal)
+            } else {
+                createButton.setTitleColor(.ypWhite, for: .normal)
+            }
+        }
+        
         createButton.backgroundColor = createButton.isEnabled ? .ypBlack : .ypGray
-    }
-    
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
     }
     
     @objc private func textFieldDidChange(_ textField: UITextField) {
@@ -377,7 +492,7 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
     
     @objc
     private func createButtonDidTap() {
-        let id = UUID()
+        
         guard let name = textField.text else { return }
         guard let category = selectedCategory else { return }
         if isCreateRegularEventTracker {
@@ -386,15 +501,19 @@ final class CreateEventTrackerViewController: UIViewController, CreateEventTrack
         guard let emojii = selectedEmojii else { return }
         guard let color = selectedColor else { return }
         
-        let newTracker = Tracker(id: id, name: name, color: color, emojii: emojii, schedule: schedule)
+        let newTracker = Tracker(id: trackerId, name: name, color: color, emojii: emojii, schedule: schedule, isPinned: false)
         let newTrackerCategory = TrackerCategory(title: category, trackerList: [newTracker])
         
-        self.chooseTypeTrackerViewController?.trackersViewController?.add(trackerCategory: newTrackerCategory)
-        
-        chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
-        
-        self.dismiss(animated: true)
-        self.chooseTypeTrackerViewController?.dismiss(animated: true)
+        if let editDelegate = trackerViewControllerEditDelegate {
+            editDelegate.add(trackerCategory: newTrackerCategory)
+            editDelegate.updateCollectionView()
+            self.dismiss(animated: true)
+        } else {
+            chooseTypeTrackerViewController?.trackersViewController?.add(trackerCategory: newTrackerCategory)
+            chooseTypeTrackerViewController?.trackersViewController?.updateCollectionView()
+            self.dismiss(animated: true)
+            self.chooseTypeTrackerViewController?.dismiss(animated: true)
+        }
     }
     
     deinit {
@@ -451,6 +570,9 @@ extension CreateEventTrackerViewController: UITableViewDelegate, UITableViewData
         
         if indexPath.row == 0 {
             let viewController = CategoryListViewController()
+            if let category = selectedCategory {
+                viewController.viewModel.saveLastSelectedCategory(selectedCategoryTitle: category)
+            }
             viewController.createEventTrackerViewController = self
             viewController.modalPresentationStyle = .formSheet
             viewController.modalTransitionStyle = .coverVertical
@@ -486,9 +608,27 @@ extension CreateEventTrackerViewController: UICollectionViewDelegate, UICollecti
         if indexPath.section == 0 {
             let emojii = emojies[indexPath.row]
             cell.updateCell(backgroundColor: .clear, emojiiLabelText: emojii)
+            
+            if let _ = trackerViewControllerEditDelegate {
+                let selectEmojii = selectedEmojii ?? "🙂"
+                let index = emojies.firstIndex(of: selectEmojii) ?? 0
+                let indexPath = IndexPath(item: index, section: 0)
+                
+                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+                collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
+            }
         } else {
             let color = colors[indexPath.row]
             cell.updateCell(backgroundColor: color)
+            
+            if let _ = trackerViewControllerEditDelegate {
+                let selectColor = selectedColor ?? colors[0]
+                let index = colors.firstIndex(where: { $0.isEqualToColor(selectColor) }) ?? 0
+                let indexPath = IndexPath(item: index, section: 1)
+                
+                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+                collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
+            }
         }
         
         return cell
