@@ -10,7 +10,6 @@ import UIKit
 private var аssociationKeyMaxLength: Int = 0
 
 extension UITextField {
-    
     @IBInspectable var maxLength: Int {
         get {
             if let length = objc_getAssociatedObject(self, &аssociationKeyMaxLength) as? Int {
@@ -24,20 +23,20 @@ extension UITextField {
             addTarget(self, action: #selector(checkMaxLength), for: .editingChanged)
         }
     }
-    
+
     @objc private func checkMaxLength(textField: UITextField) {
         guard let prospectiveText = self.text,
-              prospectiveText.count > maxLength
+            prospectiveText.count > maxLength
         else {
             return
         }
-        
+
         let selection = selectedTextRange
-        
+
         let indexEndOfText = prospectiveText.index(prospectiveText.startIndex, offsetBy: maxLength)
         let substring = prospectiveText[..<indexEndOfText]
         text = String(substring)
-        
+
         selectedTextRange = selection
     }
 }

@@ -6,20 +6,19 @@
 //
 
 enum AnalyticsServiceModel {
-
     enum Event: String {
-        case open = "open"
-        case close = "close"
-        case click = "click"
-        
-        static var rawValue:String {
+        case open
+        case close
+        case click
+
+        static var rawValue: String {
             return "event"
         }
     }
 
     enum Screen: String {
-        case main = "main"
-        
+        case main
+
         static var rawValue: String {
             return "screen"
         }
@@ -27,11 +26,11 @@ enum AnalyticsServiceModel {
 
     enum Item: String {
         case addTrack = "add_track"
-        case track = "track"
-        case filter = "filter"
-        case edit = "edit"
-        case delete = "delete"
-        
+        case track
+        case filter
+        case edit
+        case delete
+
         static var rawValue: String {
             return "item"
         }

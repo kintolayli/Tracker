@@ -16,7 +16,7 @@ protocol ChooseTypeTrackerViewControllerProtocol: AnyObject {
 final class ChooseTypeTrackerViewController: UIViewController {
     weak var trackersViewController: TrackersViewControllerProtocol?
     weak var eventTrackerDelegate: CreateEventTrackerViewControllerProtocol?
-    
+
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
@@ -25,7 +25,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
         label.text = L10n.ChooseTypeTrackerViewController.TitleLabel.text
         return label
     }()
-    
+
     private lazy var regularEventButton: UIButton = {
         let button = UIButton()
         let title = L10n.ChooseTypeTrackerViewController.RegularEventButton.title
@@ -37,10 +37,10 @@ final class ChooseTypeTrackerViewController: UIViewController {
         button.layer.masksToBounds = true
         return button
     }()
-    
+
     private lazy var irregularEventButton: UIButton = {
         let button = UIButton()
-        let title =  L10n.ChooseTypeTrackerViewController.IrregularEventButton.title
+        let title = L10n.ChooseTypeTrackerViewController.IrregularEventButton.title
         button.setTitle(title, for: .normal)
         button.setTitleColor(.ypMainBackground, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -49,45 +49,45 @@ final class ChooseTypeTrackerViewController: UIViewController {
         button.layer.masksToBounds = true
         return button
     }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        
     }
-    
+
     private func setupUI() {
         view.backgroundColor = .ypMainBackground
-        
+
         view.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([
             titleLabel,
             regularEventButton,
             irregularEventButton
         ])
-        
+
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
+
             regularEventButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 350),
             regularEventButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             regularEventButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             regularEventButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             regularEventButton.heightAnchor.constraint(equalToConstant: 60),
-            
+
             irregularEventButton.topAnchor.constraint(equalTo: regularEventButton.bottomAnchor, constant: 16),
             irregularEventButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             irregularEventButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             irregularEventButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            irregularEventButton.heightAnchor.constraint(equalToConstant: 60),
+            irregularEventButton.heightAnchor.constraint(equalToConstant: 60)
         ])
-        
+
         regularEventButton.addTarget(self, action: #selector(regularEventsButtonDidTap), for: .touchUpInside)
         irregularEventButton.addTarget(self, action: #selector(irregularEventsButtonDidTap), for: .touchUpInside)
     }
-    
+
     @objc private func regularEventsButtonDidTap() {
-        let viewController = CreateEventTrackerViewController()
+        let viewModel = CreateEventTrackerViewModel()
+        let viewController = CreateEventTrackerViewController(viewModel: viewModel)
         viewController.chooseTypeTrackerViewController = self
         self.eventTrackerDelegate = viewController
         viewController.didSelectCreateRegularEvent()
@@ -95,9 +95,10 @@ final class ChooseTypeTrackerViewController: UIViewController {
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
     }
-    
+
     @objc private func irregularEventsButtonDidTap() {
-        let viewController = CreateEventTrackerViewController()
+        let viewModel = CreateEventTrackerViewModel()
+        let viewController = CreateEventTrackerViewController(viewModel: viewModel)
         viewController.chooseTypeTrackerViewController = self
         self.eventTrackerDelegate = viewController
         viewController.modalPresentationStyle = .formSheet

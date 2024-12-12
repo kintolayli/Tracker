@@ -30,6 +30,7 @@
 		8AAEB19F2CF884E200C6E49B /* ExtensionUIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEB19E2CF884E200C6E49B /* ExtensionUIColor.swift */; };
 		8AAEB1A12CF8F83700C6E49B /* TrackersFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEB1A02CF8F83700C6E49B /* TrackersFilterViewController.swift */; };
 		8AAEB1A32CF8F9A400C6E49B /* TrackerFilterItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAEB1A22CF8F9A400C6E49B /* TrackerFilterItems.swift */; };
+		8AB615882CFF356B00959A60 /* CreateEventTrackerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB615872CFF356B00959A60 /* CreateEventTrackerViewModel.swift */; };
 		8ABA45BE2CA828A7005C8395 /* TrackerStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABA45BD2CA828A7005C8395 /* TrackerStoreError.swift */; };
 		8ABA45C02CA828CD005C8395 /* TrackerCategoryStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABA45BF2CA828CD005C8395 /* TrackerCategoryStoreError.swift */; };
 		8ABA45C22CA828E7005C8395 /* TrackerCategoryStoreUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABA45C12CA828E7005C8395 /* TrackerCategoryStoreUpdate.swift */; };
@@ -117,6 +118,7 @@
 		8AAEB19E2CF884E200C6E49B /* ExtensionUIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionUIColor.swift; sourceTree = "<group>"; };
 		8AAEB1A02CF8F83700C6E49B /* TrackersFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersFilterViewController.swift; sourceTree = "<group>"; };
 		8AAEB1A22CF8F9A400C6E49B /* TrackerFilterItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerFilterItems.swift; sourceTree = "<group>"; };
+		8AB615872CFF356B00959A60 /* CreateEventTrackerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventTrackerViewModel.swift; sourceTree = "<group>"; };
 		8ABA45BD2CA828A7005C8395 /* TrackerStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStoreError.swift; sourceTree = "<group>"; };
 		8ABA45BF2CA828CD005C8395 /* TrackerCategoryStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStoreError.swift; sourceTree = "<group>"; };
 		8ABA45C12CA828E7005C8395 /* TrackerCategoryStoreUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStoreUpdate.swift; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 				8AC0BFA42CFB78780075EBAE /* StatisticsViewModel.swift */,
 				8A4D6FFD2CEBBB6400E48CCA /* CategoryListViewModel.swift */,
 				8A2C62A22CEE926F00DF8ADF /* Binding.swift */,
+				8AB615872CFF356B00959A60 /* CreateEventTrackerViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -412,6 +415,7 @@
 			buildPhases = (
 				273BF8C9A4F11C22BA334D33 /* [CP] Check Pods Manifest.lock */,
 				8AC0BFA62CFD28210075EBAE /* Run Swiftgen */,
+				8AB615862CFE775F00959A60 /* Run SwiftLint */,
 				8ACDBC1D2C5CD87B00687ACF /* Sources */,
 				8ACDBC1E2C5CD87B00687ACF /* Frameworks */,
 				8ACDBC1F2C5CD87B00687ACF /* Resources */,
@@ -558,6 +562,25 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		8AB615862CFE775F00959A60 /* Run SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftLint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "PATH=/opt/homebrew/bin:$PATH\nif [ -f ~/com.raywenderlich.swiftlint.yml ]; then\n  if which swiftlint >/dev/null; then\n    swiftlint --no-cache --config ~/com.raywenderlich.swiftlint.yml\n  fi\nfi\n";
+		};
 		8AC0BFA62CFD28210075EBAE /* Run Swiftgen */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -615,6 +638,7 @@
 				8AD814AE2C67A7E2008DAA5D /* ScheduleTableViewCell.swift in Sources */,
 				8A4D6FFE2CEBBB6400E48CCA /* CategoryListViewModel.swift in Sources */,
 				8AC0BF962CFA99930075EBAE /* AnalyticsService.swift in Sources */,
+				8AB615882CFF356B00959A60 /* CreateEventTrackerViewModel.swift in Sources */,
 				8AD814B92C6A6DEF008DAA5D /* BaseTableViewCell.swift in Sources */,
 				8AD814782C640F5F008DAA5D /* ChooseTypeTrackerViewController.swift in Sources */,
 				8A5E2D602CF5F97B0036A6BC /* DayLocalizeModel.swift in Sources */,

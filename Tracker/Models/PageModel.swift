@@ -10,7 +10,7 @@ import Foundation
 enum PageModel {
     case firstPage
     case secondPage
-    
+
     var imageName: String {
         switch self {
         case .firstPage:
@@ -19,7 +19,7 @@ enum PageModel {
             return "startScreenImage2"
         }
     }
-    
+
     var labelName: String {
         switch self {
         case .firstPage:
@@ -28,7 +28,7 @@ enum PageModel {
             return L10n.PageModel.LabelName.secondPage
         }
     }
-    
+
     var buttonName: String {
         return L10n.PageModel.buttonName
     }

@@ -12,7 +12,7 @@ struct AlertModel {
     let title: String
     let message: String?
     let actions: [AlertActionModel]
-    
+
     init(title: String, message: String?, buttonTitle: String = "OK", buttonAction: ((UIAlertAction) -> Void)? = nil) {
         self.title = title
         self.message = message

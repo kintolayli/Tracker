@@ -15,7 +15,7 @@ enum DayLocalizeModel {
     case friday
     case saturday
     case sunday
-    
+
     var fullDayName: String {
         switch self {
         case .monday:
@@ -34,7 +34,7 @@ enum DayLocalizeModel {
             return L10n.DayLocalizeModel.FullDayName.sunday
         }
     }
-    
+
     var shortDayName: String {
         switch self {
         case .monday:

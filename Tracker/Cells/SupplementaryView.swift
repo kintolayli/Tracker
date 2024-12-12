@@ -9,7 +9,6 @@ import UIKit
 
 
 final class SupplementaryView: UICollectionReusableView {
-    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
@@ -17,19 +16,19 @@ final class SupplementaryView: UICollectionReusableView {
         label.font = .systemFont(ofSize: 21, weight: .bold)
         return label
     }()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         self.addSubviewsAndTranslatesAutoresizingMaskIntoConstraints([titleLabel])
-        
+
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
-    
+
     func updateLabel(text: String) {
         titleLabel.text = text
     }

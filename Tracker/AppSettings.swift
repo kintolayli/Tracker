@@ -13,14 +13,13 @@ private enum Keys {
 
 
 final class AppSettings {
-    
     static let shared = AppSettings()
     private let userDefaults: UserDefaults
-    
+
     private init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
     }
-    
+
     var isOnboardiingHidden: Bool {
         get {
             userDefaults.bool(forKey: Keys.isOnboardingHidden)

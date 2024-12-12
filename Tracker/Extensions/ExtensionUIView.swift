@@ -15,8 +15,9 @@ extension UIView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
     }
-    
-    @discardableResult func edgesToSuperView() -> Self {
+
+    @discardableResult
+    func edgesToSuperView() -> Self {
         guard let superview = superview else {
             assertionFailure("View is not in the hierarchy of the superview")
             return self
@@ -26,7 +27,7 @@ extension UIView {
             topAnchor.constraint(equalTo: superview.topAnchor),
             leftAnchor.constraint(equalTo: superview.leftAnchor),
             rightAnchor.constraint(equalTo: superview.rightAnchor),
-            bottomAnchor.constraint(equalTo: superview.bottomAnchor),
+            bottomAnchor.constraint(equalTo: superview.bottomAnchor)
         ])
         return self
     }
