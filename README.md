@@ -52,6 +52,6 @@
 
 ## 🔗 Полезные ссылки
 
-- [Скринкаст)](https://disk.yandex.ru/i/oSw84eQMx2VpVA)  
+- [Скринкаст](https://disk.yandex.ru/i/oSw84eQMx2VpVA)  
 - [Репозиторий проекта](https://github.com/mahlenko/tracker-practicum)  
 - [Дизайн Figma](https://www.figma.com/file/owAO4CAPTJdpM1BZU5JHv7/Tracker-(YP)?t=SZDLmkWeOPX4y6mp-0)
